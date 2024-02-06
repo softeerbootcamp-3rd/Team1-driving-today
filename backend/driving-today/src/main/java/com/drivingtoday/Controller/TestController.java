@@ -8,7 +8,7 @@ public class TestController {
     @Operation(summary = "swagger test")
     @GetMapping("/")
     public String swaggerTest(){
-
+        System.out.println("zz");
         return "test";
     }
 
