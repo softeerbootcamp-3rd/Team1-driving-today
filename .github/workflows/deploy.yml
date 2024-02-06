@@ -53,15 +53,15 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: "driving-today-0.0.1-SNAPSHOT.jar"
           target: "/home/ubuntu/"
-#
-#      ## deploy to main
-#      - name: Deploy to main server
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          key: ${{ secrets.REMOTE_SSH_KEY }}
-#          port: ${{ secrets.SSH_PORT }}
-#          script: |
-#            cd /home/ubuntu/
-#            nohup sh lets-deploy.sh >/dev/null 2>&1 &
+
+      ## deploy to main
+      - name: Deploy to main server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/ubuntu/
+            nohup sh deploy.sh > ~/dev 2>&1 &
