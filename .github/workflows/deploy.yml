@@ -28,8 +28,8 @@ jobs:
           pwd
           ls -al
           cd ./backend/driving-today/src/main/resources
-          touch ./application-secret.properties
-          echo "${{ secrets.APPLICATION_SECRET }}" > ./application-secret.properties
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION_SECRET }}" > ./application.yml
         shell: bash
 
         ## gradle build
