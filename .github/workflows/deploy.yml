@@ -44,15 +44,15 @@ jobs:
           cd ..
           cp ./backend/driving-today/build/libs/driving-today-0.0.1-SNAPSHOT.jar driving-today-0.0.1-SNAPSHOT.jar
 
-#      - name: Send jar to main server with SCP
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.USERNAME }}
-#          key: ${{ secrets.REMOTE_SSH_KEY }}
-#          port: ${{ secrets.SSH_PORT }}
-#          source: "modu-elec-0.0.1-SNAPSHOT.jar"
-#          target: "/home/ubuntu/"
+      - name: Send jar to main server with SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "driving-today-0.0.1-SNAPSHOT.jar"
+          target: "/home/ubuntu/"
 #
 #      ## deploy to main
 #      - name: Deploy to main server
