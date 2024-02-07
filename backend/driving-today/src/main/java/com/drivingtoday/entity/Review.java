@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @NoArgsConstructor
@@ -38,5 +37,4 @@ public class Review {
     @JoinColumn(name = "instructor_id")
     @NotNull
     private Instructor instructor;
-
 }

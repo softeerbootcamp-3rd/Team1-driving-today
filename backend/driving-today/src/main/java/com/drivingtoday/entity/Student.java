@@ -17,21 +17,14 @@ public class Student {
     @NotNull
     private String name;
 
-
     @Column(name = "phone_number")
     @NotNull
     private String phoneNumber;
 
-
     @Column(name = "student_image")
     private String studentImage;
-
 
     @Column(name = "nickname")
     @NotNull
     private String nickname;
-
-
-
-
 }

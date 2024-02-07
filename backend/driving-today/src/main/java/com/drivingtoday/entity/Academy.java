@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 public class Academy {
-
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "academy_id")
     private Long id;
@@ -29,6 +28,4 @@ public class Academy {
     @Column(name = "cert")
     @NotNull
     private Boolean cert;
-
-
 }
