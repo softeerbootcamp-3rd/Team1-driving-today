@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,9 +25,17 @@ public class Reservation {
     @NotNull
     private LocalDateTime createdAt;
 
-    @Column(name = "reserved_date")
+    @Column(name = "reservation_date")
     @NotNull
-    private LocalDateTime reservedDate;
+    private LocalDate reservationDate;
+
+    @Column(name = "reservation_time")
+    @NotNull
+    private Integer reservationTime;
+
+    @Column(name = "training_time")
+    @NotNull
+    private Integer trainingTime;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
