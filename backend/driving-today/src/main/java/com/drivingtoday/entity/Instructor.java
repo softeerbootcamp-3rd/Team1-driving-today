@@ -28,7 +28,7 @@ public class Instructor {
 
     @Column(name = "price_per_hour")
     @NotNull
-    private String pricePerHour;
+    private Integer pricePerHour;
 
     @Column(name = "introduction")
     @NotNull
