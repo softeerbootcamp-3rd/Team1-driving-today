@@ -37,5 +37,6 @@ public class Instructor {
 
     @ManyToOne
     @JoinColumn(name = "academy_id")
+    @NotNull
     private Academy academy;
 }
