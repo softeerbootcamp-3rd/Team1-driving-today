@@ -18,6 +18,11 @@ module.exports = {
       jsx: true,
     },
   },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
   plugins: ['react-refresh', 'simple-import-sort'],
   rules: {
     'react-refresh/only-export-components': ['warn', {allowConstantExport: true}],
