@@ -2,6 +2,7 @@ package com.drivingtoday.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -14,15 +15,19 @@ public class Academy {
     private Long id;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
     @Column(name = "latitude")
+    @NotNull
     private Double latitude;
 
     @Column(name = "longitude")
+    @NotNull
     private Double longitude;
 
     @Column(name = "cert")
+    @NotNull
     private Boolean cert;
 
 
