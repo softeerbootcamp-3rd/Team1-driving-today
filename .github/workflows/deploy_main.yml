@@ -1,0 +1,70 @@
+name: deploy_main
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: make application.properties
+        run: |
+          pwd
+          ls -al
+          cd ./backend/driving-today/src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION_SECRET }}" > ./application.yml
+        shell: bash
+
+        ## gradle build
+      - name: Build with Gradle
+        run: |
+          cd ./backend/driving-today
+          ls -al
+          pwd
+          chmod +x gradlew
+          ./gradlew clean build --exclude-task test
+          cd ..
+          cd ..
+          cp ./backend/driving-today/build/libs/driving-today-0.0.1-SNAPSHOT.jar driving-today-0.0.1-SNAPSHOT.jar
+
+      - name: Send jar to main server with SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.MAIN_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "driving-today-0.0.1-SNAPSHOT.jar"
+          target: "/home/ubuntu/"
+
+      ## deploy to main
+      - name: Deploy to main server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.MAIN_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/ubuntu/
+            nohup sh deploy.sh
