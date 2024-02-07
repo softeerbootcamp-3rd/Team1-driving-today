@@ -34,7 +34,7 @@ public class Instructor {
     @NotNull
     private String introduction;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id")
     @NotNull
     private Academy academy;
