@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 public class Instructor {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "instructor_id")
