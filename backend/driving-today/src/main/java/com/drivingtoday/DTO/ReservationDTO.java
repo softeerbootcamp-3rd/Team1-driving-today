@@ -10,15 +10,11 @@ import lombok.*;
 @Setter
 public class ReservationDTO {
 
-    private Boolean status;
-
     private String reservationDate;
 
     private Integer reservationTime;
 
     private Integer trainingTime;
-
-    private Long studentId;
 
     private Long instructorId;
 

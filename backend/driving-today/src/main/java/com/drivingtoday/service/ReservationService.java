@@ -46,7 +46,7 @@ public class ReservationService {
                 .reservationDate(date)
                 .trainingTime(reservationDTO.getTrainingTime())
                 .createdAt(LocalDateTime.now())
-                .status(reservationDTO.getStatus())
+                .status(true)
                 .student(student)
                 .instructor(instructor)
                 .build();
