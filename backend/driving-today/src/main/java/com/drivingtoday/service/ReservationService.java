@@ -36,27 +36,23 @@ public class ReservationService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(reservationDTO.getReservationDate(), formatter);
 
-        Optional<Student> student = studentRepository.findById(1L);
-        if(student.isPresent()) {
+        Optional<Student> optionalStudent = studentRepository.findById(1L);
+        Student student = optionalStudent.orElseThrow(() -> new RuntimeException("Student is not present"));
 
-            Optional<Instructor> optionalInstructor = instructorRepository.findById(reservationDTO.getInstructorId());
-            Instructor instructor = optionalInstructor.orElseThrow(() -> new RuntimeException("Instructor is not present"));
-            Reservation reservation = Reservation.builder()
-                    .reservationTime(reservationDTO.getReservationTime())
-                    .reservationDate(date)
-                    .trainingTime(reservationDTO.getTrainingTime())
-                    .createdAt(LocalDateTime.now())
-                    .status(reservationDTO.getStatus())
-                    .student(student.get())
-                    .instructor(instructor)
-                    .build();
+        Optional<Instructor> optionalInstructor = instructorRepository.findById(reservationDTO.getInstructorId());
+        Instructor instructor = optionalInstructor.orElseThrow(() -> new RuntimeException("Instructor is not present"));
+        Reservation reservation = Reservation.builder()
+                .reservationTime(reservationDTO.getReservationTime())
+                .reservationDate(date)
+                .trainingTime(reservationDTO.getTrainingTime())
+                .createdAt(LocalDateTime.now())
+                .status(reservationDTO.getStatus())
+                .student(student)
+                .instructor(instructor)
+                .build();
 
-            reservationRepository.save(reservation);
-            return;
-
-        }
-
-
+        reservationRepository.save(reservation);
+        return;
 
     }
 }
