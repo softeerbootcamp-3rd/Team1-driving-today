@@ -1,5 +1,3 @@
-import './App.css'
-
 import {ReactNode} from 'react'
 import {
   createBrowserRouter,
