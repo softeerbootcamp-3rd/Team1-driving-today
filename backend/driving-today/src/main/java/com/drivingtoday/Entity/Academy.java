@@ -1,34 +1,33 @@
-package com.drivingtoday.Entity;
+package com.drivingtoday.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-@Builder
 @Entity
 @NoArgsConstructor
+@Getter
+@Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Academy {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id",updatable = false)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "academy_id")
     private Long id;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
     @Column(name = "latitude")
+    @NotNull
     private Double latitude;
 
     @Column(name = "longitude")
+    @NotNull
     private Double longitude;
 
     @Column(name = "cert")
+    @NotNull
     private Boolean cert;
-
-
 }

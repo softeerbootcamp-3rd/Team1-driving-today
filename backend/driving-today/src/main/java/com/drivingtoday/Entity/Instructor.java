@@ -1,41 +1,43 @@
-package com.drivingtoday.Entity;
+package com.drivingtoday.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-@Builder
 @Entity
 @NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
+@Builder
 public class Instructor {
-
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id",updatable = false)
+    @Column(name = "instructor_id")
     private Long id;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
     @Column(name = "phone_number")
-    private String phone_number;
+    @NotNull
+    private String phoneNumber;
 
     @Column(name = "instructor_image")
-    private String instructor_image;
+    @NotNull
+    private String instructorImage;
 
     @Column(name = "price_per_hour")
-    private String price_per_hour;
+    @NotNull
+    private Integer pricePerHour;
 
     @Column(name = "introduction")
+    @NotNull
     private String introduction;
 
-
-
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "academy_id")
+    @NotNull
+    private Academy academy;
 }

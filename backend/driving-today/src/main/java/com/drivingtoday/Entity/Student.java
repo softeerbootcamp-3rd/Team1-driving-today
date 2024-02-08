@@ -1,38 +1,32 @@
-package com.drivingtoday.Entity;
+package com.drivingtoday.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-@Builder
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
+@Builder
 public class Student {
-
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id",updatable = false)
+    @Column(name = "student_id")
     private Long id;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
-
     @Column(name = "phone_number")
-    private String phone_number;
+    @NotNull
+    private String phoneNumber;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "student_image")
+    private String studentImage;
 
     @Column(name = "nickname")
+    @NotNull
     private String nickname;
-
-
 }

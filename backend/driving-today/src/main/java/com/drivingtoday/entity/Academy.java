@@ -8,6 +8,8 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @Getter
+@Builder
+@AllArgsConstructor
 public class Academy {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "academy_id")

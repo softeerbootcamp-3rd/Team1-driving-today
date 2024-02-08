@@ -1,35 +1,51 @@
-package com.drivingtoday.Entity;
+package com.drivingtoday.entity;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
-@Builder
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor
+@Getter
+@Builder
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Reservation {
-
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id",updatable = false)
+    @Column(name = "reservation_id")
     private Long id;
 
     @Column(name = "status")
-    private String status;
+    @NotNull
+    private Boolean status;
 
+    @Column(name = "created_at")
+    @NotNull
+    private LocalDateTime createdAt;
 
+    @Column(name = "reservation_date")
+    @NotNull
+    private LocalDate reservationDate;
 
+    @Column(name = "reservation_time")
+    @NotNull
+    private Integer reservationTime;
 
+    @Column(name = "training_time")
+    @NotNull
+    private Integer trainingTime;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id")
+    private Student student;
 
-
-
-
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "instructor_id")
+    private Instructor instructor;
 }
