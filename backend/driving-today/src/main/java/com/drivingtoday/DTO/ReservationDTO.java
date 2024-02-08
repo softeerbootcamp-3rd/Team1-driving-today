@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 public class ReservationDTO {
 
-    private String status;
+    private Boolean status;
 
     private String reservationDate;
 
