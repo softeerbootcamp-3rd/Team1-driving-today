@@ -21,6 +21,7 @@ public class AvailableInstructor {
                 .instructorName(instructor.getName())
                 .academyInfo(AcademyInfo.from(instructor.getAcademy()))
                 .pricePerHour(instructor.getPricePerHour())
+                .phoneNumber(instructor.getPhoneNumber())
                 .image(instructor.getInstructorImage())
                 .introduction(instructor.getIntroduction())
                 .build();
