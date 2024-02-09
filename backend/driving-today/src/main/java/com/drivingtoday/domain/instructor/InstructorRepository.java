@@ -16,7 +16,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
             "WHERE r.instructor_id = i.instructor_id " +
             "AND r.reservation_date = :reservationDate " +
             "AND r.reservation_time BETWEEN :reservationTime AND :reservationTime + :trainingTime - 1) " +
-            "ORDER BY ST_DISTANCE_SPHERE(POINT(a.latitude, a.longitude), POINT(:latitude, :longitude)) " +
+            "ORDER BY ST_DISTANCE_SPHERE(POINT(a.longitude, a.latitude), POINT(:longitude, :latitude)) " +
             "LIMIT :pageSize OFFSET :offset",
             nativeQuery = true)
     List<Instructor> findAvailableInstructors(
