@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class InstructorController {
 
         List<AvailableInstructor> availableInstructors = instructorList.stream()
                 .map(AvailableInstructor::from)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(availableInstructors);
     }
