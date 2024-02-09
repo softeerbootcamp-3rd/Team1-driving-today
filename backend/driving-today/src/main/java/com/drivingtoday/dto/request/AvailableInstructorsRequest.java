@@ -1,10 +1,11 @@
 package com.drivingtoday.dto.request;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
+@Getter @Setter
 public class AvailableInstructorsRequest {
     private double latitude;
     private double longitude;
