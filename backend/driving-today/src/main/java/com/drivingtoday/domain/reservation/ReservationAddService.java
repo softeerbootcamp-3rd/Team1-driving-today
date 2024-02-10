@@ -8,15 +8,13 @@ import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService {
+public class ReservationAddService {
 
     private final ReservationRepository reservationRepository;
 
@@ -37,7 +35,7 @@ public class ReservationService {
                 .reservationDate(reservationRequest.getReservationDate())
                 .trainingTime(reservationRequest.getTrainingTime())
                 .createdAt(LocalDateTime.now())
-                .status(true)
+                .isAccepted(true)
                 .student(student)
                 .instructor(instructor)
                 .build();
