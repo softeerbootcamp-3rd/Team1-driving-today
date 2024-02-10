@@ -1,6 +1,5 @@
-package com.drivingtoday.repository;
+package com.drivingtoday.domain.instructor;
 
-import com.drivingtoday.entity.Instructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {

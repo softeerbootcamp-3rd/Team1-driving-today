@@ -1,4 +1,4 @@
-package com.drivingtoday.entity;
+package com.drivingtoday.domain.academy;
 
 
 import jakarta.persistence.*;
