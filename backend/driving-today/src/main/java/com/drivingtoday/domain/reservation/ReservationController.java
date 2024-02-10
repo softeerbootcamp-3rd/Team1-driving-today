@@ -19,7 +19,7 @@ public class ReservationController {
 
     @PostMapping("/")
     @Operation(summary = "예약만들기 API")
-    public ResponseEntity<?> createReservation(@RequestBody ReservationRequest reservationRequest){
+    public ResponseEntity<Void> createReservation(@RequestBody ReservationRequest reservationRequest){
         reservationService.saveReservations(reservationRequest);
 
         return ResponseEntity.ok().build();
