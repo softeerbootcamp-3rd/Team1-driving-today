@@ -1,13 +1,11 @@
 package com.drivingtoday.domain.instructor.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter
 @AllArgsConstructor
 public class AvailableInstructorsRequest {
     private double latitude;
