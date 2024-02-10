@@ -1,8 +1,11 @@
-package com.drivingtoday.entity;
+package com.drivingtoday.domain.review;
 
 
+import com.drivingtoday.domain.instructor.Instructor;
+import com.drivingtoday.domain.student.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +15,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class Review {
+
+    @Builder
+    private Review(String contents, Double rating, Student student, Instructor instructor) {
+        this.contents = contents;
+        this.rating = rating;
+        this.student = student;
+        this.instructor = instructor;
+        this.createdAt = LocalDateTime.now();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")

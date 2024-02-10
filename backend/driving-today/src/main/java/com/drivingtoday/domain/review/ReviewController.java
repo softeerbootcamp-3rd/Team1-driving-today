@@ -1,7 +1,7 @@
-package com.drivingtoday.controller;
+package com.drivingtoday.domain.review;
 
-import com.drivingtoday.dto.ReviewRequest;
-import com.drivingtoday.service.ReviewService;
+import com.drivingtoday.domain.review.ReviewRequest;
+import com.drivingtoday.domain.review.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

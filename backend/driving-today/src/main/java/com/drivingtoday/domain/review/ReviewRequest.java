@@ -1,4 +1,4 @@
-package com.drivingtoday.dto;
+package com.drivingtoday.domain.review;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
