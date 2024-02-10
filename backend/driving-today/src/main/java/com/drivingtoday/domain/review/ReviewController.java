@@ -18,7 +18,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @Operation(summary = "리뷰 등록")
+    @Operation(summary = "리뷰 등록하기 API")
     @PostMapping
     public ResponseEntity<Void> reviewAdd(@RequestBody @Valid ReviewRequest reviewRequest) {
         Long newReviewId = reviewService.addReview(reviewRequest);
