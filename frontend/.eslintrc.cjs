@@ -22,6 +22,12 @@ module.exports = {
     react: {
       version: 'detect',
     },
+    'import/resolver': {
+      alias: {
+        map: [['@', './src']],
+        extensions: ['.ts', '.js', '.jsx', '.json'],
+      },
+    },
   },
   plugins: ['react-refresh', 'simple-import-sort'],
   rules: {
