@@ -1,4 +1,4 @@
-package com.drivingtoday.DTO;
+package com.drivingtoday.domain.reservation.dto;
 
 
 import lombok.*;
@@ -9,8 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
-public class ReservationDTO {
+public class ReservationRequest {
 
     private LocalDate reservationDate;
 

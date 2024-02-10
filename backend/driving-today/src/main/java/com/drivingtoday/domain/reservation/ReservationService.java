@@ -1,14 +1,11 @@
-package com.drivingtoday.service;
+package com.drivingtoday.domain.reservation;
 
 
-import com.drivingtoday.DTO.ReservationDTO;
-import com.drivingtoday.entity.Instructor;
-import com.drivingtoday.entity.Reservation;
-import com.drivingtoday.entity.Student;
-import com.drivingtoday.repository.InstructorRepository;
-import com.drivingtoday.repository.ReservationRepository;
-import com.drivingtoday.repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.drivingtoday.domain.reservation.dto.ReservationRequest;
+import com.drivingtoday.domain.instructor.Instructor;
+import com.drivingtoday.domain.instructor.InstructorRepository;
+import com.drivingtoday.domain.student.Student;
+import com.drivingtoday.domain.student.StudentRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,20 +28,20 @@ public class ReservationService {
         this.instructorRepository = instructorRepository;
     }
 
-    public void saveReservations(ReservationDTO reservationDTO){
+    public void saveReservations(ReservationRequest reservationRequest){
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(reservationDTO.getReservationDate(), formatter);
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //LocalDate date = LocalDate.parse(reservationRequest.getReservationDate(), formatter);
 
         Optional<Student> optionalStudent = studentRepository.findById(1L);
         Student student = optionalStudent.orElseThrow(() -> new RuntimeException("Student is not present"));
 
-        Optional<Instructor> optionalInstructor = instructorRepository.findById(reservationDTO.getInstructorId());
+        Optional<Instructor> optionalInstructor = instructorRepository.findById(reservationRequest.getInstructorId());
         Instructor instructor = optionalInstructor.orElseThrow(() -> new RuntimeException("Instructor is not present"));
         Reservation reservation = Reservation.builder()
-                .reservationTime(reservationDTO.getReservationTime())
-                .reservationDate(date)
-                .trainingTime(reservationDTO.getTrainingTime())
+                .reservationTime(reservationRequest.getReservationTime())
+                .reservationDate(reservationRequest.getReservationDate())
+                .trainingTime(reservationRequest.getTrainingTime())
                 .createdAt(LocalDateTime.now())
                 .status(true)
                 .student(student)

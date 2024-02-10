@@ -1,4 +1,4 @@
-package com.drivingtoday.entity;
+package com.drivingtoday.domain.student;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
