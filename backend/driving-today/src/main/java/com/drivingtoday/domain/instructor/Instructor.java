@@ -1,6 +1,7 @@
-package com.drivingtoday.entity;
+package com.drivingtoday.domain.instructor;
 
 
+import com.drivingtoday.domain.academy.Academy;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

@@ -1,5 +1,7 @@
-package com.drivingtoday.entity;
+package com.drivingtoday.domain.reservation;
 
+import com.drivingtoday.domain.instructor.Instructor;
+import com.drivingtoday.domain.student.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
