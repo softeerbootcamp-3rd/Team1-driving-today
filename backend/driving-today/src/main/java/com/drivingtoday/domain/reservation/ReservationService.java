@@ -6,6 +6,7 @@ import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorRepository;
 import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
@@ -22,16 +24,7 @@ public class ReservationService {
 
     private final InstructorRepository instructorRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, StudentRepository studentRepository, InstructorRepository instructorRepository){
-        this.reservationRepository = reservationRepository;
-        this.studentRepository = studentRepository;
-        this.instructorRepository = instructorRepository;
-    }
-
     public void saveReservations(ReservationRequest reservationRequest){
-
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        //LocalDate date = LocalDate.parse(reservationRequest.getReservationDate(), formatter);
 
         Optional<Student> optionalStudent = studentRepository.findById(1L);
         Student student = optionalStudent.orElseThrow(() -> new RuntimeException("Student is not present"));
