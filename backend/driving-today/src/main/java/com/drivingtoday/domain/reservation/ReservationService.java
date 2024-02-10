@@ -24,7 +24,7 @@ public class ReservationService {
 
     private final InstructorRepository instructorRepository;
 
-    public void saveReservations(ReservationRequest reservationRequest){
+    public void addReservation(ReservationRequest reservationRequest){
 
         Optional<Student> optionalStudent = studentRepository.findById(1L);
         Student student = optionalStudent.orElseThrow(() -> new RuntimeException("Student is not present"));
