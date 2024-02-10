@@ -1,24 +1,22 @@
 import styled from '@emotion/styled'
 import {HTMLAttributes, PropsWithChildren} from 'react'
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface Props extends ChipContainerProps {
   large?: boolean
-  selected: boolean
-  enabled: boolean
 }
 
-export function Chip({large, selected, enabled, children, ...props}: PropsWithChildren<Props>) {
+export function Chip({large, selected, disabled, children, ...props}: PropsWithChildren<Props>) {
   const ChipContainer = large ? LargeChipContainer : SmallChipContainer
   return (
-    <ChipContainer selected={selected} enabled={enabled} {...props}>
+    <ChipContainer selected={selected} disabled={disabled} {...props}>
       {children}
     </ChipContainer>
   )
 }
 
 interface ChipContainerProps extends HTMLAttributes<HTMLDivElement> {
-  selected: boolean
-  enabled: boolean
+  selected?: boolean
+  disabled?: boolean
 }
 
 const BaseChipContainer = styled.div<ChipContainerProps>(() => ({
@@ -36,20 +34,24 @@ const BaseChipContainer = styled.div<ChipContainerProps>(() => ({
   fontSize: '1.4rem',
 }))
 
-const SmallChipContainer = styled(BaseChipContainer)(({theme, enabled, selected}) => {
-  const backgroundColor = enabled
+const SmallChipContainer = styled(BaseChipContainer)(({theme, disabled, selected}) => {
+  const backgroundColor = !disabled
     ? selected
       ? theme.color.primary
       : theme.color.gray50
     : theme.color.gray200
 
-  const borderColor = enabled
+  const borderColor = !disabled
     ? selected
       ? theme.color.primary
       : theme.color.gray200
     : theme.color.gray200
 
-  const color = enabled ? (selected ? theme.color.white : theme.color.gray600) : theme.color.gray50
+  const color = !disabled
+    ? selected
+      ? theme.color.white
+      : theme.color.gray600
+    : theme.color.gray50
 
   return {
     backgroundColor,
@@ -58,14 +60,14 @@ const SmallChipContainer = styled(BaseChipContainer)(({theme, enabled, selected}
   }
 })
 
-const LargeChipContainer = styled(BaseChipContainer)(({theme, enabled, selected}) => {
-  const borderColor = enabled
+const LargeChipContainer = styled(BaseChipContainer)(({theme, disabled, selected}) => {
+  const borderColor = !disabled
     ? selected
       ? theme.color.primary
       : theme.color.gray200
     : theme.color.gray200
 
-  const color = enabled ? theme.color.black : theme.color.gray50
+  const color = !disabled ? theme.color.black : theme.color.gray50
 
   return {
     borderColor,
