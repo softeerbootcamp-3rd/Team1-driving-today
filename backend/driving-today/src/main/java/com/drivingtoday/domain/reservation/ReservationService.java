@@ -26,11 +26,12 @@ public class ReservationService {
 
     public void addReservation(ReservationRequest reservationRequest){
 
-        Optional<Student> optionalStudent = studentRepository.findById(1L);
-        Student student = optionalStudent.orElseThrow(() -> new RuntimeException("Student is not present"));
+        Student student = studentRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Student is not present"));
 
-        Optional<Instructor> optionalInstructor = instructorRepository.findById(reservationRequest.getInstructorId());
-        Instructor instructor = optionalInstructor.orElseThrow(() -> new RuntimeException("Instructor is not present"));
+        Instructor instructor = instructorRepository.findById(reservationRequest.getInstructorId())
+                .orElseThrow(() -> new RuntimeException("Instructor is not present"));
+
         Reservation reservation = Reservation.builder()
                 .reservationTime(reservationRequest.getReservationTime())
                 .reservationDate(reservationRequest.getReservationDate())
@@ -46,3 +47,4 @@ public class ReservationService {
 
     }
 }
+
