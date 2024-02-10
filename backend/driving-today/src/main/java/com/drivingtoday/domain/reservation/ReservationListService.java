@@ -1,8 +1,10 @@
 package com.drivingtoday.domain.reservation;
 
+import com.drivingtoday.domain.reservation.dto.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -11,7 +13,23 @@ public class ReservationListService {
 
     private final ReservationRepository reservationRepository;
 
-    public List<Reservation> findAllReservation(Long studentId){
-        return reservationRepository.findAllByStudentId(studentId);
+    public List<ReservationResponse> findAllReservation(Long studentId){
+
+        List<Reservation> reservationList = reservationRepository.findAllByStudentId(studentId);
+        List<ReservationResponse> reservationResponses = new ArrayList<>();
+
+        for(Reservation reservation : reservationList){
+            reservationResponses.add(ReservationResponse.builder()
+                            .id(reservation.getId())
+                            .reservationTime(reservation.getReservationTime())
+                            .reservationDate(reservation.getReservationDate())
+                            .isAccepted(reservation.getIsAccepted())
+                            .trainingTime(reservation.getTrainingTime())
+                            .createdAt(reservation.getCreatedAt())
+                            .instructor(reservation.getInstructor())
+                    .build());
+        }
+
+        return reservationResponses;
     }
 }

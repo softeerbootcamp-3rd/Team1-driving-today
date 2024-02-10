@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    @Query(value = "Select * from reservation Where student_id = ?1", nativeQuery = true)
+    @Query(value = "select * from Reservation where student_id = ?1", nativeQuery = true)
     List<Reservation> findAllByStudentId(Long studentId);
 
 }
