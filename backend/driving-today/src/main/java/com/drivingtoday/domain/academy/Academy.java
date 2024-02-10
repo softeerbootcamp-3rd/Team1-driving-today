@@ -1,6 +1,5 @@
 package com.drivingtoday.domain.academy;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -8,6 +7,8 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @Getter
+@Builder
+@AllArgsConstructor
 public class Academy {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "academy_id")
