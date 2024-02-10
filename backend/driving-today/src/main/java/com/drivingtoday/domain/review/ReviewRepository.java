@@ -1,6 +1,5 @@
-package com.drivingtoday.repository;
+package com.drivingtoday.domain.review;
 
-import com.drivingtoday.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
