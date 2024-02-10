@@ -3,6 +3,8 @@ package com.drivingtoday.DTO;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -10,7 +12,7 @@ import lombok.*;
 @Setter
 public class ReservationDTO {
 
-    private String reservationDate;
+    private LocalDate reservationDate;
 
     private Integer reservationTime;
 
