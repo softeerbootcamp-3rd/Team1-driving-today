@@ -1,4 +1,4 @@
-package com.drivingtoday.dto.request;
+package com.drivingtoday.domain.instructor.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

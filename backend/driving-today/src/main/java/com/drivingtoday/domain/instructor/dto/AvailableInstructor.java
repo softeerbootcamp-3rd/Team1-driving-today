@@ -1,6 +1,6 @@
-package com.drivingtoday.dto.response;
+package com.drivingtoday.domain.instructor.dto;
 
-import com.drivingtoday.entity.Instructor;
+import com.drivingtoday.domain.instructor.Instructor;
 import lombok.Builder;
 import lombok.Getter;
 
