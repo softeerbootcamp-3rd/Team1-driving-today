@@ -1,16 +1,13 @@
 package com.drivingtoday.domain.review;
 
-import com.drivingtoday.domain.review.ReviewRequest;
 import com.drivingtoday.domain.reservation.Reservation;
-import com.drivingtoday.domain.review.Review;
 import com.drivingtoday.domain.reservation.ReservationRepository;
-import com.drivingtoday.domain.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewService {
+public class ReviewAddService {
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
 
