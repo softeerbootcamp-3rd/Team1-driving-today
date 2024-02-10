@@ -32,4 +32,13 @@ class InstructorServiceTest {
         assertThat(availableInstructors.size()).isEqualTo(10);
     }
 
+    @Test
+    @DisplayName("2페이지에서 5개의 강사 리스트를 가져오기")
+    public void 페이징_테스트() {
+        AvailableInstructorsRequest request = new AvailableInstructorsRequest(
+                37.02, -122.13, 2, 9,
+                LocalDate.of(2024, 2, 8), 2, 5);
+        List<Instructor> availableInstructors = instructorService.findAvailableInstructors(request);
+        assertThat(availableInstructors.size()).isEqualTo(5);
+    }
 }
