@@ -22,7 +22,7 @@ public class ReservationAddService {
 
     private final InstructorRepository instructorRepository;
 
-    public void addReservation(ReservationRequest reservationRequest){
+    public Reservation addReservation(ReservationRequest reservationRequest){
 
         Student student = studentRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Student is not present"));
@@ -31,17 +31,16 @@ public class ReservationAddService {
                 .orElseThrow(() -> new RuntimeException("Instructor is not present"));
 
         Reservation reservation = Reservation.builder()
+                .isAccepted(true)
                 .reservationTime(reservationRequest.getReservationTime())
                 .reservationDate(reservationRequest.getReservationDate())
                 .trainingTime(reservationRequest.getTrainingTime())
-                .createdAt(LocalDateTime.now())
-                .isAccepted(true)
                 .student(student)
                 .instructor(instructor)
                 .build();
 
         reservationRepository.save(reservation);
-        return;
+        return reservation;
 
     }
 }
