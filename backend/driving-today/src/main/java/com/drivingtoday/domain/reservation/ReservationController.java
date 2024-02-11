@@ -13,23 +13,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.net.URI;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/reservations")
 public class ReservationController {
 
     private final ReservationAddService reservationAddService;
 
     private final ReservationListService reservationListService;
 
-    @PostMapping("/")
+    @PostMapping("/reservations")
     @Operation(summary = "예약만들기 API")
     public ResponseEntity<Void> reservationAdd(@RequestBody ReservationRequest reservationRequest){
-        reservationAddService.addReservation(reservationRequest);
+        Reservation reservation = reservationAddService.addReservation(reservationRequest);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(URI.create("/reservation/" + reservation.getId())).build();
     }
 
     @GetMapping("/my/reservations")
@@ -38,7 +38,7 @@ public class ReservationController {
 
         Long StudentId = 1L;
         List<ReservationResponse> contents = reservationListService.findAllReservation(StudentId);
-        return new ResponseEntity<>(contents, HttpStatus.OK);
+        return ResponseEntity.ok().body(contents);
     }
 
 
