@@ -37,7 +37,7 @@ public class ReservationService {
                 .reservationDate(reservationRequest.getReservationDate())
                 .trainingTime(reservationRequest.getTrainingTime())
                 .createdAt(LocalDateTime.now())
-                .status(true)
+                .isAccepted(true)
                 .student(student)
                 .instructor(instructor)
                 .build();
