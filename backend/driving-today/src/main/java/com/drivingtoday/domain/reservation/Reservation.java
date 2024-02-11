@@ -19,9 +19,9 @@ public class Reservation {
     @Column(name = "reservation_id")
     private Long id;
 
-    @Column(name = "status")
+    @Column(name = "is_accepted")
     @NotNull
-    private Boolean status;
+    private Boolean isAccepted;
 
     @Column(name = "created_at")
     @NotNull
