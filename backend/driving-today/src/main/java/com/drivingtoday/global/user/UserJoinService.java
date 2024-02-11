@@ -34,12 +34,7 @@ public class UserJoinService {
         }
 
         //데이터베이스에 학생 저장
-        Student newStudent = Student.builder()
-                .name(joinRequest.getName())
-                .nickname(joinRequest.getNickname())
-                .phoneNumber(joinRequest.getPhoneNumber())
-                .studentImage(imgUrl)
-                .build();
+        Student newStudent = joinRequest.toStudent(imgUrl);
         studentRepository.save(newStudent);
         return newStudent.getId();
     }
