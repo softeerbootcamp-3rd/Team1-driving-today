@@ -23,10 +23,6 @@ module.exports = {
       version: 'detect',
     },
     'import/resolver': {
-      alias: {
-        map: [['@', './src']],
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-      },
       typescript: {
         alwaysTryTypes: true,
       },
