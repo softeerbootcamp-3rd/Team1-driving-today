@@ -1,6 +1,7 @@
 package com.drivingtoday.global.user;
 
 import com.drivingtoday.global.user.dto.StudentJoinRequest;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +20,14 @@ import java.net.URI;
 public class UserJoinController {
     private final UserJoinService userJoinService;
 
+    @Operation(summary = "학생 회원가입 api")
     @PostMapping(value = "/student/join", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> studentJoin(@RequestPart @Valid StudentJoinRequest joinRequest, @RequestPart(required = false) MultipartFile profileImg) {
         Long newStudentId = userJoinService.addStudent(joinRequest, profileImg);
         log.info("Student ID : {} 님이 가입했습니다.", newStudentId);
         return ResponseEntity.created(URI.create("/students/" + newStudentId)).build();
     }
+
+    
 
 }
