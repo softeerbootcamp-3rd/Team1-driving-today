@@ -2,19 +2,20 @@ package com.drivingtoday.domain.student;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Student {
     @Builder
-    public Student(String name, String phoneNumber, String nickname) {
+    public Student(String name, String phoneNumber, String nickname, String studentImage) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
+        this.studentImage = studentImage;
     }
 
     @Id
