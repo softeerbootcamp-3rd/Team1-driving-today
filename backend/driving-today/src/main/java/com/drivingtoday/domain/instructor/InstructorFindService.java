@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 
@@ -32,8 +33,8 @@ public class InstructorFindService {
                 request.getTrainingTime(),
                 request.getLatitude(),
                 request.getLongitude(),
-                request.getPageSize(),
-                (request.getPageNumber() - 1) * request.getPageSize()
+                PageRequest.of(request.getPageNumber() - 1, request.getPageSize())
+                // 0 페이지부터 시작이 default여서 -1 처리
         );
 
         return instructorList.stream()

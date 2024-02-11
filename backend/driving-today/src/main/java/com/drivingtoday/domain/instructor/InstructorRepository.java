@@ -1,5 +1,6 @@
 package com.drivingtoday.domain.instructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,8 +16,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
             "WHERE r.instructor_id = i.instructor_id " +
             "AND r.reservation_date = :reservationDate " +
             "AND r.reservation_time BETWEEN :reservationTime AND :reservationTime + :trainingTime - 1) " +
-            "ORDER BY ST_DISTANCE_SPHERE(POINT(a.longitude, a.latitude), POINT(:longitude, :latitude)) " +
-            "LIMIT :pageSize OFFSET :offset",
+            "ORDER BY ST_DISTANCE_SPHERE(POINT(a.longitude, a.latitude), POINT(:longitude, :latitude)) ",
             nativeQuery = true)
     List<Instructor> findAvailableInstructors(
             String reservationDate,
@@ -24,7 +24,6 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
             int trainingTime,
             double latitude,
             double longitude,
-            int pageSize,
-            int offset
+            Pageable pageable
     );
 }
