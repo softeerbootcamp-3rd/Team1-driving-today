@@ -15,16 +15,10 @@ public class ReviewAddService {
 
     @Transactional
     public Long addReview(ReviewRequest reviewRequest) {
-        Reservation targetReservation = reservationRepository.findById(reviewRequest.getReservationId())
+        Reservation reservation = reservationRepository.findById(reviewRequest.getReservationId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 예약입니다."));
 
-        Review review = Review.builder()
-                .rating(reviewRequest.getRating())
-                .contents(reviewRequest.getContents())
-                .student(targetReservation.getStudent())
-                .instructor(targetReservation.getInstructor())
-                .build();
-
+        Review review = reviewRequest.toReview(reservation.getStudent(), reservation.getInstructor());
         reviewRepository.save(review);
         return review.getId();
     }
