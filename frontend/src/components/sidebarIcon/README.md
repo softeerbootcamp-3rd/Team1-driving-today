@@ -4,6 +4,15 @@
 - Sidebar에서 사용
 - selected flag로 강조 표시
 
+## props
+
+|    name     |                description                | default |
+| :---------: | :---------------------------------------: | :-----: |
+|   `icon`    |                 icon name                 |         |
+|   `label`   |         label text (not required)         |         |
+| `selected`  |    highlights icon, label, background     |  false  |
+| `highlight` | highlights icon only (without background) |  false  |
+
 ## use case
 
 ```tsx
@@ -11,12 +20,17 @@
 <SidebarIcon
   label="홈"
   icon="home"
-  selected={true}
+  selected
 />
 
 // without label
 <SidebarIcon
   icon="home"
-  selected={false}
+/>
+
+// highlight
+<SidebarIcon
+  icon="message"
+  highlight
 />
 ```

@@ -24,7 +24,7 @@ export function SidebarIcon({label, selected, highlight, icon, ...props}: Props)
 }
 
 interface ContainerProps {
-  selected: boolean
+  selected?: boolean
 }
 
 const Container = styled.div<ContainerProps>(({theme, selected}) => ({
