@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class AvailableInstructor {
+public class AvailableInstructorInfo {
     private Long instructorId;
     private String instructorName;
     private AcademyInfo academyInfo;
@@ -15,8 +15,8 @@ public class AvailableInstructor {
     private String image;
     private String introduction;
 
-    public static AvailableInstructor from(Instructor instructor) {
-        return AvailableInstructor.builder()
+    public static AvailableInstructorInfo from(Instructor instructor) {
+        return AvailableInstructorInfo.builder()
                 .instructorId(instructor.getId())
                 .instructorName(instructor.getName())
                 .academyInfo(AcademyInfo.from(instructor.getAcademy()))
