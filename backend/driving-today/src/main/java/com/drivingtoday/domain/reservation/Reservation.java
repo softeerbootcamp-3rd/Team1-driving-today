@@ -15,17 +15,15 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
-@Builder
-@AllArgsConstructor
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id")
     private Long id;
 
-    @Column(name = "status")
+    @Column(name = "is_accepted")
     @NotNull
-    private Boolean status;
+    private Boolean isAccepted;
 
     @Column(name = "created_at")
     @NotNull
@@ -43,11 +41,22 @@ public class Reservation {
     @NotNull
     private Integer trainingTime;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
+
+    @Builder
+    public Reservation(Boolean isAccepted, Integer reservationTime, Integer trainingTime, Student student, Instructor instructor, LocalDate reservationDate){
+        this.isAccepted = isAccepted;
+        this.reservationTime = reservationTime;
+        this.trainingTime = trainingTime;
+        this.student = student;
+        this.instructor = instructor;
+        this.createdAt = LocalDateTime.now();
+        this.reservationDate = reservationDate;
+    }
 }
