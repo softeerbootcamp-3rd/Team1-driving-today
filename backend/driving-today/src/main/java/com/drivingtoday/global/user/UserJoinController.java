@@ -1,5 +1,6 @@
 package com.drivingtoday.global.user;
 
+import com.drivingtoday.global.user.dto.InstructorJoinRequest;
 import com.drivingtoday.global.user.dto.StudentJoinRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -28,6 +29,12 @@ public class UserJoinController {
         return ResponseEntity.created(URI.create("/students/" + newStudentId)).build();
     }
 
-    
+    @Operation(summary = "강사 회원가입 api")
+    @PostMapping(value = "/instructor/join", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Void> instructorJoin(@RequestPart @Valid InstructorJoinRequest joinRequest, @RequestPart(required = false) MultipartFile profileImg) {
+        Long newInstructorId = userJoinService.addInstructor(joinRequest, profileImg);
+        log.info("Instructor ID : {} 님이 가입했습니다.", newInstructorId);
+        return ResponseEntity.created(URI.create("/instructors/" + newInstructorId)).build();
+    }
 
 }
