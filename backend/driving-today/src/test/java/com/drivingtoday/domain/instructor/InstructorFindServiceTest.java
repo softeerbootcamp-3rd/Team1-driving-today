@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -17,8 +19,17 @@ public class InstructorFindServiceTest {
     @Autowired InstructorFindService instructorFindService;
 
     @Test
+    @DisplayName("존재하지 않는 강사id로 조회된 경우 예외 발생")
+    public void 없는_강사_조회_테스트() {
+        RuntimeException e = assertThrows(RuntimeException.class, () -> {
+            instructorFindService.findInstructor(13L, 1, 5);
+        });
+        assertThat("해당 강사가 존재하지 않습니다.").isEqualTo(e.getMessage());
+    }
+
+    @Test
     @DisplayName("ID가 1인 강사의 리뷰를 조회하면 모든 리뷰(10개) 리스트가 반환된다")
-    public void 기본_조회_테스트() {
+    public void 기본_리뷰_조회_테스트() {
         InstructorDetailResponse response = instructorFindService.findInstructor(1L, 1, 10);
         assertThat(response.getReviews().size()).isEqualTo(10);
     }
