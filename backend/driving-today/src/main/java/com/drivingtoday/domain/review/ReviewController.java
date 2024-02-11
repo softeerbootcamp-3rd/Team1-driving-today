@@ -1,5 +1,6 @@
 package com.drivingtoday.domain.review;
 
+import com.drivingtoday.domain.review.dto.ReviewRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

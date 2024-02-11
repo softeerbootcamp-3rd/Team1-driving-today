@@ -2,6 +2,7 @@ package com.drivingtoday.domain.review;
 
 import com.drivingtoday.domain.reservation.Reservation;
 import com.drivingtoday.domain.reservation.ReservationRepository;
+import com.drivingtoday.domain.review.dto.ReviewRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
