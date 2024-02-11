@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class ReviewAddServiceTest {
@@ -26,7 +26,7 @@ class ReviewAddServiceTest {
         ReviewRequest reviewRequest = new ReviewRequest(3.5, "좋아요", 1L);
         //when: 존재하지 않는 예약
         //then
-        assertThrows(RuntimeException.class, ()->{
+        assertThrows(RuntimeException.class, () -> {
             reviewAddService.addReview(reviewRequest);
         });
     }
