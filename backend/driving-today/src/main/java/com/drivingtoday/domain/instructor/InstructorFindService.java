@@ -4,6 +4,7 @@ import com.drivingtoday.domain.instructor.dto.InstructorDetailResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,6 @@ import java.util.List;
 public class InstructorFindService {
 
     private final InstructorRepository instructorRepository;
-
     @Transactional
     public InstructorDetailResponse findInstructor(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId)
@@ -25,8 +25,8 @@ public class InstructorFindService {
     }
 
     @Transactional
-    public List<Instructor> findAvailableInstructors(AvailableInstructorsRequest request) {
-        return instructorRepository.findAvailableInstructors(
+    public List<AvailableInstructorInfo> findAvailableInstructors(AvailableInstructorsRequest request) {
+        List<Instructor> instructorList = instructorRepository.findAvailableInstructors(
                 request.getReservationDate().toString(),
                 request.getReservationTime(),
                 request.getTrainingTime(),
@@ -35,5 +35,9 @@ public class InstructorFindService {
                 request.getPageSize(),
                 (request.getPageNumber() - 1) * request.getPageSize()
         );
+
+        return instructorList.stream()
+                .map(AvailableInstructorInfo::from)
+                .toList();
     }
 }

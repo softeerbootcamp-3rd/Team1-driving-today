@@ -1,5 +1,6 @@
 package com.drivingtoday.domain.instructor;
 
+import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
 import jakarta.transaction.Transactional;
 import com.drivingtoday.domain.reservation.Reservation;
@@ -43,7 +44,7 @@ public class InstructorFindServiceTest {
                 37.02, -122.13, 2, 9,
                 LocalDate.of(2024, 2, 8), 1, 10);
 
-        List<Instructor> availableInstructors = instructorFindService.findAvailableInstructors(request);
+        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
         assertThat(availableInstructors.size()).isEqualTo(10);
     }
 
@@ -53,7 +54,7 @@ public class InstructorFindServiceTest {
         AvailableInstructorsRequest request = new AvailableInstructorsRequest(
                 37.02, -122.13, 2, 9,
                 LocalDate.of(2024, 2, 8), 2, 5);
-        List<Instructor> availableInstructors = instructorFindService.findAvailableInstructors(request);
+        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
         assertThat(availableInstructors.size()).isEqualTo(5);
     }
 
@@ -81,7 +82,7 @@ public class InstructorFindServiceTest {
                 LocalDate.of(2024, 2, 8), 1, 10);
 
 
-        List<Instructor> availableInstructors = instructorFindService.findAvailableInstructors(request);
+        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
         assertThat(availableInstructors.size()).isEqualTo(8);
 
     }

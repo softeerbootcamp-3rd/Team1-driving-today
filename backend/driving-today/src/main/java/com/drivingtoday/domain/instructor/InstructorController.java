@@ -1,12 +1,14 @@
 package com.drivingtoday.domain.instructor;
 
+
 import com.drivingtoday.domain.instructor.dto.InstructorDetailResponse;
+import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
+import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
-import com.drivingtoday.domain.instructor.dto.AvailableInstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,13 +28,10 @@ public class InstructorController {
 
     @GetMapping("/instructors")
     @Operation(summary = "예약 가능한 강사 리스트 보기 API")
-    public ResponseEntity<List<AvailableInstructor>> instructorList(@ModelAttribute AvailableInstructorsRequest request) {
+    public ResponseEntity<List<AvailableInstructorInfo>> instructorList(@ModelAttribute AvailableInstructorsRequest request) {
 
-        List<Instructor> instructorList = instructorFindService.findAvailableInstructors(request);
-
-        List<AvailableInstructor> availableInstructors = instructorList.stream()
-                .map(AvailableInstructor::from)
-                .toList();
+        List<AvailableInstructorInfo> availableInstructors =
+                instructorFindService.findAvailableInstructors(request);
 
         return ResponseEntity.ok(availableInstructors);
     }
