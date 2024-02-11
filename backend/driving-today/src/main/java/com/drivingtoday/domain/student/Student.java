@@ -10,6 +10,13 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Student {
+    @Builder
+    public Student(String name, String phoneNumber, String nickname) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.nickname = nickname;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id")
