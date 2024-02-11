@@ -29,4 +29,30 @@ public class InstructorFindServiceTest {
         InstructorDetailResponse response = instructorFindService.findInstructor(2L, 1, 1);
         assertThat(response.getReviews()).isEmpty();
     }
+
+    @Test
+    @DisplayName("저장된 10개의 리뷰를 5개씩 2page로 나눠지는지 테스트")
+    public void 페이징_테스트1() {
+        InstructorDetailResponse response1 = instructorFindService.findInstructor(1L, 1, 5);
+        assertThat(response1.getReviews().size()).isEqualTo(5);
+
+        InstructorDetailResponse response2 = instructorFindService.findInstructor(1L, 2, 5);
+        assertThat(response2.getReviews().size()).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("저장된 10개의 리뷰를 3개씩 3page + 1개 1page로 나눠지는지 테스트")
+    public void 페이징_테스트2() {
+        InstructorDetailResponse response1 = instructorFindService.findInstructor(1L, 1, 3);
+        assertThat(response1.getReviews().size()).isEqualTo(3);
+
+        InstructorDetailResponse response2 = instructorFindService.findInstructor(1L, 2, 3);
+        assertThat(response2.getReviews().size()).isEqualTo(3);
+
+        InstructorDetailResponse response3 = instructorFindService.findInstructor(1L, 3, 3);
+        assertThat(response3.getReviews().size()).isEqualTo(3);
+
+        InstructorDetailResponse response4 = instructorFindService.findInstructor(1L, 4, 3);
+        assertThat(response4.getReviews().size()).isEqualTo(1);
+    }
 }
