@@ -30,6 +30,8 @@ public class StudentJoinRequest {
         return Student.builder()
                 .name(this.name)
                 .nickname(this.nickname)
+                .email(this.email)
+                .password(this.password)
                 .phoneNumber(this.phoneNumber)
                 .studentImage(profileUrl)
                 .build();
