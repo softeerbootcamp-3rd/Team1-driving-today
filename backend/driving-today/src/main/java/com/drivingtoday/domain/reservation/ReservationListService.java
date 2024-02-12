@@ -2,6 +2,7 @@ package com.drivingtoday.domain.reservation;
 
 import com.drivingtoday.domain.instructor.dto.InstructorDTO;
 import com.drivingtoday.domain.reservation.dto.ReservationResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class ReservationListService {
 
     private final ReservationRepository reservationRepository;
 
+    @Transactional
     public List<ReservationResponse> findAllReservation(Long studentId){
 
         List<Reservation> reservationList = reservationRepository.findAllByStudentId(studentId);
