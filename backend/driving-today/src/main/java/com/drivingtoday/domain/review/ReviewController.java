@@ -19,7 +19,7 @@ public class ReviewController {
     private final ReviewFindService reviewFindService;
 
     @GetMapping("/reviews")
-    @Operation(summary = "특정 강사에 대한 리뷰들 가져오기 API")
+    @Operation(summary = "특정 강사에 대한 리뷰들 조회 API")
     public ResponseEntity<List<ReviewInfo>> reviewList(@Valid @ModelAttribute ReviewFindRequest request) {
         List<ReviewInfo> reviews = reviewFindService.findReviews(request);
         return ResponseEntity.ok(reviews);
