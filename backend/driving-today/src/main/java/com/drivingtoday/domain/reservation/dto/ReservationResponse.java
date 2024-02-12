@@ -1,18 +1,17 @@
 package com.drivingtoday.domain.reservation.dto;
 
 import com.drivingtoday.domain.instructor.Instructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.drivingtoday.domain.instructor.dto.InstructorDTO;
+import com.drivingtoday.domain.reservation.Reservation;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Builder
-@AllArgsConstructor
 @Setter
 @Getter
+@AllArgsConstructor
+@Builder
 public class ReservationResponse {
 
     private Long id;
@@ -27,6 +26,6 @@ public class ReservationResponse {
 
     private Integer trainingTime;
 
-    private Instructor instructor;
+    private InstructorDTO instructorDTO;
 
 }
