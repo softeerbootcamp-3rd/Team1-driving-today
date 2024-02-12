@@ -1,6 +1,5 @@
 package com.drivingtoday.domain.instructor;
 
-
 import com.drivingtoday.domain.instructor.dto.InstructorDetailResponse;
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
@@ -9,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +31,6 @@ public class InstructorController {
 
         List<AvailableInstructorInfo> availableInstructors =
                 instructorFindService.findAvailableInstructors(request);
-
         return ResponseEntity.ok(availableInstructors);
     }
 }

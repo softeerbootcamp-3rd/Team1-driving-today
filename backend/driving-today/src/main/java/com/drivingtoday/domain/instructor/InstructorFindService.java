@@ -27,7 +27,7 @@ public class InstructorFindService {
 
     @Transactional
     public List<AvailableInstructorInfo> findAvailableInstructors(AvailableInstructorsRequest request) {
-        List<Instructor> instructorList = instructorRepository.findAvailableInstructors(
+        return instructorRepository.findAvailableInstructors(
                 request.getReservationDate().toString(),
                 request.getReservationTime(),
                 request.getTrainingTime(),
@@ -36,9 +36,5 @@ public class InstructorFindService {
                 PageRequest.of(request.getPageNumber() - 1, request.getPageSize())
                 // 0 페이지부터 시작이 default여서 -1 처리
         );
-
-        return instructorList.stream()
-                .map(AvailableInstructorInfo::from)
-                .toList();
     }
 }

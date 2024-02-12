@@ -1,5 +1,6 @@
 package com.drivingtoday.domain.instructor;
 
+import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class InstructorRepositoryTest {
     @Test
     @DisplayName("기본 조회 테스트")
     public void test() {
-        List<Instructor> availableInstructors = instructorRepository.findAvailableInstructors(
+        List<AvailableInstructorInfo> availableInstructors = instructorRepository.findAvailableInstructors(
                 "2024-02-08", 9, 2, 37.02, -122.13, PageRequest.of(0, 10)
         );
         assertThat(availableInstructors.size()).isEqualTo(10);
