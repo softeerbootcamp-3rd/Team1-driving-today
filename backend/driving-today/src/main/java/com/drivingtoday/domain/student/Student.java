@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Student {
     @Builder
-    public Student(String name, String phoneNumber, String nickname, String studentImage) {
+    public Student(String name, String email, String password, String phoneNumber, String nickname, String studentImage) {
         this.name = name;
+        this.email = email;
+        this.password = password;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.studentImage = studentImage;
