@@ -4,6 +4,7 @@ import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.student.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class Reservation {
     @Id
@@ -59,4 +61,5 @@ public class Reservation {
         this.createdAt = LocalDateTime.now();
         this.reservationDate = reservationDate;
     }
+
 }
