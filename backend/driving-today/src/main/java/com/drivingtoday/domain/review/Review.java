@@ -15,6 +15,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class Review {
+    @Builder
+    private Review(String contents, Double rating, Student student, Instructor instructor) {
+        this.contents = contents;
+        this.rating = rating;
+        this.student = student;
+        this.instructor = instructor;
+        this.createdAt = LocalDateTime.now();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
@@ -31,7 +40,7 @@ public class Review {
     @NotNull
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     @NotNull
     private Student student;
@@ -41,12 +50,4 @@ public class Review {
     @NotNull
     private Instructor instructor;
 
-    @Builder
-    private Review(String contents, Double rating, Student student, Instructor instructor) {
-        this.contents = contents;
-        this.rating = rating;
-        this.student = student;
-        this.instructor = instructor;
-        this.createdAt = LocalDateTime.now();
-    }
 }
