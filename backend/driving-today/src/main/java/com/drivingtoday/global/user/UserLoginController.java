@@ -24,4 +24,12 @@ public class UserLoginController {
         log.info("Student ID : {} 님이 로그인했습니다.", response.getId());
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "강사 로그인 api")
+    @PostMapping("/instructor/login")
+    public ResponseEntity<LoginResponse> instructorLogin(@RequestBody @Valid LoginRequest request){
+        LoginResponse response = userLoginService.loginInstructor(request);
+        log.info("Instructor ID : {} 님이 로그인했습니다.", response.getId());
+        return ResponseEntity.ok(response);
+    }
 }
