@@ -48,7 +48,7 @@ const Input = styled.input(({theme}) => ({
 
   '&:checked + span::after': {
     content: '"✓"',
-    color: `${theme.color.white}`,
+    color: theme.color.white,
     position: 'absolute',
     fontSize: '1.5rem',
     lineHeight: '1.5rem',
@@ -56,7 +56,7 @@ const Input = styled.input(({theme}) => ({
     height: '100%',
     textAlign: 'center',
     verticalAlign: 'middle',
-    backgroundColor: `${theme.color.primary}`,
+    backgroundColor: theme.color.primary,
     borderRadius: '0.3rem',
   },
 
@@ -69,6 +69,6 @@ const Input = styled.input(({theme}) => ({
   },
 
   '&:checked:disabled + span::after': {
-    backgroundColor: `${theme.color.gray400}`,
+    backgroundColor: theme.color.gray400,
   },
 }))
