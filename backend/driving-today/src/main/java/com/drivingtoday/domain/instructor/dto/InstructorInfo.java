@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class InstructorInfo {
+    private Long id;
     private String name;
     private String phoneNumber;
     private String instructorImage;
@@ -15,6 +16,7 @@ public class InstructorInfo {
 
     public static InstructorInfo from(Instructor instructor) {
         return InstructorInfo.builder()
+                .id(instructor.getId())
                 .name(instructor.getName())
                 .phoneNumber(instructor.getPhoneNumber())
                 .instructorImage(instructor.getInstructorImage())
