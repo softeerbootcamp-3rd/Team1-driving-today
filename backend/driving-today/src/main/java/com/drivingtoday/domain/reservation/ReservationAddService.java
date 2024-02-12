@@ -1,11 +1,13 @@
 package com.drivingtoday.domain.reservation;
 
 
+import com.drivingtoday.domain.reservation.dto.ReservationDTO;
 import com.drivingtoday.domain.reservation.dto.ReservationRequest;
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorRepository;
 import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,9 @@ public class ReservationAddService {
 
     private final InstructorRepository instructorRepository;
 
-    public Reservation addReservation(ReservationRequest reservationRequest){
+
+    @Transactional
+    public ReservationDTO addReservation(ReservationRequest reservationRequest){
 
         Student student = studentRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Student is not present"));
@@ -39,8 +43,11 @@ public class ReservationAddService {
                 .instructor(instructor)
                 .build();
 
+
+
         reservationRepository.save(reservation);
-        return reservation;
+
+        return ReservationDTO.convertToDTO(reservation);
 
     }
 }
