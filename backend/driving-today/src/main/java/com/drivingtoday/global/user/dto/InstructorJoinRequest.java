@@ -35,6 +35,8 @@ public class InstructorJoinRequest {
     public Instructor toInstructor(Academy academy, String profileImg){
         return Instructor.builder()
                 .name(this.name)
+                .email(this.email)
+                .password(this.password)
                 .phoneNumber(this.phoneNumber)
                 .instructorImage(profileImg)
                 .pricePerHour(this.pricePerHour)
