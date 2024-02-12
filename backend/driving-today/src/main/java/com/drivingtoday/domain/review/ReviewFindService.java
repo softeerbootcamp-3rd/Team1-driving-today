@@ -18,6 +18,7 @@ public class ReviewFindService {
 
     @Transactional
     public List<ReviewInfo> findReviews(ReviewFindRequest request) {
+        // 페이지 번호 1부터 입력받게 설정, 최신 순으로 정렬해서 반환
         List<Review> reviews = reviewRepository.findAllByInstructorId(request.getInstructorId(),
                 PageRequest.of(request.getPageNumber() - 1, request.getPageSize(),
                         Sort.by("createdAt").descending())).getContent();

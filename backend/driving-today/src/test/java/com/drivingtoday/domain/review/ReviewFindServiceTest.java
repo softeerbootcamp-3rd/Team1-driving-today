@@ -62,6 +62,7 @@ public class ReviewFindServiceTest {
     @Test
     @DisplayName("저장된 10개의 리뷰를 3개씩 3page + 1개 1page로 나눠지는지 테스트")
     public void 페이징_테스트2() {
+        //given
         ReviewFindRequest request1 = new ReviewFindRequest(1L, 1, 3);
         ReviewFindRequest request2 = new ReviewFindRequest(1L, 2, 3);
         ReviewFindRequest request3 = new ReviewFindRequest(1L, 3, 3);
