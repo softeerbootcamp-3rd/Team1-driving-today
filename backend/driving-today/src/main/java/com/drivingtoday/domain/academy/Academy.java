@@ -28,4 +28,13 @@ public class Academy {
     @Column(name = "cert")
     @NotNull
     private Boolean cert;
+
+    @Builder
+    private Academy(String name, Double latitude, Double longitude, Boolean cert){
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.cert = cert;
+    }
+
 }

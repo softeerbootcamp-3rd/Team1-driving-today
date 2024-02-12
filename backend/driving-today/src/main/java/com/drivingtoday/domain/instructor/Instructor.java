@@ -35,8 +35,19 @@ public class Instructor {
     @NotNull
     private String introduction;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "academy_id")
     @NotNull
     private Academy academy;
+
+    @Builder
+    public Instructor(String name, String phoneNumber, String instructorImage, Integer pricePerHour, String introduction, Academy academy){
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.instructorImage = instructorImage;
+        this.pricePerHour = pricePerHour;
+        this.introduction = introduction;
+        this.academy = academy;
+    }
+
 }

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 public class Review {
 
+
     @Builder
     private Review(String contents, Double rating, Student student, Instructor instructor) {
         this.contents = contents;
@@ -46,8 +47,18 @@ public class Review {
     @NotNull
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "instructor_id")
     @NotNull
     private Instructor instructor;
+
+    @Builder
+    private Review(String contents, Double rating, Student student, Instructor instructor) {
+        this.contents = contents;
+        this.rating = rating;
+        this.student = student;
+        this.instructor = instructor;
+        this.createdAt = LocalDateTime.now();
+    }
+
 }
