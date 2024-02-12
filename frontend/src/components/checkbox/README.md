@@ -20,4 +20,8 @@ type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>
 
 // uncontrolled
 <Checkbox ref={checkboxRef} />
+
+// disabled
+<Checkbox checked disabled />
+<Checkbox disabled />
 ```

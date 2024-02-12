@@ -59,4 +59,16 @@ const Input = styled.input(({theme}) => ({
     backgroundColor: `${theme.color.primary}`,
     borderRadius: '0.3rem',
   },
+
+  '&:checked:disabled + span': {
+    border: 0,
+  },
+
+  '&:disabled + span': {
+    border: `2px solid ${theme.color.gray400}`,
+  },
+
+  '&:checked:disabled + span::after': {
+    backgroundColor: `${theme.color.gray400}`,
+  },
 }))
