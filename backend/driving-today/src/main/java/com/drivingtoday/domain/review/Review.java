@@ -27,7 +27,7 @@ public class Review {
     @NotNull
     private Double rating;
 
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @NotNull
     private LocalDateTime createdAt;
 
