@@ -2,7 +2,7 @@
 
 - checkbox 컴포넌트
 - `<input type='checkbox' />`에 대한 스타일 적용
-- controlled / uncontrolled 방식 모두 지원
+- `ref`를 넘겨줘 input DOM 노드의 focus 상태 부모 컴포넌트에서 조작할 수 있도록 함
 
 ## props
 
@@ -15,10 +15,8 @@ type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>
 ```tsx
 <Checkbox defaultChecked />
 
-// controlled
 <Checkbox checked={checked} onChange={() => setChecked((prev) => !prev)} />
 
-// uncontrolled
 <Checkbox ref={checkboxRef} />
 
 // disabled
