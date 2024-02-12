@@ -21,6 +21,14 @@ public class Instructor {
     @NotNull
     private String name;
 
+    @Column(name = "email")
+    @NotNull
+    private String email;
+
+    @Column(name = "password")
+    @NotNull
+    private String password;
+
     @Column(name = "phone_number")
     @NotNull
     private String phoneNumber;
