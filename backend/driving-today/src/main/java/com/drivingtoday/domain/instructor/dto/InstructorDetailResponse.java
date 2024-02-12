@@ -12,13 +12,11 @@ import java.util.List;
 public class InstructorDetailResponse {
     private InstructorInfo instructorInfo;
     private AcademyInfo academyInfo;
-    private List<ReviewDetail> reviews;
 
-    public static InstructorDetailResponse of(Instructor instructor, List<Review> reviews) {
+    public static InstructorDetailResponse from(Instructor instructor) {
         return InstructorDetailResponse.builder()
                 .instructorInfo(InstructorInfo.from(instructor))
                 .academyInfo(AcademyInfo.from(instructor.getAcademy()))
-                .reviews(reviews.stream().map(ReviewDetail::from).toList())
                 .build();
     }
 }
