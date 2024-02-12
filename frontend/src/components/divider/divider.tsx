@@ -2,11 +2,8 @@ import {Theme, useTheme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {HTMLAttributes} from 'react'
 
-interface Props extends HTMLAttributes<HTMLHRElement> {
-  rounded?: boolean
+interface Props extends HTMLAttributes<HTMLHRElement>, HrProps {
   color?: keyof Theme['color']
-  orientation?: 'vertical' | 'horizontal'
-  flexItem?: boolean
 }
 
 export function Divider({
@@ -41,5 +38,5 @@ const Hr = styled.hr<HrProps>`
   width: ${({orientation}) => (orientation === 'horizontal' ? '100%' : '0.1rem')};
   height: ${({orientation, flexItem}) =>
     orientation === 'horizontal' ? '0.1rem' : flexItem ? 'auto' : '100%'};
-  border-radius: ${({rounded}) => rounded && '9999px'};
+  border-radius: ${({rounded}) => rounded && '50%'};
 `
