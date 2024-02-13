@@ -1,22 +1,17 @@
 import styled from '@emotion/styled'
 import type {CSSProperties, HTMLAttributes, PropsWithChildren} from 'react'
 
-import {Button} from '../button'
+import {Button, type ButtonProps} from '@/components/button'
+import {Icon} from '@/components/icon'
 
 interface HeaderProps extends HTMLAttributes<HTMLElement>, StyledHeaderProps {}
-export function Header({children, ...props}: PropsWithChildren<HeaderProps>) {
-  return <StyledHeader {...props}>{children}</StyledHeader>
+export function Header({children, px = 0, ...props}: PropsWithChildren<HeaderProps>) {
+  return (
+    <StyledHeader px={px} {...props}>
+      {children}
+    </StyledHeader>
+  )
 }
-
-function HeaderBackButton() {
-  return <Button bgColor="white">back</Button>
-}
-
-type HeaderBoxProps = HTMLAttributes<HTMLDivElement>
-function HeaderBox({children, ...props}: PropsWithChildren<HeaderBoxProps>) {
-  return <div {...props}>{children}</div>
-}
-
 interface StyledHeaderProps {
   px?: CSSProperties['padding']
 }
@@ -34,5 +29,20 @@ const StyledHeader = styled.header<StyledHeaderProps>(({px, theme}) => ({
   borderBottom: `1px solid ${theme.color.gray200}`,
 }))
 
+type HeaderBackButtonProps = Omit<ButtonProps, 'color' | 'bgColor'>
+function HeaderBackButton(props: HeaderBackButtonProps) {
+  return (
+    <BackButton {...props} bgColor="white">
+      <Icon name="arrowBack" color="gray900" width="2.4rem" height="2.4rem" />
+      <div>뒤로 가기</div>
+    </BackButton>
+  )
+}
+const BackButton = styled(Button)(({theme}) => ({
+  display: 'flex',
+  color: theme.color.gray900,
+  alignItems: 'center',
+  justifyContent: 'center',
+}))
+
 Header.BackButton = HeaderBackButton
-Header.Box = HeaderBox
