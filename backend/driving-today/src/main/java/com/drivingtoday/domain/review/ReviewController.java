@@ -28,7 +28,7 @@ public class ReviewController {
     public ResponseEntity<List<ReviewInfo>> reviewList(@Valid @ModelAttribute ReviewFindRequest request) {
         List<ReviewInfo> reviews = reviewFindService.findReviews(request);
         return ResponseEntity.ok(reviews);
-
+    }
     
     @Operation(summary = "리뷰 등록하기 API")
     @PostMapping("/review")
