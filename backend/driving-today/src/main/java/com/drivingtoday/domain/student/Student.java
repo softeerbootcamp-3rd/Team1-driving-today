@@ -7,8 +7,6 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +27,13 @@ public class Student {
     @Column(name = "nickname")
     @NotNull
     private String nickname;
+
+    @Builder
+    public Student(String name, String phoneNumber, String studentImage, String nickname){
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.studentImage = studentImage;
+        this.nickname = nickname;
+    }
+
 }
