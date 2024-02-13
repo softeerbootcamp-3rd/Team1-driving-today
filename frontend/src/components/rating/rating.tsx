@@ -1,21 +1,24 @@
+import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {HTMLAttributes, useState} from 'react'
 
-import {Star} from '../star'
+import {Icon, IconName} from '../icon/icon'
 
-interface Props extends HTMLAttributes<HTMLDivElement>, ContainerProps {
+interface RatingProps extends HTMLAttributes<HTMLDivElement>, ContainerProps {
   defaultValue?: number
   onValueChange?: (value: number) => void
 }
 
-export function Rating({defaultValue = 0, readOnly, onValueChange, ...props}: Props) {
+const indices = Array.from({length: 5}, (_, i) => i)
+
+export function Rating({defaultValue = 0, readOnly, onValueChange, ...props}: RatingProps) {
   const [realValue, setRealValue] = useState(defaultValue)
-  const [previewValue, setPreivewValue] = useState<number | undefined>(undefined)
+  const [previewValue, setPreivewValue] = useState<number | null>(null)
   const showValue = previewValue ?? realValue
 
   return (
     <Container
-      onPointerLeave={() => setPreivewValue(undefined)}
+      onPointerLeave={() => setPreivewValue(null)}
       onClick={() => {
         const newValue = previewValue ?? defaultValue
         onValueChange?.(newValue)
@@ -25,7 +28,7 @@ export function Rating({defaultValue = 0, readOnly, onValueChange, ...props}: Pr
       {...props}
     >
       <Label>{realValue}</Label>
-      {indexes.map((v) => (
+      {indices.map((v) => (
         <Star
           key={`star-${v}`}
           value={showValue - v}
@@ -64,6 +67,20 @@ const Label = styled.p(({theme}) => ({
   lineHeight: '1.7rem',
 }))
 
-const indexes = Array(5)
-  .fill(null)
-  .map((_, i) => i)
+interface StarProps extends HTMLAttributes<HTMLDivElement> {
+  value: number
+  width?: string
+  height?: string
+  color?: keyof Theme['color']
+}
+
+export function Star({
+  value,
+  width = '1.5rem',
+  height = '1.5rem',
+  color = 'gray600',
+  ...props
+}: StarProps) {
+  const icon: IconName = value >= 1 ? 'star' : value > 0 ? 'starHalf' : 'starEmpty'
+  return <Icon name={icon} color={color} width={width} height={height} {...props} />
+}
