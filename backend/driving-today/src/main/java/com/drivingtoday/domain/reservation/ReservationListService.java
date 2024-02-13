@@ -1,11 +1,18 @@
 package com.drivingtoday.domain.reservation;
 
-import com.drivingtoday.domain.reservation.dto.ReservationResponse;
+import com.drivingtoday.domain.instructor.dto.InstructorDetailResponse;
+import com.drivingtoday.domain.reservation.dto.ReservationDetailResponse;
+import com.drivingtoday.domain.reservation.dto.ReservationInfo;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -13,23 +20,20 @@ public class ReservationListService {
 
     private final ReservationRepository reservationRepository;
 
-    public List<ReservationResponse> findAllReservation(Long studentId){
+    @Transactional
+    public List<ReservationDetailResponse> findAllReservation(Long studentId){
 
         List<Reservation> reservationList = reservationRepository.findAllByStudentId(studentId);
-        List<ReservationResponse> reservationResponses = new ArrayList<>();
+        List<ReservationDetailResponse> reservationDetailResponses = new ArrayList<>();
 
-        for(Reservation reservation : reservationList){
-            reservationResponses.add(ReservationResponse.builder()
-                            .id(reservation.getId())
-                            .reservationTime(reservation.getReservationTime())
-                            .reservationDate(reservation.getReservationDate())
-                            .isAccepted(reservation.getIsAccepted())
-                            .trainingTime(reservation.getTrainingTime())
-                            .createdAt(reservation.getCreatedAt())
-                            .instructor(reservation.getInstructor())
-                    .build());
-        }
+        reservationList.forEach(reservation -> {
+            reservationDetailResponses.add(ReservationDetailResponse.from(reservation));
+        });
 
-        return reservationResponses;
+        reservationDetailResponses.sort((r1, r2) ->
+                r2.getReservationInfo().getCreatedAt().compareTo(r1.getReservationInfo().getCreatedAt())
+        );
+        return reservationDetailResponses;
+
     }
 }
