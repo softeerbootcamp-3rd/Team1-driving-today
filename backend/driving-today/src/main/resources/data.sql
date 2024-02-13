@@ -55,4 +55,6 @@ VALUES
 INSERT INTO RESERVATION(is_accepted, reservation_date, reservation_time, training_time, created_at, instructor_id, student_id)
 VALUES
     (1, '2024-02-11', 14, 2, '2024-02-11 15:30:00', 1, 1),
+    (1, '2024-02-12', 14, 2, '2024-02-11 15:30:00', 1, 1),
+    (1, '2024-02-13', 14, 2, '2024-02-11 15:30:00', 1, 1),
     (1, '2024-02-20', 10, 1, '2024-01-11 20:14:30', 7, 3);

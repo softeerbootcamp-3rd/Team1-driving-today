@@ -1,7 +1,6 @@
 package com.drivingtoday.domain.reservation;
 
 
-import com.drivingtoday.domain.reservation.dto.ReservationDetailResponse;
 import com.drivingtoday.domain.reservation.dto.ReservationRequest;
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorRepository;
@@ -24,7 +23,7 @@ public class ReservationAddService {
 
 
     @Transactional
-    public ReservationDetailResponse addReservation(ReservationRequest reservationRequest){
+    public Long addReservation(ReservationRequest reservationRequest){
 
         Student student = studentRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Student is not present"));
@@ -45,7 +44,7 @@ public class ReservationAddService {
 
         reservationRepository.save(reservation);
 
-        return ReservationDetailResponse.from(reservation);
+        return reservation.getId();
 
     }
 }
