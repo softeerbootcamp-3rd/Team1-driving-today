@@ -31,9 +31,7 @@ const router = createBrowserRouter(
           path="/dashboard"
           element={
             <RequireAuth>
-              {({isStudent}) => {
-                return isStudent ? <StudentDashboard /> : <InstructorDashboard />
-              }}
+              {({isStudent}) => (isStudent ? <StudentDashboard /> : <InstructorDashboard />)}
             </RequireAuth>
           }
         />
@@ -41,31 +39,17 @@ const router = createBrowserRouter(
           path="/history"
           element={
             <RequireAuth>
-              {({isStudent}) => {
-                return isStudent ? <StudentHistory /> : <InstructorHistory />
-              }}
+              {({isStudent}) => (isStudent ? <StudentHistory /> : <InstructorHistory />)}
             </RequireAuth>
           }
         />
         <Route
           path="/schedule"
-          element={
-            <RequireAuth>
-              {({isStudent}) => {
-                return isStudent ?? <StudentSchedule />
-              }}
-            </RequireAuth>
-          }
+          element={<RequireAuth>{({isStudent}) => isStudent ?? <StudentSchedule />}</RequireAuth>}
         />
         <Route
           path="/purchase"
-          element={
-            <RequireAuth>
-              {({isStudent}) => {
-                return isStudent ?? <StudentPurchase />
-              }}
-            </RequireAuth>
-          }
+          element={<RequireAuth>{({isStudent}) => isStudent ?? <StudentPurchase />}</RequireAuth>}
         />
       </Route>
     </>,
