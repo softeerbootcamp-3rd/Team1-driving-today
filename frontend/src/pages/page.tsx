@@ -1,3 +1,3 @@
-function LandingPage() {
-  return <></>
+export function LandingPage() {
+  return <>landing page</>
 }

@@ -1,3 +1,3 @@
 export function StudentPurchase() {
-  return <></>
+  return <>student purchase</>
 }

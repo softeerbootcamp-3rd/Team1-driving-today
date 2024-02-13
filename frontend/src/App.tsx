@@ -2,60 +2,31 @@ import {ReactNode} from 'react'
 import {
   createBrowserRouter,
   createRoutesFromElements,
-  LoaderFunction,
-  Outlet,
+  LoaderFunctionArgs,
   redirect,
   Route,
   RouterProvider,
   useRouteLoaderData,
 } from 'react-router-dom'
 
-import {Sidebar} from './components/sidebar'
 import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
+import {Layout} from './pages/layout'
+import {LoginPage} from './pages/login/page'
+import {LandingPage} from './pages/page'
 import {StudentPurchase} from './pages/purchase/page'
 import {StudentSchedule} from './pages/schedule/page'
-
-const customLoader: LoaderFunction = ({request}) => {
-  // TODO: neet to authorize
-  const isAuth = true
-  const isStudent = true
-
-  if (!isAuth) {
-    return redirect('/login')
-  }
-  return {isStudent}
-}
 
 export function App() {
   return <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
 }
 
-function Layout() {
-  return (
-    <>
-      <Sidebar.Root>
-        <Sidebar.LinkList>
-          <Sidebar.Link icon="home" to="/dashboard" label="홈" />
-          <Sidebar.Link icon="history" to="/history" label="예약 내역" />
-          <Sidebar.Link icon="makeReservation" to="/schedule" label="연수 예약" />
-        </Sidebar.LinkList>
-        <Sidebar.Footer>
-          <Sidebar.ChatButton />
-        </Sidebar.Footer>
-      </Sidebar.Root>
-
-      <Outlet />
-    </>
-  )
-}
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route index path="/" element={<>landing page</>} />
-      <Route path="/login" element={<>login</>} />
-      <Route id="root" loader={customLoader} element={<Layout />}>
+      <Route index path="/" element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route id="root" loader={checkAuthLoader} element={<Layout />}>
         <Route
           path="/dashboard"
           element={
@@ -100,6 +71,18 @@ const router = createBrowserRouter(
     </>,
   ),
 )
+
+function checkAuthLoader({request}: LoaderFunctionArgs) {
+  // TODO: neet to authorize
+  const isAuth = true
+  const isStudent = false
+
+  if (!isAuth) {
+    return redirect('/login')
+  }
+  // TODO: need to set return type; type CheckAuthLoaderReturn
+  return {isStudent}
+}
 
 interface RequireAuthProps {
   children: ReactNode | ((arg: any) => ReactNode)

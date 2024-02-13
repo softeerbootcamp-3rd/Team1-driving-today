@@ -1,3 +1,3 @@
 export function StudentSchedule() {
-  return <></>
+  return <>student schedule</>
 }
