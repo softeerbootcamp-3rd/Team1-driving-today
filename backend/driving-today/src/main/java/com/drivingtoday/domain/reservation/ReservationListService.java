@@ -32,4 +32,26 @@ public class ReservationListService {
 
         return reservationResponses;
     }
+
+    public List<ReservationResponse> findAllInstructorReservation(Long instructorId){
+
+        List<Reservation> reservationList = reservationRepository.findAllByInstructorId(instructorId);
+        List<ReservationResponse> reservationResponses = new ArrayList<>();
+
+        for(Reservation reservation : reservationList){
+            reservationResponses.add(ReservationResponse.builder()
+                    .id(reservation.getId())
+                    .reservationTime(reservation.getReservationTime())
+                    .reservationDate(reservation.getReservationDate())
+                    .isAccepted(reservation.getIsAccepted())
+                    .trainingTime(reservation.getTrainingTime())
+                    .createdAt(reservation.getCreatedAt())
+                    .instructor(reservation.getInstructor())
+                    .build());
+
+
+        }
+
+        return reservationResponses;
+    }
 }

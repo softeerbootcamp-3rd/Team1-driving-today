@@ -24,22 +24,29 @@ public class ReservationController {
 
     private final ReservationListService reservationListService;
 
-    @PostMapping("/reservations")
     @Operation(summary = "예약만들기 API")
+    @PostMapping("/reservations")
     public ResponseEntity<Void> reservationAdd(@RequestBody ReservationRequest reservationRequest){
         Reservation reservation = reservationAddService.addReservation(reservationRequest);
 
         return ResponseEntity.created(URI.create("/reservation/" + reservation.getId())).build();
     }
 
-    @GetMapping("/my/reservations")
     @Operation(summary = "나의 예약리스트 확인하기 API")
-    public ResponseEntity<List<ReservationResponse>> reservationList(){
+    @GetMapping("/my/reservations")
+    public ResponseEntity<List<ReservationResponse>> studentReservationList(){
 
         Long StudentId = 1L;
         List<ReservationResponse> contents = reservationListService.findAllReservation(StudentId);
         return ResponseEntity.ok().body(contents);
     }
 
+    @Operation(summary = "강사가 본인 예약리스트 확인하기 API")
+    @GetMapping("/reservations")
+    public ResponseEntity<List<ReservationResponse>> instructorReservationList(){
 
+        Long InstructorId = 1L;
+        List<ReservationResponse> contents = reservationListService.findAllReservation(InstructorId);
+        return ResponseEntity.ok().body(contents);
+    }
 }
