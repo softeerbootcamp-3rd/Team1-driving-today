@@ -19,7 +19,6 @@ public class ReservationDeleteService {
     public void deleteReservation(Long reservationId){
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new RuntimeException("reservation doesn't exists"));
-        Instructor instructor = reservation.getInstructor();
 
         reservationRepository.delete(reservation);
 
