@@ -36,4 +36,5 @@ public class Academy {
         this.longitude = longitude;
         this.cert = cert;
     }
+
 }

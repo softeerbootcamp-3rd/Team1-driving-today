@@ -35,4 +35,5 @@ public class Student {
         this.studentImage = studentImage;
         this.nickname = nickname;
     }
+
 }

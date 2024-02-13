@@ -49,4 +49,5 @@ public class Instructor {
         this.introduction = introduction;
         this.academy = academy;
     }
+
 }

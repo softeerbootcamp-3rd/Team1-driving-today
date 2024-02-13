@@ -51,3 +51,8 @@ VALUES
     ('Very informative lessons', 4.7, '2024-02-08 17:00:00', 8, 1),
     ('Friendly and approachable', 4.6, '2024-02-08 18:00:00', 9, 1),
     ('Could be more punctual', 3.8, '2024-02-08 19:00:00', 10, 1);
+
+INSERT INTO RESERVATION(is_accepted, reservation_date, reservation_time, training_time, created_at, instructor_id, student_id)
+VALUES
+    (1, '2024-02-11', 14, 2, '2024-02-11 15:30:00', 1, 1),
+    (1, '2024-02-20', 10, 1, '2024-01-11 20:14:30', 7, 3);
