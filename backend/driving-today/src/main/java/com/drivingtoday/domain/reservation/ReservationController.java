@@ -6,7 +6,6 @@ import com.drivingtoday.domain.reservation.dto.ReservationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +36,16 @@ public class ReservationController {
     public ResponseEntity<List<ReservationDetailResponse>> reservationList(){
 
         Long StudentId = 1L;
-        List<ReservationDetailResponse> contents = reservationListService.findAllReservation(StudentId);
+        List<ReservationDetailResponse> contents = reservationListService.findAllStudentReservation(StudentId);
+        return ResponseEntity.ok().body(contents);
+    }
+
+    @Operation(summary = "강사가 본인 예약리스트 확인하기 API")
+    @GetMapping("/reservations")
+    public ResponseEntity<List<ReservationDetailResponse>> instructorReservationList(){
+
+        Long InstructorId = 1L;
+        List<ReservationDetailResponse> contents = reservationListService.findAllInstructorReservation(InstructorId);
         return ResponseEntity.ok().body(contents);
     }
 
