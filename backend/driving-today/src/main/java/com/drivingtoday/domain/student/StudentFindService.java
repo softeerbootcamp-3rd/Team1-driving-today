@@ -1,5 +1,6 @@
 package com.drivingtoday.domain.student;
 
+import com.drivingtoday.domain.student.dto.MyInfo;
 import com.drivingtoday.domain.student.dto.StudentInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,13 @@ public class StudentFindService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("해당 학생이 존재하지 않습니다."));
         return StudentInfo.from(student);
+    }
+
+    @Transactional
+    public MyInfo findMyInfo(){
+        Long MyId = 1L;
+        Student student = studentRepository.findById(MyId)
+                .orElseThrow(() -> new RuntimeException("해당 학생이 존재하지 않습니다."));
+        return MyInfo.from(student);
     }
 }

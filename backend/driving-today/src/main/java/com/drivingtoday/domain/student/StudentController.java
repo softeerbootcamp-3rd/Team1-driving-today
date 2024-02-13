@@ -1,5 +1,6 @@
 package com.drivingtoday.domain.student;
 
+import com.drivingtoday.domain.student.dto.MyInfo;
 import com.drivingtoday.domain.student.dto.StudentInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,12 @@ public class StudentController {
         StudentInfo studentInfo = studentFindService.findStudent(studentId);
         return ResponseEntity.ok(studentInfo);
     }
+
+    @Operation(summary = "마이페이지 API")
+    @GetMapping("/my")
+    public ResponseEntity<MyInfo> myDetails(){
+        MyInfo myInfo = studentFindService.findMyInfo();
+        return ResponseEntity.ok(myInfo);
+    }
+
 }
