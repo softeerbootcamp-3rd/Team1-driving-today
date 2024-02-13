@@ -1,11 +1,13 @@
 package com.drivingtoday.domain.reservation;
 
-import com.drivingtoday.domain.reservation.dto.ReservationDetailResponse;
+import com.drivingtoday.domain.reservation.dto.ReservationInstructorResponse;
+import com.drivingtoday.domain.reservation.dto.ReservationStudentResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,35 +17,21 @@ public class ReservationListService {
     private final ReservationRepository reservationRepository;
 
     @Transactional
-    public List<ReservationDetailResponse> findAllStudentReservation(Long studentId){
+    public List<ReservationStudentResponse> findAllStudentReservation(Long studentId, Integer pageNumber, Integer pageSize){
 
-        List<Reservation> reservationList = reservationRepository.findAllByStudentId(studentId);
-        List<ReservationDetailResponse> reservationDetailResponses = new ArrayList<>();
+        List<Reservation> reservationList = reservationRepository.findAllByStudentId(studentId,
+                PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending())).getContent();
 
-        reservationList.forEach(reservation -> {
-            reservationDetailResponses.add(ReservationDetailResponse.from(reservation));
-        });
-
-        reservationDetailResponses.sort((r1, r2) ->
-                r2.getReservationInfo().getCreatedAt().compareTo(r1.getReservationInfo().getCreatedAt())
-        );
-        return reservationDetailResponses;
+        return reservationList.stream().map(ReservationStudentResponse::from).toList();
     }
 
     @Transactional
-    public List<ReservationDetailResponse> findAllInstructorReservation(Long instructorId){
+    public List<ReservationInstructorResponse> findAllInstructorReservation(Long instructorId, Integer pageNumber, Integer pageSize){
 
-        List<Reservation> reservationList = reservationRepository.findAllByInstructorId(instructorId);
-        List<ReservationDetailResponse> reservationDetailResponses = new ArrayList<>();
+        List<Reservation> reservationList = reservationRepository.findAllByInstructorId(instructorId,
+                PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending())).getContent();
 
-        reservationList.forEach(reservation -> {
-            reservationDetailResponses.add(ReservationDetailResponse.from(reservation));
-        });
-
-        reservationDetailResponses.sort((r1, r2) ->
-                r2.getReservationInfo().getCreatedAt().compareTo(r1.getReservationInfo().getCreatedAt())
-        );
-        return reservationDetailResponses;
+        return reservationList.stream().map(ReservationInstructorResponse::from).toList();
     }
 
 
