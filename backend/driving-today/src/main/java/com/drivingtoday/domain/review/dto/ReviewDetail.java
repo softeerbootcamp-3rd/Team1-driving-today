@@ -1,4 +1,4 @@
-package com.drivingtoday.domain.instructor.dto;
+package com.drivingtoday.domain.review.dto;
 
 import com.drivingtoday.domain.review.Review;
 import lombok.Builder;
