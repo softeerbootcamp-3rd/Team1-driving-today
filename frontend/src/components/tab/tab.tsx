@@ -2,36 +2,36 @@
 import styled from '@emotion/styled'
 import {createContext, PropsWithChildren, useContext, useState} from 'react'
 
-interface TabContext {
-  value: number
-  setValue: React.Dispatch<React.SetStateAction<number>>
-}
-
-const tabContext = createContext<TabContext | null>(null)
+const TabContext = createContext<string | null>(null)
+const TabSetContext = createContext<React.Dispatch<React.SetStateAction<string>> | null>(null)
 
 interface ProviderProps {
-  defaultValue: number
+  defaultValue: string
 }
 
 function TabProvider({defaultValue, children}: PropsWithChildren<ProviderProps>) {
   const [value, setValue] = useState(defaultValue)
-  return <tabContext.Provider value={{value, setValue}}>{children}</tabContext.Provider>
+  return (
+    <TabContext.Provider value={value}>
+      <TabSetContext.Provider value={setValue}>{children}</TabSetContext.Provider>
+    </TabContext.Provider>
+  )
 }
 
-type TabOnChange = (value: number) => void
-const onChangeContext = createContext<TabOnChange | null>(null)
+type TabOnChange = (value: string) => void
+const TabItemListContext = createContext<TabOnChange | null>(null)
 
 interface TabItemListProps {
   onChange?: TabOnChange
 }
 
-const ItemListContainer = styled.div({display: 'flex'})
+const ItemListContainer = styled.div({display: 'flex', userSelect: 'none'})
 
 function TabItemList({children, onChange}: PropsWithChildren<TabItemListProps>) {
   return (
-    <onChangeContext.Provider value={onChange ?? null}>
+    <TabItemListContext.Provider value={onChange ?? null}>
       <ItemListContainer>{children}</ItemListContainer>
-    </onChangeContext.Provider>
+    </TabItemListContext.Provider>
   )
 }
 
@@ -53,19 +53,23 @@ const ItemContainer = styled.div<ItemContainerProps>(({theme, selected}) => ({
 
 interface ItemProps {
   label: string
-  value: number
+  value: string
 }
 
 function TabItem({label, value}: ItemProps) {
-  const context = useContext(tabContext)
-  const onChange = useContext(onChangeContext)
-  const isSelected = value === context?.value
+  const context = useContext(TabContext)
+  const setContext = useContext(TabSetContext)
+  const onChange = useContext(TabItemListContext)
+  const isSelected = value === context
   return (
     <ItemContainer
       selected={isSelected}
       onClick={() => {
         if (!isSelected) onChange?.(value)
-        context?.setValue(value)
+        setContext?.((prev) => {
+          if (prev !== value) onChange?.(value)
+          return value
+        })
       }}
     >
       {label}
@@ -74,12 +78,12 @@ function TabItem({label, value}: ItemProps) {
 }
 
 interface ContentProps {
-  value: number
+  value: string
 }
 
 function TabContent({value, children}: PropsWithChildren<ContentProps>) {
-  const context = useContext(tabContext)
-  return context?.value === value ? children : null
+  const context = useContext(TabContext)
+  return context === value ? children : null
 }
 
 export const Tab = {
