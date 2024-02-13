@@ -45,11 +45,11 @@ const router = createBrowserRouter(
         />
         <Route
           path="/schedule"
-          element={<RequireAuth>{({isStudent}) => isStudent ?? <StudentSchedule />}</RequireAuth>}
+          element={<RequireAuth>{({isStudent}) => isStudent && <StudentSchedule />}</RequireAuth>}
         />
         <Route
           path="/purchase"
-          element={<RequireAuth>{({isStudent}) => isStudent ?? <StudentPurchase />}</RequireAuth>}
+          element={<RequireAuth>{({isStudent}) => isStudent && <StudentPurchase />}</RequireAuth>}
         />
       </Route>
     </>,
