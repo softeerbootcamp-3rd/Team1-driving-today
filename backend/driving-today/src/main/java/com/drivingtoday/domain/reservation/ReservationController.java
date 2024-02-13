@@ -1,8 +1,9 @@
 package com.drivingtoday.domain.reservation;
 
 
-import com.drivingtoday.domain.reservation.dto.ReservationDetailResponse;
+import com.drivingtoday.domain.reservation.dto.ReservationInstructorResponse;
 import com.drivingtoday.domain.reservation.dto.ReservationRequest;
+import com.drivingtoday.domain.reservation.dto.ReservationStudentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -26,26 +27,27 @@ public class ReservationController {
     @PostMapping("/reservations")
     @Operation(summary = "예약만들기 API")
     public ResponseEntity<Void> reservationAdd(@RequestBody ReservationRequest reservationRequest){
-        ReservationDetailResponse reservationDetailResponse = reservationAddService.addReservation(reservationRequest);
-        return ResponseEntity.created(URI.create("/reservation/" + reservationDetailResponse.getReservationInfo().getId())).build();
+        Long newReservationId = reservationAddService.addReservation(reservationRequest);
+        return ResponseEntity.created(URI.create("/reservation/" + newReservationId)).build();
     }
 
     @GetMapping("/my/reservations")
     @Operation(summary = "나의 예약리스트 확인하기 API")
-    public ResponseEntity<List<ReservationDetailResponse>> reservationList(@RequestParam("pageNumber") Integer pageNumber,
+    public ResponseEntity<List<ReservationStudentResponse>> reservationList(@RequestParam("pageNumber") Integer pageNumber,
                                                                            @RequestParam("pageSize") Integer pageSize){
         Long StudentId = 1L;
-        List<ReservationDetailResponse> contents = reservationListService.findAllStudentReservation(StudentId, pageNumber, pageSize);
-        return ResponseEntity.ok().body(contents);
+        List<ReservationStudentResponse> allStudentReservation = reservationListService.findAllStudentReservation(StudentId, pageNumber, pageSize);
+        return ResponseEntity.ok(allStudentReservation);
     }
+
 
     @Operation(summary = "강사가 본인 예약리스트 확인하기 API")
     @GetMapping("/reservations")
-    public ResponseEntity<List<ReservationDetailResponse>> instructorReservationList(@RequestParam("pageNumber") Integer pageNumber,
-                                                                                     @RequestParam("pageSize") Integer pageSize){
+    public ResponseEntity<List<ReservationInstructorResponse>> instructorReservationList(@RequestParam("pageNumber") Integer pageNumber,
+                                                                                         @RequestParam("pageSize") Integer pageSize){
         Long InstructorId = 1L;
-        List<ReservationDetailResponse> contents = reservationListService.findAllInstructorReservation(InstructorId, pageNumber, pageSize);
-        return ResponseEntity.ok().body(contents);
+        List<ReservationInstructorResponse> allInstructorReservation = reservationListService.findAllInstructorReservation(InstructorId, pageNumber, pageSize);
+        return ResponseEntity.ok(allInstructorReservation);
     }
 
     @DeleteMapping("/reservations/{reservation_id}")
