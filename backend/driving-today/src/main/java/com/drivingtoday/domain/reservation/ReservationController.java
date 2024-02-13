@@ -45,7 +45,9 @@ public class ReservationController {
     @Operation(summary = "예약 취소하기 API")
     public ResponseEntity<Void> deleteReservation(@PathVariable("reservation_id") @Parameter(description = "삭제할 예약의 ID", required = true) Long reservationId) {
 
-        return reservationDeleteService.deleteReservation(reservationId);
+        reservationDeleteService.deleteReservation(reservationId);
+
+        return ResponseEntity.ok().build();
     }
 
 }
