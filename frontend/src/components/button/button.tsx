@@ -2,7 +2,7 @@ import type {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {ButtonHTMLAttributes, PropsWithChildren} from 'react'
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * text color
    * @default 'gray50'
@@ -20,7 +20,7 @@ export function ButtonBase({
   color = 'gray50',
   bgColor = 'primary',
   ...props
-}: PropsWithChildren<Props>) {
+}: PropsWithChildren<ButtonProps>) {
   return (
     <Button {...props} color={color} bgColor={bgColor}>
       {children}

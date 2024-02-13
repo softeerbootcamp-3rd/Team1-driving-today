@@ -1,9 +1,11 @@
 package com.drivingtoday.domain.instructor.dto;
 
-import com.drivingtoday.domain.academy.dto.AcademyInfo;
+
 import com.drivingtoday.domain.instructor.Instructor;
+import com.drivingtoday.domain.review.Review;
 import lombok.Builder;
 import lombok.Getter;
+import java.util.List;
 
 @Getter
 @Builder
@@ -17,4 +19,5 @@ public class InstructorDetailResponse {
                 .academyInfo(AcademyInfo.from(instructor.getAcademy()))
                 .build();
     }
+
 }
