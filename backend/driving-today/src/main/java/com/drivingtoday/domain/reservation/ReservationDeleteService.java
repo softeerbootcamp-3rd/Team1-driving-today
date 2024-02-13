@@ -16,7 +16,7 @@ public class ReservationDeleteService {
     private final ReservationRepository reservationRepository;
 
     @Transactional
-    public ResponseEntity<String> deleteReservation(Long reservationId){
+    public ResponseEntity<Void> deleteReservation(Long reservationId){
         try{
             Reservation reservation = reservationRepository.findById(reservationId)
                     .orElseThrow(() -> new IllegalArgumentException("reservation doesn't exists"));
@@ -25,9 +25,9 @@ public class ReservationDeleteService {
 
             reservationRepository.delete(reservation);
 
-            return ResponseEntity.ok("Reservation deleted Successfully");
+            return ResponseEntity.ok().build();
         }catch(Exception ignored){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete reservation.");
+            return ResponseEntity.badRequest().build();
         }
     }
 
