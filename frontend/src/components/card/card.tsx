@@ -240,4 +240,9 @@ export const Card = {
   InstructorHistory: InstructorHistoryCard,
   StudentHistory: StudentHistoryCard,
   ReservationResult: ReservationResultCard,
+  MultipleDescriptionContainer,
+  IconLabel,
+  ProfilePic,
+  Name,
+  Label,
 }
