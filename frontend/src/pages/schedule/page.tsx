@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import {useEffect, useState} from 'react'
 import {Map} from 'react-kakao-maps-sdk'
+import {useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
@@ -21,7 +22,22 @@ const initialFormData: ScheduleForm = {
   },
   trainingTime: null,
   reservationTime: null,
-  reservationDate: '2024-02-23',
+  reservationDate: '',
+}
+
+function searchPathFactory(formData: ScheduleForm) {
+  const queries = {
+    latitude: formData.position.latitude,
+    longitude: formData.position.longitude,
+    trainingTime: formData.trainingTime,
+    reservationTime: formData.reservationTime,
+    reservationDate: formData.reservationDate,
+  }
+  const searchParam = Object.entries(queries)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&')
+
+  return `/search?${searchParam}`
 }
 
 function getInitialFormDataFrom() {
@@ -30,6 +46,7 @@ function getInitialFormDataFrom() {
 }
 
 export function StudentSchedule() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom)
 
   useEffect(() => {
@@ -108,7 +125,8 @@ export function StudentSchedule() {
             />
           </SearchField>
 
-          <Button onClick={() => console.log('next')}>다음</Button>
+          {/* TODO: form validate */}
+          <Button onClick={() => navigate(searchPathFactory(formData))}>다음</Button>
         </SearchContainer>
       </Box>
       {/* TODO: 카카오 지도 */}
