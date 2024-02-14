@@ -12,6 +12,8 @@ interface ScheduleForm {
   reservationTime: number | null
   reservationDate: string
 }
+
+// NOTE: 기본위치 - 서울시청 좌표
 const initialFormData: ScheduleForm = {
   position: {
     latitude: 37.566,
@@ -42,7 +44,6 @@ export function StudentSchedule() {
         (error) => {
           // TODO: 에러 처리
           // 기본 위치 설정
-          setFormData((prev) => ({...prev, position: position.coords}))
           console.error(error)
         },
       )
