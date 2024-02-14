@@ -9,6 +9,8 @@ import com.drivingtoday.global.auth.jwt.Jwt;
 import com.drivingtoday.global.auth.jwt.JwtProvider;
 import com.drivingtoday.global.user.dto.LoginRequest;
 import com.drivingtoday.global.user.dto.LoginResponse;
+import com.drivingtoday.global.user.exception.UserErrorCode;
+import com.drivingtoday.global.user.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +27,11 @@ public class UserLoginService {
     public LoginResponse loginStudent(LoginRequest request) {
         //1. 유효한 이메일인지 확인
         Student student = studentRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new RuntimeException("존재하지 않는 이메일입니다.")
+                () -> UserException.from(UserErrorCode.NOT_FOUND_USER_EMAIL)
         );
         //2. 패스워드 확인
         if (!student.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("비밀번호가 틀렸습니다.");
+            throw UserException.from(UserErrorCode.INVALID_USER_PASSWORD);
         }
         //3. 토큰 생성
         Map<String, Object> claims = new HashMap<>();
@@ -42,11 +44,11 @@ public class UserLoginService {
     public LoginResponse loginInstructor(LoginRequest request) {
         //1. 유효한 이메일인지 확인
         Instructor instructor = instructorRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new RuntimeException("존재하지 않는 이메일입니다.")
+                () -> UserException.from(UserErrorCode.NOT_FOUND_USER_EMAIL)
         );
         //2. 패스워드 확인
         if (!instructor.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("비밀번호가 틀렸습니다.");
+            throw UserException.from(UserErrorCode.INVALID_USER_PASSWORD);
         }
         //3. 토큰 생성
         Map<String, Object> claims = new HashMap<>();

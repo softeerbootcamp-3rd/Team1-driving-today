@@ -9,6 +9,8 @@ import com.drivingtoday.domain.student.StudentRepository;
 import com.drivingtoday.global.s3.S3UploadService;
 import com.drivingtoday.global.user.dto.InstructorJoinRequest;
 import com.drivingtoday.global.user.dto.StudentJoinRequest;
+import com.drivingtoday.global.user.exception.UserErrorCode;
+import com.drivingtoday.global.user.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,9 +27,14 @@ public class UserJoinService {
 
     public Long addStudent(StudentJoinRequest joinRequest, MultipartFile profileImg) {
 
+        //이미 존재하는 이메일일 경우 예외 발생
+        if(studentRepository.findByEmail(joinRequest.getEmail()).isPresent()){
+            throw UserException.from(UserErrorCode.DUPLICATED_USER_EMAIL);
+        }
+
         //이미 존재하는 닉네임일 경우 예외 발생
         if (studentRepository.findByNickname(joinRequest.getNickname()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 닉네임입니다.");
+            throw UserException.from(UserErrorCode.DUPLICATED_USER_NICKNAME);
         }
 
         //프로필 이미지 업로드
@@ -47,7 +54,11 @@ public class UserJoinService {
     }
 
     public Long addInstructor(InstructorJoinRequest joinRequest, MultipartFile profileImg) {
-        //TODO: 이미 존재하는 강사일 경우 예외 발생->기준?
+
+        //이미 존재하는 이메일일 경우 예외 발생
+        if(instructorRepository.findByEmail(joinRequest.getEmail()).isPresent()){
+            throw UserException.from(UserErrorCode.DUPLICATED_USER_EMAIL);
+        }
         //프로필 이미지 업로드
         String imgUrl = "";
         try {
