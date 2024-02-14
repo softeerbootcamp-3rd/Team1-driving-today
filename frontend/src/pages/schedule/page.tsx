@@ -7,42 +7,52 @@ import {Chip} from '@/components/chip'
 import {Header} from '@/components/header'
 
 interface Position {
-  lat: number
-  lon: number
+  latitude: number
+  longitude: number
 }
 interface ScheduleForm {
-  position: Position
-  trainTime: number
-  trainType: number
-  date: string
+  position: Position | null
+  trainingTime: number | null
+  reservationTime: number | null
+  reservationDate: string
 }
 const initialFormData: ScheduleForm = {
   position: {
-    lat: 36,
-    lon: 120,
+    latitude: 36,
+    longitude: 120,
   },
-  trainTime: 12,
-  trainType: 1,
-  date: '2024-02-23',
+  trainingTime: 1,
+  reservationTime: 12,
+  reservationDate: '2024-02-23',
 }
 
-function getInitialFormDataFrom(searchParam) {
-  return () => {
-    // TODO 초기 상태 반환
-    return initialFormData
-  }
+function getInitialFormDataFrom() {
+  // TODO: session storage 에 저장된 정보가 있다면 반환
+  return initialFormData
 }
 
 export function StudentSchedule() {
-  const [searchParam, setSearchParam] = useSearchParams()
-  // TODO: query string 에서 formData 받아서 상태 초기화
-  const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom(searchParam))
+  // const [searchParam, setSearchParam] = useSearchParams()
+  const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom)
 
   useEffect(() => {
-    // TODO: 사용자 위치 권한 설정되어 있으면 초기 포지션 값 설정 자동 설정
-    // 위치 상태값이 채워져 있지 않을 때만 현재 위치로 초기화
-    // const currentPosition = getCurrentPosition()
-    // setFormData({...formData, position: currentPosition})
+    // TODO: 위치 상태값이 채워져 있지 않을 때만 현재 위치로 초기화
+    //   사용자가 승인하면 현재 위치 사용
+    //   사용자가 거절하면 null 주기
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prev) => ({...prev, position: position.coords}))
+          console.log(position)
+        },
+        (error) => {
+          // TODO: 에러 처리
+          console.error(error)
+        },
+      )
+    } else {
+      alert('현재 위치 정보를 제공하지 않는 브라우저 입니다.')
+    }
   }, [])
 
   return (
@@ -63,8 +73,8 @@ export function StudentSchedule() {
                 return (
                   <li key={`time-${time}`}>
                     <Chip
-                      selected={time === formData?.trainTime}
-                      onClick={() => setFormData((prev) => ({...prev, trainTime: time}))}
+                      selected={time === formData.reservationTime}
+                      onClick={() => setFormData((prev) => ({...prev, reservationTime: time}))}
                     >
                       {`${time}:00`}
                     </Chip>
@@ -81,8 +91,8 @@ export function StudentSchedule() {
                 return (
                   <li key={`type-${type}`}>
                     <Chip
-                      selected={type === formData?.trainType}
-                      onClick={() => setFormData((prev) => ({...prev, trainType: type}))}
+                      selected={type === formData.trainingTime}
+                      onClick={() => setFormData((prev) => ({...prev, trainingTime: type}))}
                     >
                       {`${type} 시간`}
                     </Chip>
@@ -96,8 +106,8 @@ export function StudentSchedule() {
             <SearchFieldTitle>원하는 일자를 선택해 주세요</SearchFieldTitle>
             <DateInput
               type="date"
-              value={formData.date}
-              onChange={(e) => setFormData((prev) => ({...prev, date: e.target.value}))}
+              value={formData.reservationDate}
+              onChange={(e) => setFormData((prev) => ({...prev, reservationDate: e.target.value}))}
             />
           </SearchField>
 
