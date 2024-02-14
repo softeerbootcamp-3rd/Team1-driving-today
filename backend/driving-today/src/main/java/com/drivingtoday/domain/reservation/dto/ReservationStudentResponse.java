@@ -16,6 +16,7 @@ public class ReservationStudentResponse {
     private LocalDate reservationDate;
     private Integer reservationTime;
     private Integer trainingTime;
+    private Long instructorId;
 
     public static ReservationStudentResponse from(Reservation reservation) {
         return ReservationStudentResponse.builder()
@@ -26,6 +27,7 @@ public class ReservationStudentResponse {
                 .reservationDate(reservation.getReservationDate())
                 .reservationTime(reservation.getReservationTime())
                 .trainingTime(reservation.getTrainingTime())
+                .instructorId(reservation.getInstructor().getId())
                 .build();
     }
 }
