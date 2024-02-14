@@ -17,6 +17,7 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +38,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         //요청 헤더에 토큰이 없는 경우
         if (!isContainToken(authorization)) {
-            throw new JwtException(JwtErrorCode.EMPTY_JWT);
+            log.warn("{} : {}", JwtErrorCode.EMPTY_JWT.getErrorCode(), JwtErrorCode.EMPTY_JWT.getMessage());
+            makeExceptionResponse(JwtErrorCode.EMPTY_JWT, response);
+            return;
         }
 
         //토큰 꺼내기
@@ -47,7 +50,9 @@ public class JwtFilter extends OncePerRequestFilter {
         if (jwtErrorCode == JwtErrorCode.VALID_JWT_TOKEN) {
             request.setAttribute("Authentication", makeAuthentication(accessToken));
         } else {
-            throw new JwtException(jwtErrorCode);
+            log.warn("{} : {}", jwtErrorCode.getErrorCode(), jwtErrorCode.getMessage());
+            makeExceptionResponse(jwtErrorCode, response);
+            return;
         }
 
         filterChain.doFilter(request, response);
@@ -65,6 +70,16 @@ public class JwtFilter extends OncePerRequestFilter {
     private Authentication makeAuthentication(String token) {
         Claims claims = jwtProvider.getClaims(token);
         return Authentication.of(claims.get(JwtProvider.CLAIM_ROLE, String.class), claims.get(JwtProvider.CLAIM_USERID, Long.class));
+    }
+
+    private void makeExceptionResponse(JwtErrorCode jwtErrorCode, HttpServletResponse response) throws IOException{
+        String errorMessage = jwtErrorCode.getErrorCode() + ": " + jwtErrorCode.getMessage();
+        byte[] messageBytes = errorMessage.getBytes(StandardCharsets.UTF_8);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/plain;charset=UTF-8");
+        response.setContentLength(messageBytes.length);
+        response.setStatus(JwtErrorCode.EMPTY_JWT.getHttpStatus().value());
+        response.getOutputStream().write(messageBytes);
     }
 
 }
