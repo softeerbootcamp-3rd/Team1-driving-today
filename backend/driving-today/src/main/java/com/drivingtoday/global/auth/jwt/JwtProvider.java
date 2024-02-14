@@ -71,19 +71,14 @@ public class JwtProvider {
             getClaims(token);
             return JwtErrorCode.VALID_JWT_TOKEN;
         } catch (SignatureException exception) {
-            log.warn("JWT 서명이 유효하지 않습니다");
             return JwtErrorCode.INVALID_JWT_SIGNATURE;
         } catch (MalformedJwtException exception) {
-            log.warn("JWT가 올바르게 구성되지 않았습니다.");
             return JwtErrorCode.INVALID_JWT_TOKEN;
         } catch (ExpiredJwtException exception) {
-            log.warn("만료된 토큰입니다.");
             return JwtErrorCode.EXPIRED_JWT_TOKEN;
         } catch (UnsupportedJwtException exception) {
-            log.warn("지원되지 않는 형식의 토큰입니다.");
             return JwtErrorCode.UNSUPPORTED_JWT_TOKEN;
         } catch (IllegalArgumentException exception) {
-            log.warn("JWT Claim이 비어있습니다.");
             return JwtErrorCode.EMPTY_JWT;
         }
     }
