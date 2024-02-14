@@ -48,7 +48,7 @@
 ## use case
 
 ```tsx
-<ReservationResultCard
+<Card.ReservationResult
   instructorName="강사 이름"
   academyName="학원 이름"
   pricePerHour={10000}
@@ -60,7 +60,7 @@
   onRequestReservation={requestReservation}
 />
 
-<StudentHistoryCard
+<Card.StudentHistory
   instructorName="강사 이름"
   academyName="학원 이름"
   image=""
@@ -69,7 +69,7 @@
   onReviewClick={showReviewForm}
 />
 
-<InstructorHistoryCard
+<Card.InstructorHistory
   studentName="학생 이름"
   phoneStr="010-0000-0000"
   dateStr="2024.03.01"

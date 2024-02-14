@@ -111,7 +111,7 @@ interface ReservationResultProps extends CardProps {
   onContact?: () => void
 }
 
-export function ReservationResultCard({
+function ReservationResultCard({
   instructorName,
   academyName,
   pricePerHour,
@@ -163,7 +163,7 @@ interface StudentHistoryProps extends CardProps {
   onReviewClick?: () => void
 }
 
-export function StudentHistoryCard({
+function StudentHistoryCard({
   instructorName,
   academyName,
   dateStr,
@@ -203,7 +203,7 @@ interface InstructorHistoryProps extends CardProps {
   onRejectClick?: () => void
 }
 
-export function InstructorHistoryCard({
+function InstructorHistoryCard({
   studentName,
   phoneStr,
   dateStr,
@@ -234,4 +234,10 @@ export function InstructorHistoryCard({
       </ContentContainer>
     </BaseContainer>
   )
+}
+
+export const Card = {
+  InstructorHistory: InstructorHistoryCard,
+  StudentHistory: StudentHistoryCard,
+  ReservationResult: ReservationResultCard,
 }
