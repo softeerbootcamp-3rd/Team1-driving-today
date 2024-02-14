@@ -1,4 +1,4 @@
-INSERT INTO Academy (name, latitude, longitude, cert)
+INSERT INTO academy (name, latitude, longitude, cert)
 VALUES
     ('Academy 1', 37.12345, -122.6789, true),
     ('Academy 2', 37.54321, -122.9876, false),
@@ -12,7 +12,7 @@ VALUES
     ('Academy 10', 37.01234, -122.7890, false);
 
 
-INSERT INTO Student (name, phone_number, student_image, nickname)
+INSERT INTO student (name, phone_number, student_image, nickname)
 VALUES
     ('John Doe', '010-1234-5678', 'http://example.com/image1.jpg', 'Johny'),
     ('Jane Smith', '010-9876-5432', 'http://example.com/image2.jpg', 'Janey'),
@@ -26,7 +26,7 @@ VALUES
     ('Olivia Jung', '010-8901-3456', 'http://example.com/image10.jpg', 'Liv');
 
 
-INSERT INTO Instructor (name, phone_number, instructor_image, price_per_hour, introduction, academy_id)
+INSERT INTO instructor (name, phone_number, instructor_image, price_per_hour, introduction, academy_id)
 VALUES
     ('Instructor 1', '010-1111-1111', 'instructor_image_1.jpg', 50000, 'Introduction 1', 1),
     ('Instructor 2', '010-2222-2222', 'instructor_image_2.jpg', 55000, 'Introduction 2', 2),
@@ -39,7 +39,7 @@ VALUES
     ('Instructor 9', '010-9999-9999', 'instructor_image_9.jpg', 90000, 'Introduction 9', 9),
     ('Instructor 10', '010-0000-0000', 'instructor_image_10.jpg', 95000, 'Introduction 10', 10);
 
-INSERT INTO Review (contents, rating, created_at, student_id, instructor_id)
+INSERT INTO review (contents, rating, created_at, student_id, instructor_id)
 VALUES
     ('Great instructor!', 4.5, '2024-02-08 10:00:00', 1, 1),
     ('Excellent teaching skills!', 5.0, '2024-02-08 11:00:00', 2, 1),
@@ -52,7 +52,9 @@ VALUES
     ('Friendly and approachable', 4.6, '2024-02-08 18:00:00', 9, 1),
     ('Could be more punctual', 3.8, '2024-02-08 19:00:00', 10, 1);
 
-INSERT INTO RESERVATION(is_accepted, reservation_date, reservation_time, training_time, created_at, instructor_id, student_id)
+INSERT INTO reservation (is_accepted, reservation_date, reservation_time, training_time, created_at, instructor_id, student_id)
 VALUES
     (1, '2024-02-11', 14, 2, '2024-02-11 15:30:00', 1, 1),
+    (1, '2024-02-12', 14, 2, '2024-02-11 15:30:00', 1, 1),
+    (1, '2024-02-13', 14, 2, '2024-02-11 15:30:00', 1, 1),
     (1, '2024-02-20', 10, 1, '2024-01-11 20:14:30', 7, 3);
