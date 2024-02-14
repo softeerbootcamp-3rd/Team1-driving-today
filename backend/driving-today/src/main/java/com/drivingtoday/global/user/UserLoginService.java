@@ -4,14 +4,21 @@ import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorRepository;
 import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentRepository;
+import com.drivingtoday.global.auth.constants.Role;
+import com.drivingtoday.global.auth.jwt.Jwt;
+import com.drivingtoday.global.auth.jwt.JwtProvider;
 import com.drivingtoday.global.user.dto.LoginRequest;
 import com.drivingtoday.global.user.dto.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class UserLoginService {
+    private final JwtProvider jwtProvider;
     private final StudentRepository studentRepository;
     private final InstructorRepository instructorRepository;
 
@@ -24,7 +31,12 @@ public class UserLoginService {
         if (!student.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("비밀번호가 틀렸습니다.");
         }
-        return LoginResponse.of(student.getId());
+        //3. 토큰 생성
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtProvider.CLAIM_USERID, student.getId());
+        claims.put(JwtProvider.CLAIM_ROLE, Role.STUDENT);
+        Jwt jwt = jwtProvider.createJwt(claims);
+        return LoginResponse.of(student.getId(), jwt);
     }
 
     public LoginResponse loginInstructor(LoginRequest request) {
@@ -36,6 +48,11 @@ public class UserLoginService {
         if (!instructor.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("비밀번호가 틀렸습니다.");
         }
-        return LoginResponse.of(instructor.getId());
+        //3. 토큰 생성
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtProvider.CLAIM_USERID,instructor.getId());
+        claims.put(JwtProvider.CLAIM_ROLE, Role.INSTRUCTOR);
+        Jwt jwt = jwtProvider.createJwt(claims);
+        return LoginResponse.of(instructor.getId(), jwt);
     }
 }
