@@ -10,4 +10,5 @@ public interface AvailableInstructorInfo {
     Double getLongitude();
     Boolean getCert();
     Double getDistance();
+    Double getAverageRating();
 }
