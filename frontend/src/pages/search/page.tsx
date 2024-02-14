@@ -1,16 +1,17 @@
 import styled from '@emotion/styled'
-import {Map} from 'react-kakao-maps-sdk'
-import {useSearchParams} from 'react-router-dom'
+import {Map, MapMarker, MarkerClusterer} from 'react-kakao-maps-sdk'
+import {useNavigate, useSearchParams} from 'react-router-dom'
 
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
-import {Icon} from '@/components/icon'
 
+import {SearchPreview} from './components'
 import {dummydata} from './data'
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   // TODO: searchParms 가 모두 있는지 확인, 없다면 이전 페이지로 redirect
   const trainingTime = Number(searchParams.get('trainingTime'))
@@ -19,47 +20,35 @@ export function SearchPage() {
   const longitude = Number(searchParams.get('longitude'))
   const reservationDate = searchParams.get('reservationDate')
 
-  // TODO: 지도 드래그를 통한 주소 검색
-
   return (
     <>
-      <Box>
+      <SearchResultContainer>
         <Header px="2rem">
           <div style={{padding: '2rem 0'}}>
-            <Header.BackButton />
+            <Header.BackButton onClick={() => navigate('/schedule')} />
           </div>
         </Header>
 
         <H1>강사 선택</H1>
-        <SearchContainer>
+        <Box>
           <SearchPreview />
-
           <Divider />
-
-          <ul
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-            }}
-          >
-            {dummydata.map((instructor) => {
-              return (
-                <Card.ReservationResult
-                  key={instructor.instructorId}
-                  instructorName={instructor.instructorName}
-                  academyName={instructor.academyName}
-                  image={instructor.instructorImage}
-                  pricePerHour={instructor.pricePerHour}
-                  distance={instructor.distance}
-                  duration={trainingTime}
-                  rating={2}
-                />
-              )
-            })}
-          </ul>
-        </SearchContainer>
-      </Box>
+          <InstructorList>
+            {dummydata.map((instructor) => (
+              <Card.ReservationResult
+                key={instructor.instructorId}
+                instructorName={instructor.instructorName}
+                academyName={instructor.academyName}
+                image={instructor.instructorImage}
+                pricePerHour={instructor.pricePerHour}
+                distance={instructor.distance}
+                duration={2}
+                rating={2}
+              />
+            ))}
+          </InstructorList>
+        </Box>
+      </SearchResultContainer>
 
       <Map
         id="map"
@@ -71,76 +60,48 @@ export function SearchPage() {
           width: '100%',
           height: '100%',
         }}
-        level={3} // 지도의 확대 레벨
-      />
+        level={3}
+        onDragEnd={(map) => {
+          const latlng = map.getCenter()
+          // TODO: 지도 드래그를 통한 주소 검색
+          setSearchParams((prev) => {
+            prev.set('latitude', String(latlng.getLat()))
+            prev.set('longitude', String(latlng.getLng()))
+            return prev
+          })
+        }}
+      >
+        <MarkerClusterer averageCenter={true} minLevel={10}>
+          {dummydata.map((instructor) => (
+            <MapMarker
+              key={instructor.instructorId}
+              position={{
+                lat: instructor.latitude,
+                lng: instructor.longitude,
+              }}
+              image={{
+                src: '/marker.png',
+                size: {
+                  width: 38,
+                  height: 48,
+                },
+              }}
+            />
+          ))}
+        </MarkerClusterer>
+      </Map>
     </>
   )
 }
 
-function SearchPreview() {
-  const [searchParams] = useSearchParams()
-
-  const trainingTime = Number(searchParams.get('trainingTime'))
-  const reservationTime = Number(searchParams.get('reservationTime'))
-  const reservationDate = searchParams.get('reservationDate') as string
-
-  return (
-    <Container>
-      <div>
-        <Icon name="date" color="primary" width="1.5rem" height="1.5rem" />
-        <span>{new Date(reservationDate).toLocaleDateString('ko-KR')}</span>
-      </div>
-      <div>
-        <Icon name="time" color="primary" width="1.5rem" height="1.5rem" />
-        <span>{reservationTime}:00</span>
-      </div>
-      <div>
-        <Icon name="duration" color="primary" width="1.5rem" height="1.5rem" />
-        <span>{trainingTime}시간</span>
-      </div>
-    </Container>
-  )
-}
-
-const Box = styled.section(() => ({
+const SearchResultContainer = styled.section(() => ({
   width: '30%',
   minWidth: '60rem',
+  height: '100%',
   boxShadow: '5px 1px 5px 0px rgb(0 0 0 / 10%)',
   zIndex: 2,
   display: 'flex',
   flexDirection: 'column',
-}))
-
-const Container = styled.button(({theme}) => ({
-  position: 'sticky',
-  top: 0,
-  border: `1px solid ${theme.color.primary}`,
-  borderRadius: '0.8rem',
-  backgroundColor: theme.color.white,
-  padding: '2rem 0',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  color: theme.color.primary,
-  fontSize: '1.4rem',
-  '&:hover': {
-    backgroundColor: theme.color.gray100,
-  },
-  '&:active': {
-    backgroundColor: theme.color.gray200,
-  },
-  '& > div': {
-    gap: '0.5rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '1.4rem',
-    padding: '0 1rem',
-  },
-  '& > * + *': {
-    borderRight: 0,
-    borderLeft: `1px solid ${theme.color.primary}`,
-  },
 }))
 
 const H1 = styled.h1(({theme}) => ({
@@ -153,7 +114,7 @@ const H1 = styled.h1(({theme}) => ({
   top: 0,
 }))
 
-const SearchContainer = styled.ul(({theme}) => ({
+const Box = styled.div(({theme}) => ({
   backgroundColor: theme.color.white,
   display: 'flex',
   flexDirection: 'column',
@@ -162,4 +123,11 @@ const SearchContainer = styled.ul(({theme}) => ({
   flexGrow: 1,
   overflowY: 'scroll',
   padding: '0 2rem',
+}))
+
+const InstructorList = styled.ul(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  paddingBottom: '5rem',
 }))
