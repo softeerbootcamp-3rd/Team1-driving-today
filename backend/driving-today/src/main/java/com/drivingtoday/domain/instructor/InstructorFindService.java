@@ -1,6 +1,7 @@
 package com.drivingtoday.domain.instructor;
 
 import com.drivingtoday.domain.instructor.dto.InstructorDetailResponse;
+import com.drivingtoday.domain.review.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,13 @@ import java.util.List;
 public class InstructorFindService {
 
     private final InstructorRepository instructorRepository;
+    private final ReviewRepository reviewRepository;
     @Transactional
     public InstructorDetailResponse findInstructor(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId)
                 .orElseThrow(() -> new RuntimeException("해당 강사가 존재하지 않습니다."));
-        return InstructorDetailResponse.from(instructor);
+        Double averageRating = reviewRepository.findAverageRatingByInstructorId(instructorId);
+        return InstructorDetailResponse.of(instructor, averageRating);
     }
 
     @Transactional
