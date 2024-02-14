@@ -1,6 +1,6 @@
 package com.drivingtoday.global.auth.jwt;
 
-import com.drivingtoday.global.auth.constants.JwtErrorCode;
+import com.drivingtoday.global.auth.exception.JwtErrorCode;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

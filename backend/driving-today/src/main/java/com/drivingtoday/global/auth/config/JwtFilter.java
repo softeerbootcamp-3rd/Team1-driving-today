@@ -1,8 +1,7 @@
 package com.drivingtoday.global.auth.config;
 
 import com.drivingtoday.global.auth.constants.Authentication;
-import com.drivingtoday.global.auth.constants.JwtErrorCode;
-import com.drivingtoday.global.auth.constants.JwtException;
+import com.drivingtoday.global.auth.exception.JwtErrorCode;
 import com.drivingtoday.global.auth.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

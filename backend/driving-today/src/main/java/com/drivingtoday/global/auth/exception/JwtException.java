@@ -1,4 +1,4 @@
-package com.drivingtoday.global.auth.constants;
+package com.drivingtoday.global.auth.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
