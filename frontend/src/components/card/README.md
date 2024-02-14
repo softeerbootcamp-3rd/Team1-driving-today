@@ -1,5 +1,3 @@
-# Button
-
 ## description
 
 - 카드 컴포넌트
