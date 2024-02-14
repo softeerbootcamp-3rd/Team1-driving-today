@@ -1,28 +1,24 @@
 import styled from '@emotion/styled'
 import {useEffect, useState} from 'react'
-import {useSearchParams} from 'react-router-dom'
+import {Map} from 'react-kakao-maps-sdk'
 
 import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
 import {Header} from '@/components/header'
 
-interface Position {
-  latitude: number
-  longitude: number
-}
 interface ScheduleForm {
-  position: Position | null
+  position: Pick<GeolocationCoordinates, 'latitude' | 'longitude'>
   trainingTime: number | null
   reservationTime: number | null
   reservationDate: string
 }
 const initialFormData: ScheduleForm = {
   position: {
-    latitude: 36,
-    longitude: 120,
+    latitude: 37.566,
+    longitude: 126.977,
   },
-  trainingTime: 1,
-  reservationTime: 12,
+  trainingTime: null,
+  reservationTime: null,
   reservationDate: '2024-02-23',
 }
 
@@ -32,7 +28,6 @@ function getInitialFormDataFrom() {
 }
 
 export function StudentSchedule() {
-  // const [searchParam, setSearchParam] = useSearchParams()
   const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom)
 
   useEffect(() => {
@@ -43,10 +38,11 @@ export function StudentSchedule() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setFormData((prev) => ({...prev, position: position.coords}))
-          console.log(position)
         },
         (error) => {
           // TODO: 에러 처리
+          // 기본 위치 설정
+          setFormData((prev) => ({...prev, position: position.coords}))
           console.error(error)
         },
       )
@@ -57,7 +53,7 @@ export function StudentSchedule() {
 
   return (
     <>
-      <section>
+      <Box>
         <Header px="2rem">
           <div>
             <Header.BackButton />
@@ -68,7 +64,7 @@ export function StudentSchedule() {
         <SearchContainer>
           <SearchField>
             <SearchFieldTitle>원하는 시작 시간을 선택해주세요</SearchFieldTitle>
-            <ul style={{display: 'flex', gap: 10}}>
+            <ul style={{display: 'flex', gap: 10, flexFlow: 'wrap'}}>
               {Array.from(Array(9), (_, i) => i + 9).map((time) => {
                 return (
                   <li key={`time-${time}`}>
@@ -113,11 +109,30 @@ export function StudentSchedule() {
 
           <Button onClick={() => console.log('next')}>다음</Button>
         </SearchContainer>
-      </section>
+      </Box>
       {/* TODO: 카카오 지도 */}
+      <Map
+        id="map"
+        center={{
+          lat: formData.position?.latitude,
+          lng: formData.position?.longitude,
+        }}
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        level={3} // 지도의 확대 레벨
+      />
     </>
   )
 }
+
+const Box = styled.section(() => ({
+  width: '30%',
+  minWidth: '400px',
+  boxShadow: '5px 1px 6px 0px #ddd',
+  zIndex: 2,
+}))
 
 const H1 = styled.h1(({theme}) => ({
   color: theme.color.gray900,
