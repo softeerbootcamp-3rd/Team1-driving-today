@@ -2,26 +2,22 @@ import {useCallback, useEffect, useState} from 'react'
 
 interface UseFetchResult<T> {
   data?: T
-  error?: number
+  error?: unknown
   loading: boolean
   reload: () => void
 }
 
 interface UseFetchCallbacks<T> {
-  onSuccess: (data: T) => void
-  onError: (errorCode: number) => void
+  onSuccess?: (data: T) => void
+  onError?: (errorCode: number) => void
 }
 
-interface UseFetchParam<T> {
-  init?: RequestInit
-  callbacks?: UseFetchCallbacks<T>
-}
+type UseFetchParam<T> = Omit<RequestInit, 'signal'> & UseFetchCallbacks<T>
 
-const UnknownError = -1
-
-export function useFetch<T>(url: string, {init, callbacks}: UseFetchParam<T>): UseFetchResult<T> {
+export function useFetch<T>(url: string, params: UseFetchParam<T>): UseFetchResult<T> {
+  const {onSuccess, onError, ...init} = params
   const [data, setData] = useState<T>()
-  const [error, setError] = useState<number>()
+  const [error, setError] = useState<unknown>()
   const [loading, setLoading] = useState(true)
 
   const doFetch = useCallback(
@@ -30,28 +26,24 @@ export function useFetch<T>(url: string, {init, callbacks}: UseFetchParam<T>): U
       setError(undefined)
       fetch(url, {...init, signal})
         .then(async (res) => {
-          if (res.status < 200 || res.status >= 300) throw res.status
+          if (res.status < 200 || res.status >= 300) throw new Error(res.status.toString())
           try {
             return await res.json()
           } catch {
-            return undefined
+            return
           }
         })
         .then((json: T) => {
           setData(json)
-          callbacks?.onSuccess?.(json)
+          onSuccess?.(json)
         })
-        .catch((error: number) => {
-          if (isNaN(error)) {
-            setError(UnknownError)
-            return
-          }
+        .catch((error) => {
           setError(error)
-          callbacks?.onError?.(error)
+          onError?.(error)
         })
         .finally(() => setLoading(false))
     },
-    [url, init, callbacks],
+    [url, init, onSuccess, onError],
   )
 
   useEffect(() => {
