@@ -1,4 +1,4 @@
-package com.drivingtoday.global.config;
+package com.drivingtoday.global.s3;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
