@@ -43,7 +43,8 @@ export function useFetch<T>(url: string, params: UseFetchParam<T>): UseFetchResu
         })
         .finally(() => setLoading(false))
     },
-    [url, init, onSuccess, onError],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [url, JSON.stringify(init), onSuccess, onError],
   )
 
   useEffect(() => {
