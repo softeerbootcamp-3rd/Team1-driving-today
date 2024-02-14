@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import {Outlet, useLoaderData} from 'react-router-dom'
 
 import {Sidebar} from '@/components/sidebar'
@@ -6,13 +7,17 @@ export function Layout() {
   const {isStudent} = useLoaderData()
 
   return (
-    <>
+    <LayoutContainer>
       {isStudent ? <StudentSidebar /> : <InstructorSidebar />}
-
       <Outlet />
-    </>
+    </LayoutContainer>
   )
 }
+const LayoutContainer = styled.main(() => ({
+  display: 'flex',
+  height: '100%',
+  width: '100%',
+}))
 
 function StudentSidebar() {
   return (
