@@ -12,11 +12,13 @@ import java.util.List;
 public class InstructorDetailResponse {
     private InstructorInfo instructorInfo;
     private AcademyInfo academyInfo;
+    private Double averageRating;
 
-    public static InstructorDetailResponse from(Instructor instructor) {
+    public static InstructorDetailResponse of(Instructor instructor, Double averageRating) {
         return InstructorDetailResponse.builder()
                 .instructorInfo(InstructorInfo.from(instructor))
                 .academyInfo(AcademyInfo.from(instructor.getAcademy()))
+                .averageRating(averageRating)
                 .build();
     }
 

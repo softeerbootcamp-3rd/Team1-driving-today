@@ -43,14 +43,19 @@ INSERT INTO review (contents, rating, created_at, student_id, instructor_id)
 VALUES
     ('Great instructor!', 4.5, '2024-02-08 10:00:00', 1, 1),
     ('Excellent teaching skills!', 5.0, '2024-02-08 11:00:00', 2, 1),
-    ('Very patient and knowledgeable', 4.8, '2024-02-08 12:00:00', 3, 1),
+    ('Very patient and knowledgeable', 4.5, '2024-02-08 12:00:00', 3, 1),
     ('Could improve communication', 3.5, '2024-02-08 13:00:00', 4, 1),
-    ('Highly recommend!', 4.9, '2024-02-08 14:00:00', 5, 1),
+    ('Highly recommend!', 4.4, '2024-02-08 14:00:00', 5, 1),
     ('Amazing experience!', 5.0, '2024-02-08 15:00:00', 6, 1),
     ('Good instructor overall', 4.0, '2024-02-08 16:00:00', 7, 1),
-    ('Very informative lessons', 4.7, '2024-02-08 17:00:00', 8, 1),
-    ('Friendly and approachable', 4.6, '2024-02-08 18:00:00', 9, 1),
-    ('Could be more punctual', 3.8, '2024-02-08 19:00:00', 10, 1);
+    ('Very informative lessons', 4.5, '2024-02-08 17:00:00', 8, 1),
+    ('Friendly and approachable', 4.0, '2024-02-08 18:00:00', 9, 1),
+    ('Could be more punctual', 3.5, '2024-02-08 19:00:00', 10, 1),
+    ('Great instructor!', 3.5, '2024-02-08 10:00:00', 1, 8),
+    ('Excellent teaching skills!', 2.0, '2024-02-08 11:00:00', 2, 8),
+    ('Very patient and knowledgeable', 1.5, '2024-02-08 12:00:00', 3, 8),
+    ('Could improve communication', 1.5, '2024-02-08 13:00:00', 4, 8),
+    ('Highly recommend!', 2.0, '2024-02-08 14:00:00', 5, 8);
 
 INSERT INTO reservation (is_accepted, reservation_date, reservation_time, training_time, created_at, instructor_id, student_id)
 VALUES
