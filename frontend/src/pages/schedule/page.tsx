@@ -140,7 +140,7 @@ export function StudentSchedule() {
           width: '100%',
           height: '100%',
         }}
-        level={3} // 지도의 확대 레벨
+        level={3}
       />
     </>
   )
@@ -149,7 +149,7 @@ export function StudentSchedule() {
 const Box = styled.section(() => ({
   width: '30%',
   minWidth: '400px',
-  boxShadow: '5px 1px 6px 0px #ddd',
+  boxShadow: '5px 1px 5px 0px rgb(0 0 0 / 10%)',
   zIndex: 2,
 }))
 
