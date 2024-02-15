@@ -1,18 +1,22 @@
 import {useEffect, useRef} from 'react'
 
-type UseIntersectionObserverCallback = () => void
+type UseIntersectionObserverCallback = (entry: IntersectionObserverEntry) => void
 
 export function useIntersectionObserver(
   callback: UseIntersectionObserverCallback,
   options?: IntersectionObserverInit,
 ) {
-  const ref = useRef<HTMLElement>(null)
+  const ref = useRef(null)
   const callbackRef = useRef(callback)
 
   useEffect(() => {
     if (!ref.current) return
-    const observer = new IntersectionObserver(() => {
-      callbackRef.current()
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          callbackRef.current(entry)
+        }
+      })
     }, options)
 
     observer.observe(ref.current)
