@@ -5,6 +5,7 @@ import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.student.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class Review {
+    @Builder
+    private Review(String contents, Double rating, Student student, Instructor instructor) {
+        this.contents = contents;
+        this.rating = rating;
+        this.student = student;
+        this.instructor = instructor;
+        this.createdAt = LocalDateTime.now();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
@@ -26,7 +36,7 @@ public class Review {
     @NotNull
     private Double rating;
 
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @NotNull
     private LocalDateTime createdAt;
 
@@ -35,8 +45,10 @@ public class Review {
     @NotNull
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "instructor_id")
     @NotNull
     private Instructor instructor;
+
 }
+

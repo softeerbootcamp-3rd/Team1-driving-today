@@ -8,9 +8,9 @@ import lombok.*;
 
 @Entity
 @NoArgsConstructor
-@Getter
 @AllArgsConstructor
 @Builder
+@Getter
 public class Instructor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,8 +45,10 @@ public class Instructor {
     @NotNull
     private String introduction;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academy_id")
     @NotNull
     private Academy academy;
+
+
 }
