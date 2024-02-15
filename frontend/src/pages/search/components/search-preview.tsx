@@ -29,12 +29,11 @@ export function SearchPreview() {
 }
 
 const StyledLink = styled(Link)(({theme}) => ({
-  position: 'sticky',
-  top: 0,
   border: `1px solid ${theme.color.primary}`,
   borderRadius: '0.8rem',
   backgroundColor: theme.color.white,
   padding: '2rem 0',
+  marginBottom: '2rem',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

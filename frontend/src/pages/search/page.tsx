@@ -33,21 +33,21 @@ export function SearchPage() {
         <Box>
           <SearchPreview />
           <Divider />
-          <InstructorList>
-            {dummydata.map((instructor) => (
-              <Card.ReservationResult
-                key={instructor.instructorId}
-                instructorName={instructor.instructorName}
-                academyName={instructor.academyName}
-                image={instructor.instructorImage}
-                pricePerHour={instructor.pricePerHour}
-                distance={instructor.distance}
-                duration={2}
-                rating={2}
-              />
-            ))}
-          </InstructorList>
         </Box>
+        <InstructorList>
+          {dummydata.map((instructor) => (
+            <Card.ReservationResult
+              key={instructor.instructorId}
+              instructorName={instructor.instructorName}
+              academyName={instructor.academyName}
+              image={instructor.instructorImage}
+              pricePerHour={instructor.pricePerHour}
+              distance={instructor.distance}
+              duration={2}
+              rating={2}
+            />
+          ))}
+        </InstructorList>
       </SearchResultContainer>
 
       <Map
@@ -99,6 +99,7 @@ const SearchResultContainer = styled.section(() => ({
   minWidth: '60rem',
   height: '100%',
   boxShadow: '5px 1px 5px 0px rgb(0 0 0 / 10%)',
+  // NOTE: box-shodow 스타일을 적용하기 위해 지도의 z index 보다 높힘
   zIndex: 2,
   display: 'flex',
   flexDirection: 'column',
@@ -110,24 +111,17 @@ const H1 = styled.h1(({theme}) => ({
   fontWeight: 'bold',
   fontSize: '2rem',
   padding: '2rem',
-  position: 'sticky',
-  top: 0,
 }))
 
-const Box = styled.div(({theme}) => ({
-  backgroundColor: theme.color.white,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-  width: '100%',
-  flexGrow: 1,
-  overflowY: 'scroll',
-  padding: '0 2rem',
+const Box = styled.div(() => ({
+  padding: '0 2rem 2rem',
 }))
 
 const InstructorList = styled.ul(() => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '1rem',
-  paddingBottom: '5rem',
+  flex: '1 1 0',
+  overflowY: 'scroll',
+  padding: '0 2rem 5rem',
 }))
