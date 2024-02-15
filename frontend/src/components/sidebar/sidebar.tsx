@@ -16,6 +16,9 @@ const Nav = styled.nav(({theme}) => ({
   justifyContent: 'space-between',
   height: '100%',
   width: '8rem',
+  position: 'sticky',
+  zIndex: 1,
+  left: 0,
   backgroundColor: theme.color.gray200,
 }))
 
