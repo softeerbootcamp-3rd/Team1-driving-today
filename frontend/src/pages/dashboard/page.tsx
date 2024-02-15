@@ -10,7 +10,7 @@ import {ScheduleCard} from './components/schedule-card'
 export function StudentDashboard() {
   return (
     <RootLayout>
-      <Header>
+      <Header px="20rem">
         <Logo />
       </Header>
       <ContentLayout>
@@ -28,7 +28,7 @@ export function StudentDashboard() {
 export function InstructorDashboard() {
   return (
     <RootLayout>
-      <Header>
+      <Header px="20rem">
         <Logo />
       </Header>
       <ContentLayout>
