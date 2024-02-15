@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+    private static ThreadLocal<Authentication> auth = new ThreadLocal<>();
     private final JwtProvider jwtProvider;
     private final String[] allowUriList
             = new String[]{"*/join", "*/login", "/swagger-ui/*", "**/api-docs**"};
@@ -47,7 +49,9 @@ public class JwtFilter extends OncePerRequestFilter {
         //토큰 검증
         JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
         if (jwtErrorCode == JwtErrorCode.VALID_JWT_TOKEN) {
-            request.setAttribute("Authentication", makeAuthentication(accessToken));
+
+            auth.set(makeAuthentication(accessToken));
+            //request.setAttribute("Authentication", makeAuthentication(accessToken));
         } else {
             log.warn("{} : {}", jwtErrorCode.getErrorCode(), jwtErrorCode.getMessage());
             makeExceptionResponse(jwtErrorCode, response);
@@ -81,4 +85,7 @@ public class JwtFilter extends OncePerRequestFilter {
         response.getOutputStream().write(messageBytes);
     }
 
+    public static Authentication getAuthentication(){
+        return auth.get();
+    }
 }
