@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react'
 
-interface UseFetchResult<T> {
+export interface UseFetchResult<T> {
   data?: T
   error?: unknown
   loading: boolean
@@ -14,7 +14,7 @@ interface UseFetchCallbacks<T> {
 
 type UseFetchParam<T> = Omit<RequestInit, 'signal'> & UseFetchCallbacks<T>
 
-export function useFetch<T>(url: string, params: UseFetchParam<T>): UseFetchResult<T> {
+export function useFetch<T>(url: string, params: UseFetchParam<T> = {}): UseFetchResult<T> {
   const {onSuccess, onError, ...init} = params
   const [data, setData] = useState<T>()
   const [error, setError] = useState<unknown>()
