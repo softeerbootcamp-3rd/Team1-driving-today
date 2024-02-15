@@ -22,6 +22,7 @@ const StyledHeader = styled.header<StyledHeaderProps>(({px, theme}) => ({
   display: 'flex',
   alignItems: 'center',
   height: '8rem',
+  flex: '0 0 8rem',
   width: '100%',
   paddingLeft: px,
   paddingRight: px,
