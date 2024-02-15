@@ -21,5 +21,4 @@ public class ExceptionManager {
         return ResponseEntity.status(500)
                 .body("E0000: 알 수 없는 에러가 발생했습니다.");
     }
-
 }

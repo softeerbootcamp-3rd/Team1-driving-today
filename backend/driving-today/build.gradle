@@ -31,6 +31,11 @@ dependencies {
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version:'0.9.1'
 	implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// json
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.2'
+
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 }
