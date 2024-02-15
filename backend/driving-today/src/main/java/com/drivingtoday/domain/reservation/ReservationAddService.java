@@ -8,6 +8,7 @@ import com.drivingtoday.domain.reservation.exception.ReservationErrorCode;
 import com.drivingtoday.domain.reservation.exception.ReservationException;
 import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentRepository;
+import com.drivingtoday.global.auth.config.JwtFilter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class ReservationAddService {
     @Transactional
     public Long addReservation(ReservationRequest reservationRequest){
 
-        Student student = studentRepository.findById(1L)
+        Student student = studentRepository.findById(JwtFilter.getAuthentication().getId())
                 .orElseThrow(() -> ReservationException.from(ReservationErrorCode.STUDENT_NOT_EXISTS));
 
         Instructor instructor = instructorRepository.findById(reservationRequest.getInstructorId())
@@ -57,8 +58,6 @@ public class ReservationAddService {
                 .student(student)
                 .instructor(instructor)
                 .build();
-
-
 
         reservationRepository.save(reservation);
 
