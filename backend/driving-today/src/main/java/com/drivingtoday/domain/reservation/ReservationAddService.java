@@ -4,11 +4,15 @@ package com.drivingtoday.domain.reservation;
 import com.drivingtoday.domain.reservation.dto.ReservationRequest;
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorRepository;
+import com.drivingtoday.domain.reservation.exception.ReservationErrorCode;
+import com.drivingtoday.domain.reservation.exception.ReservationException;
 import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -26,10 +30,24 @@ public class ReservationAddService {
     public Long addReservation(ReservationRequest reservationRequest){
 
         Student student = studentRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("Student is not present"));
+                .orElseThrow(() -> ReservationException.from(ReservationErrorCode.STUDENT_NOT_EXISTS));
 
         Instructor instructor = instructorRepository.findById(reservationRequest.getInstructorId())
-                .orElseThrow(() -> new RuntimeException("Instructor is not present"));
+                .orElseThrow(() -> ReservationException.from(ReservationErrorCode.INSTRUCTOR_NOT_EXISTS));
+
+        List<Reservation> reservationList = reservationRepository.findAllByInstructorId(instructor.getId());
+
+        for(Reservation reservation : reservationList){
+
+            if(reservation.getReservationDate().isEqual(reservationRequest.getReservationDate())){
+                int startTime = reservation.getReservationTime();
+                int trainingTime = reservation.getTrainingTime();
+                int requestStartTime = reservationRequest.getReservationTime();
+                if(startTime <= requestStartTime && startTime+trainingTime > requestStartTime){
+                    throw ReservationException.from(ReservationErrorCode.RESERVATION_ALREADY_EXISTS);
+                }
+            }
+        }
 
         Reservation reservation = Reservation.builder()
                 .isAccepted(true)
