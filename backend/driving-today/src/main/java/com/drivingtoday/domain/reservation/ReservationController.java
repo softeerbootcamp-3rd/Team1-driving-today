@@ -4,6 +4,8 @@ package com.drivingtoday.domain.reservation;
 import com.drivingtoday.domain.reservation.dto.ReservationInstructorResponse;
 import com.drivingtoday.domain.reservation.dto.ReservationRequest;
 import com.drivingtoday.domain.reservation.dto.ReservationStudentResponse;
+import com.drivingtoday.global.auth.config.JwtFilter;
+import com.drivingtoday.global.auth.constants.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +34,12 @@ public class ReservationController {
     }
 
     @GetMapping("/my/reservations")
-    @Operation(summary = "나의 예약리스트 확인하기 API")
+    @Operation(summary = "학생이 본인 예약리스트 확인하기 API")
     public ResponseEntity<List<ReservationStudentResponse>> reservationList(@RequestParam("pageNumber") Integer pageNumber,
                                                                            @RequestParam("pageSize") Integer pageSize){
-        Long StudentId = 1L;
-        List<ReservationStudentResponse> allStudentReservation = reservationListService.findAllStudentReservation(StudentId, pageNumber, pageSize);
+        System.out.println("id : " + JwtFilter.getAuthentication().getId());
+        List<ReservationStudentResponse> allStudentReservation =
+                reservationListService.findAllStudentReservation(JwtFilter.getAuthentication().getId(), pageNumber, pageSize);
         return ResponseEntity.ok(allStudentReservation);
     }
 
@@ -45,8 +48,8 @@ public class ReservationController {
     @GetMapping("/reservations")
     public ResponseEntity<List<ReservationInstructorResponse>> instructorReservationList(@RequestParam("pageNumber") Integer pageNumber,
                                                                                          @RequestParam("pageSize") Integer pageSize){
-        Long InstructorId = 1L;
-        List<ReservationInstructorResponse> allInstructorReservation = reservationListService.findAllInstructorReservation(InstructorId, pageNumber, pageSize);
+        List<ReservationInstructorResponse> allInstructorReservation =
+                reservationListService.findAllInstructorReservation(JwtFilter.getAuthentication().getId(), pageNumber, pageSize);
         return ResponseEntity.ok(allInstructorReservation);
     }
 
