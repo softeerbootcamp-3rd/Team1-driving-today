@@ -50,7 +50,7 @@ function useStudentList() {
 }
 
 export function StudentCardlist({onReviewClick, selected}: StudentCardlistProps) {
-  const {data} = useStudentList()
+  const {data: studentList} = useStudentList()
   const [filter, setFilter] = useState('all')
   return (
     <Container>
@@ -61,9 +61,9 @@ export function StudentCardlist({onReviewClick, selected}: StudentCardlistProps)
           <Tab.Item label="예정" value="scheduled" />
           <Tab.Item label="완료" value="completed" />
         </Tab.ItemList>
-        {data && (
+        {studentList && (
           <List>
-            {data.map((v) => {
+            {studentList.map((v) => {
               const canReview = isCompleted(v.reservationDate, v.reservationTime, v.trainingTime)
               const reviewClick = canReview ? () => onReviewClick(v) : undefined
               if ((filter === 'scheduled' && canReview) || (filter === 'completed' && !canReview))

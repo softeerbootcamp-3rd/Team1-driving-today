@@ -34,11 +34,13 @@ interface InstructorResponse {
   }
 }
 
+const DEFAULT_RATING = 5
+
 export function ReviewModal({onClose, reservationId, instructorId}: ReviewModalProps) {
   const {data} = useFetch<InstructorResponse>(`${API_BASE_URL}/instructors/${instructorId}`)
 
   const [submitting, setSubmitting] = useState<boolean>(false)
-  const [rating, setRating] = useState<number>(5)
+  const [rating, setRating] = useState<number>(DEFAULT_RATING)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const submitReview = () => {
