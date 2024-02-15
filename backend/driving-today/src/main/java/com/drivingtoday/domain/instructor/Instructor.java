@@ -8,6 +8,8 @@ import lombok.*;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 public class Instructor {
     @Id
@@ -18,6 +20,14 @@ public class Instructor {
     @Column(name = "name")
     @NotNull
     private String name;
+
+    @Column(name = "email")
+    @NotNull
+    private String email;
+
+    @Column(name = "password")
+    @NotNull
+    private String password;
 
     @Column(name = "phone_number")
     @NotNull
@@ -40,14 +50,5 @@ public class Instructor {
     @NotNull
     private Academy academy;
 
-    @Builder
-    public Instructor(String name, String phoneNumber, String instructorImage, Integer pricePerHour, String introduction, Academy academy){
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.instructorImage = instructorImage;
-        this.pricePerHour = pricePerHour;
-        this.introduction = introduction;
-        this.academy = academy;
-    }
 
 }

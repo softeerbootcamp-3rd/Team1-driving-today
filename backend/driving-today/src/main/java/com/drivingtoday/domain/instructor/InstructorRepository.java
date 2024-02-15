@@ -7,7 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
+import java.util.Optional;
+
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
+
+    Optional<Instructor> findByEmail(String email);
 
     @Query(value = "SELECT i.instructor_id as instructorId, i.name as instructorName, i.instructor_image as instructorImage, i.price_per_hour as pricePerHour, " +
             "a.name as academyName, a.latitude as latitude, a.longitude as longitude, a.cert as cert, " +
@@ -30,4 +34,5 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
             double longitude,
             Pageable pageable
     );
+
 }
