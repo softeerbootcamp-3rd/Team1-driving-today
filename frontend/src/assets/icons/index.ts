@@ -1,6 +1,7 @@
 export {default as arrowBack} from './arrow_back.svg'
 export {default as building} from './building.svg'
 export {default as call} from './call.svg'
+export {default as close} from './close.svg'
 export {default as date} from './date.svg'
 export {default as duration} from './duration.svg'
 export {default as history} from './history.svg'
