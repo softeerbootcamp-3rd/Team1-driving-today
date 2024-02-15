@@ -16,6 +16,7 @@ import {LoginPage} from './pages/login/page'
 import {LandingPage} from './pages/page'
 import {StudentPurchase} from './pages/purchase/page'
 import {StudentSchedule} from './pages/schedule/page'
+import {SearchPage} from './pages/search/page'
 
 export function App() {
   return <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
@@ -48,6 +49,10 @@ const router = createBrowserRouter(
           element={<RequireAuth>{({isStudent}) => isStudent && <StudentSchedule />}</RequireAuth>}
         />
         <Route
+          path="/search"
+          element={<RequireAuth>{({isStudent}) => isStudent && <SearchPage />}</RequireAuth>}
+        />
+        <Route
           path="/purchase"
           element={<RequireAuth>{({isStudent}) => isStudent && <StudentPurchase />}</RequireAuth>}
         />
@@ -59,7 +64,7 @@ const router = createBrowserRouter(
 function checkAuthLoader({request}: LoaderFunctionArgs) {
   // TODO: neet to authorize
   const isAuth = true
-  const isStudent = false
+  const isStudent = true
 
   if (!isAuth) {
     return redirect('/login')
