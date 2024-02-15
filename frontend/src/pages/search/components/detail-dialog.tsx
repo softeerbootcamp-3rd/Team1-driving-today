@@ -119,7 +119,7 @@ function InstructorDetail({id}: {id: number}) {
               <Flex gap="1rem" alignItems="center">
                 <Avartar src={detailData.instructorInfo.instructorImage} width="30" height="30" />
                 <Typograpy color="gray900" size="1.4rem" weight="bold">
-                  {detailData.instructorInfo.name}
+                  {review.reviewerName}
                 </Typograpy>
               </Flex>
               <Flex justifyContent="space-between">
