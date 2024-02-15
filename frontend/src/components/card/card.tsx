@@ -124,7 +124,7 @@ function ReservationResultCard({
   ...props
 }: ReservationResultProps) {
   return (
-    <BaseContainer {...props}>
+    <BaseContainer style={{cursor: 'pointer'}} {...props}>
       <ProfilePic src={image} />
       <ContentContainer>
         <Name>{instructorName}</Name>
@@ -240,4 +240,9 @@ export const Card = {
   InstructorHistory: InstructorHistoryCard,
   StudentHistory: StudentHistoryCard,
   ReservationResult: ReservationResultCard,
+  MultipleDescriptionContainer,
+  IconLabel,
+  ProfilePic,
+  Name,
+  Label,
 }

@@ -44,8 +44,8 @@ const ItemContainer = styled.div<ItemContainerProps>(({theme, selected}) => ({
   borderColor: selected ? theme.color.primary : 'transparent',
   borderStyle: 'solid',
   textAlign: 'center',
-  height: '48px',
-  lineHeight: '46px',
+  height: '4.8rem',
+  lineHeight: '4.6rem',
   color: theme.color.gray700,
   flexGrow: 1,
   fontSize: '1.4rem',
@@ -66,10 +66,7 @@ function TabItem({label, value}: ItemProps) {
       selected={isSelected}
       onClick={() => {
         if (!isSelected) onChange?.(value)
-        setContext?.((prev) => {
-          if (prev !== value) onChange?.(value)
-          return value
-        })
+        setContext?.(value)
       }}
     >
       {label}

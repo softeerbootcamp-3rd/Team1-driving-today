@@ -1,6 +1,7 @@
 package com.drivingtoday.global.exception;
 
 import com.drivingtoday.domain.reservation.exception.ReservationException;
+import com.drivingtoday.domain.review.exception.ReviewException;
 import com.drivingtoday.global.user.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionManager {
     @ExceptionHandler(UserException.class)
     public ResponseEntity<?> userExceptionHandler(UserException e) {
+        log.warn("{}: {}", e.getErrorCode(), e.getMessage());
+        return ResponseEntity.status(e.getHttpStatus())
+                .body(e.getErrorCode() + ": " + e.getMessage());
+    }
+
+
+    @ExceptionHandler(ReviewException.class)
+    public ResponseEntity<?> reviewExceptionHandler(ReviewException e) {
         log.warn("{}: {}", e.getErrorCode(), e.getMessage());
         return ResponseEntity.status(e.getHttpStatus())
                 .body(e.getErrorCode() + ": " + e.getMessage());
