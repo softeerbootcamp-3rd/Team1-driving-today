@@ -124,7 +124,7 @@ function ReservationResultCard({
   ...props
 }: ReservationResultProps) {
   return (
-    <BaseContainer {...props}>
+    <BaseContainer style={{cursor: 'pointer'}} {...props}>
       <ProfilePic src={image} />
       <ContentContainer>
         <Name>{instructorName}</Name>
