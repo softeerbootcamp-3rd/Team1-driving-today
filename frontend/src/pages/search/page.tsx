@@ -46,8 +46,8 @@ export function SearchPage() {
               image={instructor.instructorImage}
               pricePerHour={instructor.pricePerHour}
               distance={instructor.distance}
-              duration={2}
-              rating={5}
+              duration={trainingTime}
+              rating={instructor.averageRating}
               onRequestReservation={() => {
                 navigate('/purchase', {
                   state: {
