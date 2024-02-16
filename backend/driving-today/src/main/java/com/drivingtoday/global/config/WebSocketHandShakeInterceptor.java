@@ -27,7 +27,8 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         String accessToken = request.getHeaders().getFirst("Sec-WebSocket-Protocol");
 
-        System.out.println("accessToken ::: " + accessToken);
+        log.info("accessToken: " + accessToken);
+
         String subProtocol = new String(accessToken);
         response.getHeaders().set("Sec-WebSocket-Protocol", subProtocol);
         try{
@@ -35,20 +36,10 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
             JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
             Authentication auth = makeAuthentication(accessToken);
 
-
             Authentication loginedAuthentication = JwtFilter.getAuthentication();
 
-            System.out.println("logined id : " + loginedAuthentication.getId());
-            /*
-            Authentication authentication = JwtFilter.getAuthentication();
-            log.info("Role : {}", authentication.getRole());
-            log.info("Id : {}", authentication.getId());
-             */
-
             if(Objects.equals(auth.getId(), loginedAuthentication.getId())){
-                //request.getHeaders().
-                //ChatRoom chatRoom = chatService.findRoomById();
-                System.out.println("ID IS " + loginedAuthentication.getId());
+                log.info("logged in ID : " + loginedAuthentication.getId());
             }
             return Objects.equals(auth.getId(), loginedAuthentication.getId()) && Objects.equals(loginedAuthentication.getRole(), Role.STUDENT.toString());
         }catch(Exception e){
@@ -66,6 +57,4 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
 
     }
-
-
 }
