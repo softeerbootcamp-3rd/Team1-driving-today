@@ -2,11 +2,13 @@ package com.drivingtoday.domain.chat;
 
 import com.drivingtoday.domain.chat.model.ChatRoom;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
@@ -23,8 +25,7 @@ public class ChatController {
     @PostMapping("/chat/room")  //방을 만들었으면 해당 방으로 가야지. /chat/createRoom
     public ResponseEntity<Void> createRoom(@RequestBody String roomName) { // roomName이 아니라 사람 id 하고 엮어야 할 듯
         ChatRoom room = chatService.createRoom(roomName);
-        System.out.println("roomname:  "+ roomName);
-        System.out.println("CREATED ROOM ID: " + room.getRoomId());
+        log.info("room created with ID : " + room.getRoomId());
         return ResponseEntity.ok().build();
     }
 
@@ -36,7 +37,7 @@ public class ChatController {
     @GetMapping("/chat/enter")   // /chat/chatRoom
     public ResponseEntity<ChatRoom> chatRoom(@RequestParam("roomId") String roomId){
         ChatRoom room = chatService.findRoomById(roomId);
-        System.out.println(roomId + "entered");
+        log.info(roomId + "entered");
         return ResponseEntity.ok().body(room);
     }
 }
