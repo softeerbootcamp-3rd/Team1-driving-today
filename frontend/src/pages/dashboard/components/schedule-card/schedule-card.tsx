@@ -20,15 +20,13 @@ export function ScheduleCard() {
   const loading = false
   const reload = () => {}
 
-  const onCancelClick = data
-    ? async () => {
-        // todo: delete api call
-        // const res = await fetch(`${API_BASE_URL}/reservations/${data.reservationId}`, {
-        //   method: 'DELETE',
-        // })
-        reload()
-      }
-    : undefined
+  const onCancelClick = async () => {
+    // todo: delete api call
+    // const res = await fetch(`${API_BASE_URL}/reservations/${data.reservationId}`, {
+    //   method: 'DELETE',
+    // })
+    reload()
+  }
 
   return (
     <Container>
