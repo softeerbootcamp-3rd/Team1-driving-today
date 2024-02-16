@@ -39,4 +39,6 @@ public class ExceptionManager {
         return ResponseEntity.status(e.getHttpStatus())
                 .body(e.getErrorCode() + ": " + e.getMessage());
     }
+
+
 }
