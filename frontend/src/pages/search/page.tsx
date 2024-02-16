@@ -48,6 +48,18 @@ export function SearchPage() {
               distance={instructor.distance}
               duration={2}
               rating={5}
+              onRequestReservation={() => {
+                navigate('/purchase', {
+                  state: {
+                    instructorId: instructor.instructorId,
+                    reservationDate,
+                    reservationTime,
+                    trainingTime,
+                    instructorName: instructor.instructorName,
+                    academyName: instructor.academyName,
+                  },
+                })
+              }}
               onClick={() => {
                 const latlng = new kakao.maps.LatLng(instructor.latitude, instructor.longitude)
                 mapRef.current?.panTo(latlng)
