@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 
 import {Card} from '@/components/card'
+import {useApiCall, UseApiResult} from '@/hooks/use-api-call'
 
 const Container = styled.div({
   display: 'flex',
@@ -17,43 +18,25 @@ const List = styled.div({
   gap: '1rem',
 })
 
+interface StudentReservation {
+  reservationId: number
+  studentImage: string
+  studentName: string
+  phoneNumber: string
+  reservationDate: string
+  reservationTime: number
+  trainingTime: number
+  studentId: number
+}
+
+function useStudentReservationList(): UseApiResult<StudentReservation[]> {
+  // todo: infinite scroll
+  return useApiCall<StudentReservation[]>('/reservations?pageNumber=1&pageSize=10')
+}
+
 export function Cardlist() {
   // TODO: use real API
-  // const {data, reload} = useInstructorList()
-  const data = [
-    {
-      reservationId: 0,
-      studentImage: 'string',
-      studentName: 'string',
-      phoneNumber: 'string',
-      reservationDate: '2024-02-15',
-      reservationTime: 12,
-      trainingTime: 2,
-      studentId: 1,
-    },
-    {
-      reservationId: 1,
-      studentImage: 'string',
-      studentName: 'string',
-      phoneNumber: 'string',
-      reservationDate: '2024-02-15',
-      reservationTime: 13,
-      trainingTime: 1,
-      studentId: 1,
-    },
-    {
-      reservationId: 2,
-      studentImage: 'string',
-      studentName: 'string',
-      phoneNumber: 'string',
-      reservationDate: '2024-02-15',
-      reservationTime: 13,
-      trainingTime: 1,
-      studentId: 1,
-    },
-  ]
-
-  const reload = () => {}
+  const {data: studentReservationList, reload} = useStudentReservationList()
 
   const rejectReservationRequest = async (id: number) => {
     // todo: API
@@ -62,10 +45,10 @@ export function Cardlist() {
   }
 
   return (
-    data && (
+    studentReservationList && (
       <Container>
         <List>
-          {data.map((v) => (
+          {studentReservationList.map((v) => (
             <Card.InstructorHistory
               key={v.reservationId}
               studentName={v.studentName}
@@ -85,8 +68,3 @@ export function Cardlist() {
 function timeToStr(reservationTime: number, trainingTime: number) {
   return `${reservationTime}시~${reservationTime + trainingTime}시 (${trainingTime}시간)`
 }
-
-// function useInstructorList() {
-//   // todo: infinite scroll
-//   return useFetch<InstructorReservation[]>(`${API_BASE_URL}/reservations?pageNumber=1&pageSize=10`)
-// }

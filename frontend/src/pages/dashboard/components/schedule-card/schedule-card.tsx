@@ -6,12 +6,12 @@ import {Icon} from '@/components/icon'
 
 export function ScheduleCard() {
   // todo: do actual API call
-  // const {data, loading, reload} = useFetch()
+  // const {data, loading, reload} = useApiCall()
   const data = {
     reservationId: 1,
-    instructorImage: 'string',
-    instructorName: 'string',
-    academyName: 'string',
+    instructorImage: 'https://picsum.photos/200',
+    instructorName: '오정진',
+    academyName: '학원',
     reservationDate: '2024-02-15',
     reservationTime: 12,
     trainingTime: 1,
@@ -22,7 +22,7 @@ export function ScheduleCard() {
 
   const onCancelClick = async () => {
     // todo: delete api call
-    // const res = await fetch(`${API_BASE_URL}/reservations/${data.reservationId}`, {
+    // const res = await apiCall(`/reservations/${data.reservationId}`, {
     //   method: 'DELETE',
     // })
     reload()
