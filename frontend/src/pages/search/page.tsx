@@ -60,6 +60,7 @@ export function SearchPage() {
                   },
                 })
               }}
+              selected={instructor.instructorId === selectedId}
               onClick={() => {
                 const latlng = new kakao.maps.LatLng(instructor.latitude, instructor.longitude)
                 mapRef.current?.panTo(latlng)
