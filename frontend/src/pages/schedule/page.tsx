@@ -81,6 +81,15 @@ export function StudentSchedule() {
         <H1>연수 예약하기</H1>
         <SearchContainer>
           <SearchField>
+            <SearchFieldTitle>원하는 일자를 선택해 주세요</SearchFieldTitle>
+            <DateInput
+              type="date"
+              value={formData.reservationDate}
+              onChange={(e) => setFormData((prev) => ({...prev, reservationDate: e.target.value}))}
+            />
+          </SearchField>
+
+          <SearchField as="fieldset">
             <SearchFieldTitle>원하는 시작 시간을 선택해주세요</SearchFieldTitle>
             <ul style={{display: 'flex', gap: 10, flexFlow: 'wrap'}}>
               {Array.from(Array(9), (_, i) => i + 9).map((time) => {
@@ -114,15 +123,6 @@ export function StudentSchedule() {
                 )
               })}
             </ul>
-          </SearchField>
-
-          <SearchField>
-            <SearchFieldTitle>원하는 일자를 선택해 주세요</SearchFieldTitle>
-            <DateInput
-              type="date"
-              value={formData.reservationDate}
-              onChange={(e) => setFormData((prev) => ({...prev, reservationDate: e.target.value}))}
-            />
           </SearchField>
 
           {/* TODO: form validate */}
