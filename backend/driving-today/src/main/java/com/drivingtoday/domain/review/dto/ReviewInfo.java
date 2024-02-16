@@ -14,6 +14,7 @@ public class ReviewInfo {
     private Double rating;
     private LocalDateTime createdAt;
     private String reviewerName;
+    private String reviewerImage;
 
     public static ReviewInfo from(Review review) {
         return ReviewInfo.builder()
@@ -22,6 +23,7 @@ public class ReviewInfo {
                 .rating(review.getRating())
                 .createdAt(review.getCreatedAt())
                 .reviewerName(review.getStudent().getName())
+                .reviewerImage(review.getStudent().getStudentImage())
                 .build();
     }
 }
