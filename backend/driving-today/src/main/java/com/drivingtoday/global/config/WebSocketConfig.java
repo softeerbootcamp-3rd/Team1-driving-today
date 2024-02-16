@@ -25,11 +25,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/ws/chat")
+        registry.addHandler(webSocketHandler, "/ws/chat")  // handler 등록, js에서 new Websocket할 때 경로 지정
                 .addInterceptors(webSocketHandShakeinterceptor())
-                .setAllowedOrigins("*");
-        // handler 등록,   js에서 new Websocket할 때 경로 지정
-        //다른 url에서도 접속할 수있게(CORS방지)
+                .setAllowedOrigins("*"); //다른 url에서도 접속할 수있게(CORS방지)
     }
 
     @Bean
