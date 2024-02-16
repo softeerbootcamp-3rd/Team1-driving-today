@@ -15,11 +15,12 @@ interface ScheduleForm {
 }
 
 // NOTE: 기본위치 - 서울시청 좌표
+const defaultPosition = {
+  latitude: 37.566,
+  longitude: 126.977,
+}
 const initialFormData: ScheduleForm = {
-  position: {
-    latitude: 37.566,
-    longitude: 126.977,
-  },
+  position: defaultPosition,
   trainingTime: null,
   reservationTime: null,
   reservationDate: '',
@@ -45,6 +46,12 @@ function getInitialFormDataFrom() {
   return initialFormData
 }
 
+function getCurrentPosition(options?: PositionOptions): Promise<GeolocationPosition> {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options)
+  })
+}
+
 export function StudentSchedule() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom)
@@ -54,16 +61,16 @@ export function StudentSchedule() {
     //   사용자가 승인하면 현재 위치 사용
     //   사용자가 거절하면 null 주기
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData((prev) => ({...prev, position: position.coords}))
-        },
-        (error) => {
-          // TODO: 에러 처리
-          // 기본 위치 설정
-          console.error(error)
-        },
-      )
+      getCurrentPosition()
+        .then((position) => {
+          const {
+            coords: {latitude, longitude},
+          } = position
+          setFormData((prev) => ({...prev, position: {latitude, longitude}}))
+        })
+        .catch(() => {
+          setFormData((prev) => ({...prev, position: defaultPosition}))
+        })
     } else {
       alert('현재 위치 정보를 제공하지 않는 브라우저 입니다.')
     }
