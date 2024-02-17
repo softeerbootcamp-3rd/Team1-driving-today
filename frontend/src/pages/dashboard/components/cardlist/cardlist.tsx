@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
 import {Card} from '@/components/card'
-import {useApiCall, UseApiResult} from '@/hooks/use-api-call'
+import {useApiCall} from '@/hooks/use-api-call'
 
 const Container = styled.div({
   display: 'flex',
@@ -29,7 +29,7 @@ interface StudentReservation {
   studentId: number
 }
 
-function useStudentReservationList(): UseApiResult<StudentReservation[]> {
+function useStudentReservationList() {
   // todo: infinite scroll
   return useApiCall<StudentReservation[]>('/reservations?pageNumber=1&pageSize=10')
 }

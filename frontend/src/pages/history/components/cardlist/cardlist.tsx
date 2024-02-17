@@ -3,7 +3,7 @@ import {useState} from 'react'
 
 import {Card} from '@/components/card'
 import {Tab} from '@/components/tab'
-import {useApiCall, UseApiResult} from '@/hooks/use-api-call'
+import {useApiCall} from '@/hooks/use-api-call'
 import {API_BASE_URL} from '@/utils/constants'
 
 export interface StudentReservation {
@@ -44,7 +44,7 @@ interface StudentCardlistProps {
   selected?: StudentReservation
 }
 
-function useStudentList(): UseApiResult<StudentReservation[]> {
+function useStudentList() {
   // todo: infinite scroll
   return useApiCall<StudentReservation[]>('/my/reservations?pageNumber=1&pageSize=10')
 }

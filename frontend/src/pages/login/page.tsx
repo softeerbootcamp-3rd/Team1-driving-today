@@ -1,11 +1,11 @@
 import styled from '@emotion/styled'
 import {useEffect, useState} from 'react'
-import {Form, useRouteError} from 'react-router-dom'
+import {ActionFunctionArgs, Form, redirect, useRouteError} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
 
-import {UserRole} from '../../utils/session'
+import {sessionProvider, UserRole} from '../../utils/session'
 
 export function LoginPage() {
   const [userRole, setUserRole] = useState<UserRole>('STUDENT')
@@ -60,3 +60,21 @@ const Input = styled.input(({theme}) => ({
   border: `1px solid ${theme.color.gray300}`,
   borderRadius: '1rem',
 }))
+
+// eslint-disable-next-line react-refresh/only-export-components
+export async function loginAction({request}: ActionFunctionArgs) {
+  const formData = Object.fromEntries(await request.formData())
+  const userRole = formData['userRole'] as UserRole
+
+  const email = formData['email'] as string
+  const password = formData['password'] as string
+
+  if (!userRole) throw new Error('role not defined')
+  if (!email) throw new Error('no email')
+  if (!password) throw new Error('no password')
+
+  const newSession = await sessionProvider.login(userRole, email, password)
+  sessionProvider.session = newSession
+
+  return redirect('/dashboard')
+}

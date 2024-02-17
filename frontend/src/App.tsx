@@ -11,13 +11,12 @@ import {
 import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
-import {LoginPage} from './pages/login/page'
-import {loginAction} from './pages/login/utils/login'
+import {loginAction, LoginPage} from './pages/login/page'
 import {LandingPage} from './pages/page'
 import {StudentPurchase} from './pages/purchase/page'
 import {StudentSchedule} from './pages/schedule/page'
 import {SearchPage} from './pages/search/page'
-import {sessionProvider} from './utils/session'
+import {sessionProvider, UserRole} from './utils/session'
 
 export function App() {
   return <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
