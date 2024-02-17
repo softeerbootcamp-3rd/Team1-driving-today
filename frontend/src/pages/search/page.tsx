@@ -75,6 +75,7 @@ export function SearchPage() {
                     trainingTime,
                     instructorName: instructor.instructorName,
                     academyName: instructor.academyName,
+                    pricePerHour: instructor.pricePerHour,
                   },
                 })
               }}

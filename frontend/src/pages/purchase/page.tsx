@@ -22,6 +22,7 @@ interface State {
   trainingTime: number
   instructorName: string
   academyName: string
+  pricePerHour: number
 }
 
 export function StudentPurchase() {
@@ -36,7 +37,8 @@ export function StudentPurchase() {
       isValidReservationDate(state.reservationDate) &&
       !isNaN(state.instructorId) &&
       isString(state.instructorName) &&
-      isString(state.academyName)
+      isString(state.academyName) &&
+      !isNaN(state.pricePerHour)
     ) {
       return
     }
@@ -133,6 +135,12 @@ function PaymentMethod() {
 
 function PurcheseResult() {
   const [checked, setChecked] = useState(false)
+  const {state} = useLocation() as Location<State | null>
+
+  if (state === null) {
+    return null
+  }
+  const totalPrice = state.pricePerHour * state.trainingTime
 
   return (
     <PurcheseResultContainer>
@@ -141,7 +149,7 @@ function PurcheseResult() {
           최종 연수 금액
         </Typograpy>
         <Typograpy color="primary" size="1.6rem" weight="bold">
-          {Number(320000).toLocaleString()} 원
+          {totalPrice.toLocaleString()} 원
         </Typograpy>
       </Flex>
       <Flex alignItems="center">
@@ -150,7 +158,7 @@ function PurcheseResult() {
           결제 내역을 확인하였으며 전자상거래법에 의거하여 환불이 진행되는 것에 동의합니다.
         </Typograpy>
       </Flex>
-      <Button disabled={!checked}>{Number(320000).toLocaleString()} 원 결제하기</Button>
+      <Button disabled={!checked}>{totalPrice.toLocaleString()} 원 결제하기</Button>
     </PurcheseResultContainer>
   )
 }

@@ -113,6 +113,7 @@ function InstructorDetail({id}: {id: number}) {
                   trainingTime,
                   instructorName: detailData.instructorInfo.name,
                   academyName: detailData.academyInfo.name,
+                  pricePerHour: detailData.instructorInfo.pricePerHour,
                 },
               })
             }}
