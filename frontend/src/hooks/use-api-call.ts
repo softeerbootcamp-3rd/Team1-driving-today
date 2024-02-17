@@ -1,20 +1,22 @@
 import {useCallback, useEffect, useState} from 'react'
 
-export interface UseFetchResult<T> {
+import {apiCall} from '@/utils/api'
+
+export interface UseApiResult<T> {
   data?: T
   error?: unknown
   loading: boolean
   reload: () => void
 }
 
-interface UseFetchCallbacks<T> {
+interface UseApiCallbacks<T> {
   onSuccess?: (data: T) => void
   onError?: (errorCode: number) => void
 }
 
-type UseFetchParam<T> = Omit<RequestInit, 'signal'> & UseFetchCallbacks<T>
+export type UseApiParam<T> = Omit<RequestInit, 'signal'> & UseApiCallbacks<T>
 
-export function useFetch<T>(url: string, params: UseFetchParam<T> = {}): UseFetchResult<T> {
+export function useApiCall<T>(path: string, params: UseApiParam<T> = {}): UseApiResult<T> {
   const {onSuccess, onError, ...init} = params
   const [data, setData] = useState<T>()
   const [error, setError] = useState<unknown>()
@@ -24,7 +26,10 @@ export function useFetch<T>(url: string, params: UseFetchParam<T> = {}): UseFetc
     (signal?: AbortSignal) => {
       setLoading(true)
       setError(undefined)
-      fetch(url, {...init, signal})
+      apiCall(path, {
+        ...init,
+        signal,
+      })
         .then(async (res) => {
           if (res.status < 200 || res.status >= 300) throw new Error(res.status.toString())
           try {
@@ -44,7 +49,7 @@ export function useFetch<T>(url: string, params: UseFetchParam<T> = {}): UseFetc
         .finally(() => setLoading(false))
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [url, JSON.stringify(init), onSuccess, onError],
+    [path, JSON.stringify(init), onSuccess, onError],
   )
 
   useEffect(() => {
