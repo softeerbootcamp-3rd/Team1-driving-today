@@ -1,6 +1,7 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {CSSProperties} from 'react'
+import {useNavigate, useSearchParams} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Divider} from '@/components/divider'
@@ -70,6 +71,12 @@ const DialogContent = styled.div(() => ({
 
 function InstructorDetail({id}: {id: number}) {
   // TODO: 상세 정보, 리뷰 리스트 받아오기(무한스크롤)
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const trainingTime = Number(searchParams.get('trainingTime'))
+  const reservationTime = Number(searchParams.get('reservationTime'))
+  const reservationDate = searchParams.get('reservationDate')
+
   return (
     <>
       <Flex as="section" gap="1rem" flexDirection="column">
@@ -96,7 +103,22 @@ function InstructorDetail({id}: {id: number}) {
         </Flex>
         <Actions>
           <Button>문의</Button>
-          <Button>예약</Button>
+          <Button
+            onClick={() => {
+              navigate('/purchase', {
+                state: {
+                  instructorId: detailData.instructorInfo.id,
+                  reservationDate,
+                  reservationTime,
+                  trainingTime,
+                  instructorName: detailData.instructorInfo.name,
+                  academyName: detailData.academyInfo.name,
+                },
+              })
+            }}
+          >
+            예약
+          </Button>
         </Actions>
       </Flex>
       <Divider />
