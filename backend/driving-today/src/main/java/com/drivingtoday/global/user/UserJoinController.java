@@ -23,7 +23,7 @@ public class UserJoinController {
 
     @Operation(summary = "학생 회원가입 api")
     @PostMapping(value = "/student/join", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> studentJoin(@RequestPart @Valid StudentJoinRequest joinRequest, @RequestPart(required = false) MultipartFile profileImg) {
+    public ResponseEntity<Void> studentJoin(@RequestPart("joinRequest") @Valid StudentJoinRequest joinRequest, @RequestPart( value="profileImg", required = false) MultipartFile profileImg) {
         Long newStudentId = userJoinService.addStudent(joinRequest, profileImg);
         log.info("Student ID : {} 님이 가입했습니다.", newStudentId);
         return ResponseEntity.created(URI.create("/students/" + newStudentId)).build();
@@ -31,7 +31,7 @@ public class UserJoinController {
 
     @Operation(summary = "강사 회원가입 api")
     @PostMapping(value = "/instructor/join", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> instructorJoin(@RequestPart @Valid InstructorJoinRequest joinRequest, @RequestPart(required = false) MultipartFile profileImg) {
+    public ResponseEntity<Void> instructorJoin(@RequestPart("joinRequest") @Valid InstructorJoinRequest joinRequest, @RequestPart( value="profileImg", required = false ) MultipartFile profileImg) {
         Long newInstructorId = userJoinService.addInstructor(joinRequest, profileImg);
         log.info("Instructor ID : {} 님이 가입했습니다.", newInstructorId);
         return ResponseEntity.created(URI.create("/instructors/" + newInstructorId)).build();
