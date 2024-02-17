@@ -8,18 +8,8 @@ import {Chip} from '@/components/chip'
 import {Header} from '@/components/header'
 
 import {type Coord, useCurrentPosition} from './hooks'
-
-interface ScheduleForm {
-  trainingTime: number | null
-  reservationTime: number | null
-  reservationDate: string
-}
-type ScheduleFormError = {
-  [key in keyof ScheduleForm]?: {
-    type: string
-    message: string
-  }
-}
+import type {ScheduleForm, ScheduleFormError} from './types'
+import {validateFormData} from './utils'
 
 // NOTE: 기본위치 - 서울시청 좌표
 const defaultPosition = {
@@ -52,26 +42,6 @@ function getInitialFormDataFrom() {
   return initialFormData
 }
 
-function validate(formData: ScheduleForm): ScheduleFormError | null {
-  const validReservationDate = formData.reservationDate !== ''
-  const validReservationTime = formData.reservationTime !== null
-  const validTrainingTime = formData.trainingTime !== null
-
-  if (validReservationDate && validReservationTime && validTrainingTime) return null
-
-  const errors = {} as ScheduleFormError
-  if (!validReservationDate) {
-    errors.reservationDate = {type: 'required', message: '예약 날짜를 입력해주세요.'}
-  }
-  if (!validReservationTime) {
-    errors.reservationTime = {type: 'required', message: '원하는 시작 시간을 선택해주세요.'}
-  }
-  if (!validTrainingTime) {
-    errors.trainingTime = {type: 'required', message: '연수 타입을 선택해주세요.'}
-  }
-  return errors
-}
-
 export function StudentSchedule() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom)
@@ -79,7 +49,7 @@ export function StudentSchedule() {
   const coord = useCurrentPosition({defaultPosition})
 
   const handleSubmit = () => {
-    const errors = validate(formData)
+    const errors = validateFormData(formData)
     if (errors) {
       setFormErrors(errors)
       return
