@@ -56,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String headerName = headerNames.nextElement();
-                log.info(headerName + ": " + request.getHeader(headerName));
+                System.out.println(headerName + ": " + request.getHeader(headerName));
                 if(headerName.contains("sec-websocket-protocol")){
                     if(authorization == null){
                         authorization = "Bearer " + request.getHeader(headerName);

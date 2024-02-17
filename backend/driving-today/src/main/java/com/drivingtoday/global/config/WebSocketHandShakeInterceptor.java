@@ -29,7 +29,18 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
 
         log.info("accessToken: " + accessToken);
 
-        String subProtocol = new String(accessToken);
+        //////////////////2/17 일 작업
+        if(accessToken == null){
+            if(request.getURI().getQuery() != null){
+                accessToken = request.getURI().getQuery().split("=")[1];
+            }
+        }
+        //////////////////
+
+        assert accessToken != null;
+        String subProtocol = accessToken;
+
+
         response.getHeaders().set("Sec-WebSocket-Protocol", subProtocol);
         try{
 
@@ -43,6 +54,7 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
             }
             return Objects.equals(auth.getId(), loginedAuthentication.getId()) && Objects.equals(loginedAuthentication.getRole(), Role.STUDENT.toString());
         }catch(Exception e){
+            log.info("authorize 안됨");
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }
