@@ -20,7 +20,6 @@ public class ReservationInstructorResponse {
     private Integer reservationTime;
     private Integer trainingTime;
     private Long studentId;
-    private Boolean isUpcoming;
 
     public static ReservationInstructorResponse from(Reservation reservation) {
         return ReservationInstructorResponse.builder()
@@ -32,14 +31,6 @@ public class ReservationInstructorResponse {
                 .reservationTime(reservation.getReservationTime())
                 .trainingTime(reservation.getTrainingTime())
                 .studentId(reservation.getStudent().getId())
-                .isUpcoming(isReservationUpcoming(reservation))
                 .build();
-    }
-
-    private static Boolean isReservationUpcoming(Reservation reservation) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime reservationDateTime = LocalDateTime.of(reservation.getReservationDate(),
-                        LocalTime.of(reservation.getReservationTime(), 0));
-        return reservationDateTime.isAfter(now);
     }
 }
