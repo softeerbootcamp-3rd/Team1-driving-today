@@ -1,36 +1,45 @@
-import {useEffect, useState} from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 
-interface UseInfiniteFetchArg<TData, TError, TPageParams> {
-  queryFn: ({pageParam}: {pageParam: TPageParams}) => Promise<TData>
-  initialParams: TPageParams
-  getNextPageParams: ({pageParam}: {pageParam: TPageParams}) => TPageParams | undefined | null
+export interface UseInfiniteFetchArg<TData, TPageParam> {
+  queryFn: ({pageParam}: {pageParam: TPageParam}) => Promise<TData>
+  initialPageParam: TPageParam
+  getNextPageParam: ({pageParam}: {pageParam: TPageParam}) => TPageParam
 }
 
-interface UseInfniteFetchReturn<TData> {
+export interface UseInfniteFetchReturn<TData> {
   fetchNextPage: () => Promise<unknown>
-  data?: TData
+  data?: TData[]
   error?: unknown
   loading: boolean
 }
 
-export function useInfiniteFetch<TData, TError, TPageParams>({
+export function useInfiniteFetch<TData, TPageParam>({
   queryFn,
-  initialParams,
-  getNextpageParams,
-}: UseInfiniteFetchArg<TData, TError, TPageParams>): UseInfniteFetchReturn<TData> {
-  const [data, setData] = useState<TData>()
+  initialPageParam,
+  getNextPageParam,
+}: UseInfiniteFetchArg<TData, TPageParam>): UseInfniteFetchReturn<TData> {
+  const [data, setData] = useState<TData[]>()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState()
-  const nextParams = initialParams
+  const [error, setError] = useState<unknown>()
+  const nextPageParamRef = useRef(initialPageParam)
+  const getNextPageParamRef = useRef(getNextPageParam)
 
-  const fetchNextPage = async () => {
+  const fetchNextPage = useCallback(async () => {
+    setLoading(true)
     try {
-      const data = await queryFn({pageParam: nextParams})
-    } catch (error) {}
-  }
+      const res = await queryFn({pageParam: nextPageParamRef.current})
+      setData((prev) => (prev ? prev : []).concat(res))
+      setError(null)
+    } catch (error) {
+      setError(error)
+    } finally {
+      nextPageParamRef.current = getNextPageParamRef.current({pageParam: nextPageParamRef.current})
+      setLoading(false)
+    }
+  }, [queryFn])
 
   useEffect(() => {
-    const abortController = new AbortController()
+    fetchNextPage()
   }, [])
 
   return {fetchNextPage, data, loading, error}
