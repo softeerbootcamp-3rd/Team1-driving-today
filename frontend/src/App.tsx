@@ -2,7 +2,6 @@ import {ReactNode} from 'react'
 import {
   createBrowserRouter,
   createRoutesFromElements,
-  LoaderFunctionArgs,
   redirect,
   Route,
   RouterProvider,
@@ -12,11 +11,12 @@ import {
 import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
-import {LoginPage} from './pages/login/page'
+import {loginAction, LoginPage} from './pages/login/page'
 import {LandingPage} from './pages/page'
 import {StudentPurchase} from './pages/purchase/page'
 import {StudentSchedule} from './pages/schedule/page'
 import {SearchPage} from './pages/search/page'
+import {sessionProvider, UserRole} from './utils/session'
 
 export function App() {
   return <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
@@ -26,59 +26,58 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route index path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/login"
+        action={loginAction}
+        element={<LoginPage />}
+        errorElement={<LoginPage />}
+      />
       <Route id="root" loader={checkAuthLoader} element={<Layout />}>
         <Route
           path="/dashboard"
           element={
-            <RequireAuth>
-              {({isStudent}) => (isStudent ? <StudentDashboard /> : <InstructorDashboard />)}
-            </RequireAuth>
+            <RequireRole>
+              {(isStudent) => (isStudent ? <StudentDashboard /> : <InstructorDashboard />)}
+            </RequireRole>
           }
         />
         <Route
           path="/history"
           element={
-            <RequireAuth>
-              {({isStudent}) => (isStudent ? <StudentHistory /> : <InstructorHistory />)}
-            </RequireAuth>
+            <RequireRole>
+              {(isStudent) => (isStudent ? <StudentHistory /> : <InstructorHistory />)}
+            </RequireRole>
           }
         />
         <Route
           path="/schedule"
-          element={<RequireAuth>{({isStudent}) => isStudent && <StudentSchedule />}</RequireAuth>}
+          element={<RequireRole>{(isStudent) => isStudent && <StudentSchedule />}</RequireRole>}
         />
         <Route
           path="/search"
-          element={<RequireAuth>{({isStudent}) => isStudent && <SearchPage />}</RequireAuth>}
+          element={<RequireRole>{(isStudent) => isStudent && <SearchPage />}</RequireRole>}
         />
         <Route
           path="/purchase"
-          element={<RequireAuth>{({isStudent}) => isStudent && <StudentPurchase />}</RequireAuth>}
+          element={<RequireRole>{(isStudent) => isStudent && <StudentPurchase />}</RequireRole>}
         />
       </Route>
     </>,
   ),
 )
 
-function checkAuthLoader({request}: LoaderFunctionArgs) {
-  // TODO: neet to authorize
-  const isAuth = true
-  const isStudent = true
-
-  if (!isAuth) {
+async function checkAuthLoader() {
+  if (!sessionProvider.session) {
     return redirect('/login')
   }
-  // TODO: need to set return type; type CheckAuthLoaderReturn
-  return {isStudent}
+  return sessionProvider.session.role
 }
 
-interface RequireAuthProps {
+interface RequireRoleProps {
   children: ReactNode | ((arg: any) => ReactNode)
 }
 
-function RequireAuth({children}: RequireAuthProps) {
-  const user = useRouteLoaderData('root')
-
-  return <>{typeof children === 'function' ? children(user) : children}</>
+function RequireRole({children}: RequireRoleProps) {
+  const role = useRouteLoaderData('root') as UserRole
+  return <>{typeof children === 'function' ? children(role === 'STUDENT') : children}</>
 }

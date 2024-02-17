@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
+import {useApiCall} from '@/hooks/use-api-call'
 
 interface MyInfoResponse {
   name: string
@@ -9,13 +10,7 @@ interface MyInfoResponse {
   nickname: string
 }
 export function MyProfileCard() {
-  // todo: use actual API
-  // const {data} = useFetch()
-  const data: MyInfoResponse = {
-    name: '오정진',
-    image: '',
-    nickname: 'ojj1123',
-  }
+  const {data} = useApiCall<MyInfoResponse>('/my')
 
   return (
     <Container>
