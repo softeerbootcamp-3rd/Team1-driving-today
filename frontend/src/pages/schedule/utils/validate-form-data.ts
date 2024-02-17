@@ -1,9 +1,11 @@
+import {isValidReservationDate, isValidReservationTime, isValidTrainingTime} from '@/utils/validate'
+
 import type {ScheduleForm, ScheduleFormError} from '../types'
 
 export function validateFormData(formData: ScheduleForm): ScheduleFormError | null {
-  const validReservationDate = formData.reservationDate !== ''
-  const validReservationTime = formData.reservationTime !== null
-  const validTrainingTime = formData.trainingTime !== null
+  const validReservationDate = isValidReservationDate(formData.reservationDate)
+  const validReservationTime = isValidReservationTime(formData.reservationTime)
+  const validTrainingTime = isValidTrainingTime(formData.trainingTime)
 
   if (validReservationDate && validReservationTime && validTrainingTime) return null
 

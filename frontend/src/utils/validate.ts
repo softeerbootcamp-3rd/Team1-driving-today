@@ -1,15 +1,20 @@
 /**
  * trainingTime이 1 또는 2인지 확인합니다.
  */
-export function isValidTrainingTime(trainingTime: number) {
-  return trainingTime === 1 || trainingTime === 2
+export function isValidTrainingTime(trainingTime: number | null) {
+  return typeof trainingTime === 'number' && (trainingTime === 1 || trainingTime === 2)
 }
 
 /**
  * reservationTime이 9에서 17 사이의 정수인지 확인합니다.
  */
-export function isValidReservationTime(reservationTime: number) {
-  return Number.isInteger(reservationTime) && reservationTime >= 9 && reservationTime <= 17
+export function isValidReservationTime(reservationTime: number | null) {
+  return (
+    typeof reservationTime === 'number' &&
+    Number.isInteger(reservationTime) &&
+    reservationTime >= 9 &&
+    reservationTime <= 17
+  )
 }
 
 /**
