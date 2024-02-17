@@ -3,7 +3,7 @@ import {useState} from 'react'
 
 import {Card} from '@/components/card'
 import {Tab} from '@/components/tab'
-import {useFetch} from '@/hooks/use-fetch'
+import {useApiCall} from '@/hooks/use-api-call'
 import {API_BASE_URL} from '@/utils/constants'
 
 export interface StudentReservation {
@@ -46,7 +46,7 @@ interface StudentCardlistProps {
 
 function useStudentList() {
   // todo: infinite scroll
-  return useFetch<StudentReservation[]>(`${API_BASE_URL}/my/reservations?pageNumber=1&pageSize=10`)
+  return useApiCall<StudentReservation[]>('/my/reservations?pageNumber=1&pageSize=10')
 }
 
 export function StudentCardlist({onReviewClick, selected}: StudentCardlistProps) {
@@ -103,7 +103,9 @@ export type InstructorHistoryResponse = InstructorReservation[]
 
 function useInstructorList() {
   // todo: infinite scroll
-  return useFetch<InstructorReservation[]>(`${API_BASE_URL}/reservations?pageNumber=1&pageSize=10`)
+  return useApiCall<InstructorReservation[]>(
+    `${API_BASE_URL}/reservations?pageNumber=1&pageSize=10`,
+  )
 }
 
 interface InstructorCardlistProps {
