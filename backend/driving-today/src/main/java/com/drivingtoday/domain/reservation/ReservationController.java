@@ -47,9 +47,10 @@ public class ReservationController {
     @Operation(summary = "강사가 본인 예약리스트 확인하기 API")
     @GetMapping("/reservations")
     public ResponseEntity<List<ReservationInstructorResponse>> instructorReservationList(@RequestParam("pageNumber") Integer pageNumber,
-                                                                                         @RequestParam("pageSize") Integer pageSize){
+                                                                                         @RequestParam("pageSize") Integer pageSize,
+                                                                                         @RequestParam("isUpcoming") Boolean isUpcoming){
         List<ReservationInstructorResponse> allInstructorReservation =
-                reservationListService.findAllInstructorReservation(JwtFilter.getAuthentication().getId(), pageNumber, pageSize);
+                reservationListService.findAllInstructorReservation(JwtFilter.getAuthentication().getId(), pageNumber, pageSize, isUpcoming);
         return ResponseEntity.ok(allInstructorReservation);
     }
 
