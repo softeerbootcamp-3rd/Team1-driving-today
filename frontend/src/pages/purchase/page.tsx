@@ -1,6 +1,6 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
-import {CSSProperties, useState} from 'react'
+import {CSSProperties, useEffect, useState} from 'react'
 import {Location, useLocation, useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
@@ -8,6 +8,12 @@ import {Checkbox} from '@/components/checkbox'
 import {Chip} from '@/components/chip'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
+import {
+  isString,
+  isValidReservationDate,
+  isValidReservationTime,
+  isValidTrainingTime,
+} from '@/utils/validate'
 
 interface State {
   instructorId: number
@@ -19,7 +25,23 @@ interface State {
 }
 
 export function StudentPurchase() {
+  const {state} = useLocation() as Location<State | null>
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (
+      state !== null &&
+      isValidTrainingTime(state.trainingTime) &&
+      isValidReservationTime(state.reservationTime) &&
+      isValidReservationDate(state.reservationDate) &&
+      !isNaN(state.instructorId) &&
+      isString(state.instructorName) &&
+      isString(state.academyName)
+    ) {
+      return
+    }
+    navigate('/schedule')
+  }, [navigate, state])
 
   return (
     <Box>
@@ -41,7 +63,11 @@ export function StudentPurchase() {
 }
 
 function ReservationInfo() {
-  const {state} = useLocation() as Location<State>
+  const {state} = useLocation() as Location<State | null>
+
+  if (state === null) {
+    return null
+  }
 
   return (
     <ReservationInfoContainer>
@@ -180,7 +206,7 @@ const PaymentMethodContainer = styled.section(({theme}) => ({
   border: `1px solid ${theme.color.gray200}`,
 }))
 
-const PurcheseResultContainer = styled.section(({theme}) => ({
+const PurcheseResultContainer = styled.section(() => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '2rem',

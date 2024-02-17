@@ -1,11 +1,18 @@
 import styled from '@emotion/styled'
-import {useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {Map, MapMarker, MarkerClusterer} from 'react-kakao-maps-sdk'
 import {useNavigate, useSearchParams} from 'react-router-dom'
 
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
+import {
+  isValidLatitude,
+  isValidLongitude,
+  isValidReservationDate,
+  isValidReservationTime,
+  isValidTrainingTime,
+} from '@/utils/validate'
 
 import {DetailDialog, SearchPreview} from './components'
 import {dummydata} from './data'
@@ -16,12 +23,23 @@ export function SearchPage() {
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
-  // TODO: searchParms 가 모두 있는지 확인, 없다면 이전 페이지로 redirect
   const trainingTime = Number(searchParams.get('trainingTime'))
   const reservationTime = Number(searchParams.get('reservationTime'))
   const latitude = Number(searchParams.get('latitude'))
   const longitude = Number(searchParams.get('longitude'))
   const reservationDate = searchParams.get('reservationDate')
+  useEffect(() => {
+    if (
+      isValidTrainingTime(trainingTime) &&
+      isValidReservationTime(reservationTime) &&
+      isValidReservationDate(reservationDate) &&
+      isValidLongitude(longitude) &&
+      isValidLatitude(latitude)
+    ) {
+      return
+    }
+    navigate('/schedule')
+  }, [latitude, longitude, navigate, reservationDate, reservationTime, trainingTime])
 
   return (
     <>
