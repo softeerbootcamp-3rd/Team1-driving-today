@@ -33,7 +33,7 @@ const StyledLink = styled(Link)(({theme}) => ({
   borderRadius: '0.8rem',
   backgroundColor: theme.color.white,
   padding: '2rem 0',
-  marginBottom: '2rem',
+  margin: '2rem 0',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

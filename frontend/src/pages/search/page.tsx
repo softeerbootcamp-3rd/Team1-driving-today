@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import {useRef, useState} from 'react'
 import {Map, MapMarker, MarkerClusterer} from 'react-kakao-maps-sdk'
 import {useNavigate, useSearchParams} from 'react-router-dom'
 
@@ -6,12 +7,14 @@ import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
 
-import {SearchPreview} from './components'
+import {DetailDialog, SearchPreview} from './components'
 import {dummydata} from './data'
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
+  const mapRef = useRef<kakao.maps.Map | null>(null)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
 
   // TODO: searchParms 가 모두 있는지 확인, 없다면 이전 페이지로 redirect
   const trainingTime = Number(searchParams.get('trainingTime'))
@@ -29,8 +32,8 @@ export function SearchPage() {
           </div>
         </Header>
 
-        <H1>강사 선택</H1>
         <Box>
+          <H1>강사 선택</H1>
           <SearchPreview />
           <Divider />
         </Box>
@@ -44,10 +47,28 @@ export function SearchPage() {
               pricePerHour={instructor.pricePerHour}
               distance={instructor.distance}
               duration={2}
-              rating={2}
+              rating={5}
+              onRequestReservation={() => {
+                navigate('/purchase', {
+                  state: {
+                    instructorId: instructor.instructorId,
+                    reservationDate,
+                    reservationTime,
+                    trainingTime,
+                    instructorName: instructor.instructorName,
+                    academyName: instructor.academyName,
+                  },
+                })
+              }}
+              onClick={() => {
+                const latlng = new kakao.maps.LatLng(instructor.latitude, instructor.longitude)
+                mapRef.current?.panTo(latlng)
+                setSelectedId(instructor.instructorId)
+              }}
             />
           ))}
         </InstructorList>
+        {selectedId && <DetailDialog id={selectedId} onClose={() => setSelectedId(null)} />}
       </SearchResultContainer>
 
       <Map
@@ -60,6 +81,8 @@ export function SearchPage() {
           width: '100%',
           height: '100%',
         }}
+        isPanto
+        ref={mapRef}
         level={3}
         onDragEnd={(map) => {
           const latlng = map.getCenter()
@@ -95,8 +118,9 @@ export function SearchPage() {
 }
 
 const SearchResultContainer = styled.section(() => ({
+  position: 'relative',
   width: '30%',
-  minWidth: '60rem',
+  minWidth: '45rem',
   height: '100%',
   boxShadow: '5px 1px 5px 0px rgb(0 0 0 / 10%)',
   // NOTE: box-shodow 스타일을 적용하기 위해 지도의 z index 보다 높힘
@@ -110,7 +134,6 @@ const H1 = styled.h1(({theme}) => ({
   backgroundColor: theme.color.white,
   fontWeight: 'bold',
   fontSize: '2rem',
-  padding: '2rem',
 }))
 
 const Box = styled.div(() => ({

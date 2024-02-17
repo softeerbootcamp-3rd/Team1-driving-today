@@ -3,12 +3,14 @@ import {Outlet, useLoaderData} from 'react-router-dom'
 
 import {Sidebar} from '@/components/sidebar'
 
+import {UserRole} from '../utils/session'
+
 export function Layout() {
-  const {isStudent} = useLoaderData()
+  const role = useLoaderData() as UserRole
 
   return (
     <LayoutContainer>
-      {isStudent ? <StudentSidebar /> : <InstructorSidebar />}
+      {role === 'STUDENT' ? <StudentSidebar /> : <InstructorSidebar />}
       <Outlet />
     </LayoutContainer>
   )

@@ -138,6 +138,8 @@ function ReservationResultCard({
           <IconLabel icon="duration" color="gray500">
             {`${duration}시간`}
           </IconLabel>
+        </MultipleDescriptionContainer>
+        <MultipleDescriptionContainer>
           <IconLabel icon="building" color="gray500">
             {`${distance}km`}
           </IconLabel>
