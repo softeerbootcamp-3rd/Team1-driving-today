@@ -16,16 +16,16 @@ import java.util.Set;
 public class ChatRoomInfo {
 
     private String roomId;
-    //String name;
     private String studentId;
+    private String instructorId;
 
     @JsonIgnore
     Set<WebSocketSession> sessions = new HashSet<>();
-    public static ChatRoomInfo from(ChatRoom chatRoom, String StudentId) {
+    public static ChatRoomInfo from(ChatRoom chatRoom) {
         return ChatRoomInfo.builder()
                 .roomId(chatRoom.getId().toString())
-                .studentId(StudentId)
+                .studentId(chatRoom.getStudent().getId().toString())
+                .instructorId(chatRoom.getInstructor().getId().toString())
                 .build();
-        //this.name = name;
     }
 }

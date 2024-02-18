@@ -1,5 +1,6 @@
 package com.drivingtoday.global.config;
 
+import com.drivingtoday.domain.chat.ChatService;
 import com.drivingtoday.global.auth.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,4 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public WebSocketHandShakeInterceptor webSocketHandShakeinterceptor() {
         return new WebSocketHandShakeInterceptor(jwtProvider);
     }
-
-
 }

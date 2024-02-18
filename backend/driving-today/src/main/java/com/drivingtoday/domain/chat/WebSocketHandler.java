@@ -27,39 +27,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // Logic for handling connection establishment
     }
 
-    /*
-    @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        try {
-            String payload = message.getPayload();
-            ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
-
-            log.info("getRoomId : " + chatMessage.getRoomId());
-
-            ChatRoom room = chatService.findRoomById(chatMessage.getRoomId());
-            Set<WebSocketSession> sessions = room.getSessions();
-            if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
-                sessions.add(session);
-                chatMessage.setMessage(chatMessage.getSender() + "님이 입장했습니다.");
-                log.info(chatMessage.getSender() + "님이 입장했습니다.");
-
-                sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
-            } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
-                sessions.remove(session);
-                log.info(chatMessage.getSender() + "님이 퇴장했습니다.");
-                chatMessage.setMessage(chatMessage.getSender() + "님이 퇴장했습니다.");
-                sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
-            } else {
-                sendToEachSocket(sessions, message);
-            }
-        } catch (IOException e) {
-            log.error("Error processing WebSocket message", e);
-        }
-    }
-
-     */
-
-
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
