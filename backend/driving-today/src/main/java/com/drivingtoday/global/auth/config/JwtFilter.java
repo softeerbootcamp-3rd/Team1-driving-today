@@ -41,8 +41,8 @@ public class JwtFilter extends OncePerRequestFilter {
         if ("OPTIONS".equals(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
-            log.info("request url : " + request.getRequestURL());
-            log.info("query : " + request.getQueryString());
+           // log.info("request url : " + request.getRequestURL());
+           // log.info("query : " + request.getQueryString());
 
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -52,18 +52,18 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
 
-            log.info("request headers : ");
+            //log.info("request headers : ");
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String headerName = headerNames.nextElement();
-                log.info(headerName + ": " + request.getHeader(headerName));
+                //System.out.println(headerName + ": " + request.getHeader(headerName));
                 if(headerName.contains("sec-websocket-protocol")){
                     if(authorization == null){
                         authorization = "Bearer " + request.getHeader(headerName);
                     }
                 }
             }
-            log.info("authorization : "  + authorization);
+           // log.info("authorization : "  + authorization);
             //request uri가 allowUriList 중 하나->토큰 검증하지 않아도 됨
             if (checkAllowList(request.getRequestURI())) {
                 filterChain.doFilter(request, response);
@@ -78,7 +78,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             //토큰 꺼내기
             String accessToken = jwtProvider.resolveToken(authorization);
-            log.info("JWT TOKEN : "  + accessToken);
+           // log.info("JWT TOKEN : "  + accessToken);
             //토큰 검증
             JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
             if (jwtErrorCode == JwtErrorCode.VALID_JWT_TOKEN) {

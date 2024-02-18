@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +40,14 @@ public class InstructorFindService {
                 PageRequest.of(request.getPageNumber() - 1, request.getPageSize())
                 // 0 페이지부터 시작이 default여서 -1 처리
         );
+    }
+
+    @Transactional
+    public Instructor findById(Long instructorId){
+        Optional<Instructor> instructor = instructorRepository.findById(instructorId);
+        if (instructor.isPresent()) {
+            return instructor.get();
+        }
+        throw new RuntimeException("instructor not found with id: " + instructorId);
     }
 }
