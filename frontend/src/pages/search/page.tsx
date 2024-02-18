@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import {useRef, useState} from 'react'
-import {Map, MapMarker, MarkerClusterer} from 'react-kakao-maps-sdk'
+import {CustomOverlayMap, Map, MarkerClusterer} from 'react-kakao-maps-sdk'
 import {useNavigate, useSearchParams} from 'react-router-dom'
 
 import {Card} from '@/components/card'
@@ -15,6 +15,7 @@ export function SearchPage() {
   const navigate = useNavigate()
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [hoverInstructorId, setHoverInstructorId] = useState<number | null>(null)
 
   // TODO: searchParms 가 모두 있는지 확인, 없다면 이전 페이지로 redirect
   const trainingTime = Number(searchParams.get('trainingTime'))
@@ -60,6 +61,12 @@ export function SearchPage() {
                   },
                 })
               }}
+              onMouseOver={() => {
+                setHoverInstructorId(instructor.instructorId)
+              }}
+              onMouseOut={() => {
+                setHoverInstructorId(null)
+              }}
               onClick={() => {
                 const latlng = new kakao.maps.LatLng(instructor.latitude, instructor.longitude)
                 mapRef.current?.panTo(latlng)
@@ -95,22 +102,40 @@ export function SearchPage() {
         }}
       >
         <MarkerClusterer averageCenter={true} minLevel={10}>
-          {dummydata.map((instructor) => (
-            <MapMarker
-              key={instructor.instructorId}
-              position={{
-                lat: instructor.latitude,
-                lng: instructor.longitude,
-              }}
-              image={{
-                src: '/marker.png',
-                size: {
-                  width: 38,
-                  height: 48,
-                },
-              }}
-            />
-          ))}
+          {dummydata.map((instructor) => {
+            const {instructorId: id, latitude, longitude} = instructor
+            return (
+              <CustomOverlayMap
+                key={id}
+                position={{
+                  lat: latitude,
+                  lng: longitude,
+                }}
+                clickable
+              >
+                <MarkerContainer
+                  className={selectedId === id ? 'hatch' : ''}
+                  selected={selectedId === id}
+                  hover={hoverInstructorId === id}
+                  onClick={() => {
+                    const latlng = new kakao.maps.LatLng(latitude, longitude)
+                    mapRef.current?.panTo(latlng)
+                    setSelectedId(id)
+                  }}
+                >
+                  <img
+                    src="/marker.svg"
+                    onMouseEnter={() => {
+                      setHoverInstructorId(id)
+                    }}
+                    onMouseOut={() => {
+                      setHoverInstructorId(null)
+                    }}
+                  />
+                </MarkerContainer>
+              </CustomOverlayMap>
+            )
+          })}
         </MarkerClusterer>
       </Map>
     </>
@@ -147,4 +172,16 @@ const InstructorList = styled.ul(() => ({
   flex: '1 1 0',
   overflowY: 'scroll',
   padding: '0 2rem 5rem',
+}))
+
+const MarkerContainer = styled.div<{selected: boolean; hover: boolean}>(({selected, hover}) => ({
+  cursor: 'pointer',
+  width: 24,
+  height: 34,
+  transition: 'all 0.3s',
+  transformOrigin: 'bottom center',
+  transform: selected || hover ? 'scale(1.5)' : 'scale(1)',
+  '&:hover': {
+    transform: 'scale(1.5)',
+  },
 }))
