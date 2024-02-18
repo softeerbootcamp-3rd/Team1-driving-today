@@ -5,9 +5,13 @@ import {CSSProperties} from 'react'
 import {Button} from '@/components/button'
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
+import {Loading} from '@/components/loading'
 import {Rating} from '@/components/rating'
+import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
+import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {apiCall} from '@/utils/api'
 
-import {detailData, reviewData} from '../data'
+import {detailData} from '../data'
 
 interface DetailDialogProps {
   id: number
@@ -32,7 +36,7 @@ export function DetailDialog({id, onClose}: DetailDialogProps) {
         </Icon>
       </DialogHeader>
       <DialogContent>
-        <InstructorDetail id={id} />
+        <InstructorDetail key={id} id={id} />
       </DialogContent>
     </Dialog>
   )
@@ -68,8 +72,24 @@ const DialogContent = styled.div(() => ({
   gap: '1rem',
 }))
 
+const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
-  // TODO: 상세 정보, 리뷰 리스트 받아오기(무한스크롤)
+  // TODO: error handling
+  const {data, loading, hasNextPageParam, fetchNextPage} = useInfiniteFetch({
+    queryFn: ({pageParam}) => {
+      return apiCall(
+        `/reviews?instructorId=${id}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
+      ).then((res) => res.json())
+    },
+    initialPageParam: 1,
+    getNextPageParam: ({pageParam, lastPage}) => {
+      const isLastPage = lastPage.length < PAGE_SIZE
+      const nextPageParam = pageParam + 1
+      return isLastPage ? undefined : nextPageParam
+    },
+  })
+  const intersectedRef = useIntersectionObserver(() => fetchNextPage())
+
   return (
     <>
       <Flex as="section" gap="1rem" flexDirection="column">
@@ -114,7 +134,7 @@ function InstructorDetail({id}: {id: number}) {
           리뷰
         </Typograpy>
         <Flex as="ul" gap="2.5rem" flexDirection="column" style={{paddingBottom: '4rem'}}>
-          {reviewData.map((review) => (
+          {data?.map((review) => (
             <Flex as="li" flexDirection="column" gap="1.5rem" key={review.reviewId}>
               <Flex gap="1rem" alignItems="center">
                 <Avartar src={detailData.instructorInfo.instructorImage} width="30" height="30" />
@@ -133,6 +153,12 @@ function InstructorDetail({id}: {id: number}) {
               </Typograpy>
             </Flex>
           ))}
+          {loading && (
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Loading />
+            </div>
+          )}
+          {hasNextPageParam && <div ref={intersectedRef} style={{height: '3rem'}}></div>}
         </Flex>
       </Flex>
     </>
