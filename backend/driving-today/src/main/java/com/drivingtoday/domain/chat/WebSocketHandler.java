@@ -27,6 +27,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // Logic for handling connection establishment
     }
 
+    /*
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
@@ -74,6 +75,43 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 sessions.forEach(s -> log.info("Session ID: " + s.getId()));
                 log.info("----------------------");
 
+                sendToEachSocket(sessions, message);
+            }
+        } catch (IOException e) {
+            log.error("Error processing WebSocket message", e);
+        }
+    }
+
+     */
+
+
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        try {
+            String payload = message.getPayload();
+            ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+
+            log.info("getRoomId : " + chatMessage.getRoomId());
+
+            // 여기에서 ChatRoom 엔티티에 대한 로직이 변경되어야 함
+            ChatRoom room = chatService.findRoomById(Long.parseLong(chatMessage.getRoomId()));
+
+            // 방을 찾은 후, 해당 방의 세션 목록을 가져오는 대신,
+            // Spring의 WebSocket 세션 관리 기능을 사용하여 세션을 관리함
+            Set<WebSocketSession> sessions = sessionService.getSessionsByRoomId(chatMessage.getRoomId());
+
+            if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
+                sessions.add(session);
+                chatMessage.setMessage(chatMessage.getSender() + "님이 입장했습니다.");
+                log.info(chatMessage.getSender() + "님이 입장했습니다.");
+
+                sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
+            } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
+                sessions.remove(session);
+                log.info(chatMessage.getSender() + "님이 퇴장했습니다.");
+                chatMessage.setMessage(chatMessage.getSender() + "님이 퇴장했습니다.");
+                sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
+            } else {
                 sendToEachSocket(sessions, message);
             }
         } catch (IOException e) {

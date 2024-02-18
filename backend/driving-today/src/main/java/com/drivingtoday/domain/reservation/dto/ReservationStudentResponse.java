@@ -1,6 +1,7 @@
 package com.drivingtoday.domain.reservation.dto;
 
 import com.drivingtoday.domain.reservation.Reservation;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class ReservationStudentResponse {
     private String instructorImage;
     private String instructorName;
     private String academyName;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate reservationDate;
     private Integer reservationTime;
     private Integer trainingTime;
