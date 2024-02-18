@@ -25,15 +25,6 @@ public class ChatController {
     private final InstructorFindService instructorFindService;
     private final StudentFindService studentFindService;
 
-    /*
-    @RequestMapping("/chat/rooms")  // /chat/roomList
-    public ResponseEntity<List<ChatRoom>> chatList(){
-        List<ChatRoom> roomList = chatService.findAllRoom();
-        return ResponseEntity.ok().body(roomList);
-    }
-
-     */
-
     @PostMapping("/chat/room")  //방을 만들었으면 해당 방으로 가야지. /chat/createRoom
     public ResponseEntity<ChatRoomInfo> createRoom(@RequestBody String instructorId) { // roomName이 아니라 사람 id 하고 엮어야 할 듯
         Authentication authentication = JwtFilter.getAuthentication();
