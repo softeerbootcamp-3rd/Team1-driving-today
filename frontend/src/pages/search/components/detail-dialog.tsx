@@ -92,7 +92,6 @@ interface InstructorDetailResponse {
 const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
   const instructorDetail = useApiCall<InstructorDetailResponse>(`/instructors/${id}`)
-  console.log(instructorDetail)
   // TODO: error handling
   const {
     data: reviews,
