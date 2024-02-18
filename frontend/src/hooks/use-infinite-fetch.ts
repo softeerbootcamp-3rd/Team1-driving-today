@@ -17,7 +17,7 @@ export interface UseInfniteFetchReturn<TData> {
   data?: TData[]
   error?: unknown
   loading: boolean
-  hasNextPageParam: boolean
+  hasNextPage: boolean
 }
 
 export function useInfiniteFetch<TData, TPageParam>({
@@ -28,7 +28,7 @@ export function useInfiniteFetch<TData, TPageParam>({
   const [data, setData] = useState<TData[]>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>()
-  const [hasNextPageParam, setHasNextPageParam] = useState(true)
+  const [hasNextPage, setHasNextPage] = useState(true)
   const queryFnRef = useRef(queryFn)
   const nextPageParamRef = useRef<TPageParam | undefined>(initialPageParam)
   const getNextPageParamRef = useRef(getNextPageParam)
@@ -45,7 +45,7 @@ export function useInfiniteFetch<TData, TPageParam>({
         lastPage: res,
       })
       if (!nextPageParamRef.current) {
-        setHasNextPageParam(false)
+        setHasNextPage(false)
       }
       setData((prev) => (prev ? prev : []).concat(res))
       setError(null)
@@ -56,7 +56,8 @@ export function useInfiniteFetch<TData, TPageParam>({
     }
   }, [])
 
-  return useMemo(() => {
-    return {fetchNextPage, data, loading, error, hasNextPageParam}
-  }, [fetchNextPage, data, loading, error, hasNextPageParam])
+  return useMemo(
+    () => ({fetchNextPage, data, loading, error, hasNextPage}),
+    [fetchNextPage, data, loading, error, hasNextPage],
+  )
 }

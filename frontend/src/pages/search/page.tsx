@@ -12,7 +12,6 @@ import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
 import {apiCall} from '@/utils/api'
 
 import {DetailDialog, SearchPreview} from './components'
-import {dummydata} from './data'
 
 const PAGE_SIZE = 5
 
@@ -31,7 +30,7 @@ export function SearchPage() {
   const reservationDate = searchParams.get('reservationDate')
 
   // TODO: error handling
-  const {data, loading, hasNextPageParam, fetchNextPage} = useInfiniteFetch({
+  const {data, loading, fetchNextPage} = useInfiniteFetch({
     queryFn: ({pageParam}) => {
       return apiCall(
         `/instructors?latitude=${latitude}&longitude=${longitude}&trainingTime=${trainingTime}&reservationTime=${reservationTime}&reservationDate=${reservationDate}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
@@ -83,7 +82,7 @@ export function SearchPage() {
                   },
                 })
               }}
-              onMouseOver={() => {
+              onMouseEnter={() => {
                 setHoverInstructorId(instructor.instructorId)
               }}
               onMouseOut={() => {
@@ -96,12 +95,12 @@ export function SearchPage() {
               }}
             />
           ))}
+          <div ref={intersectedRef} style={{height: '3rem'}} />
           {loading && (
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
               <Loading />
             </div>
           )}
-          {hasNextPageParam && <div ref={intersectedRef} style={{height: '3rem'}} />}
         </InstructorList>
         {selectedId && <DetailDialog id={selectedId} onClose={() => setSelectedId(null)} />}
       </SearchResultContainer>
@@ -130,7 +129,7 @@ export function SearchPage() {
         }}
       >
         <MarkerClusterer averageCenter={true} minLevel={10}>
-          {dummydata.map((instructor) => {
+          {data?.map((instructor) => {
             const {instructorId: id, latitude, longitude} = instructor
             return (
               <CustomOverlayMap

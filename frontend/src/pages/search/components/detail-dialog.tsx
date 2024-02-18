@@ -75,7 +75,7 @@ const DialogContent = styled.div(() => ({
 const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
   // TODO: error handling
-  const {data, loading, hasNextPageParam, fetchNextPage} = useInfiniteFetch({
+  const {data, loading, fetchNextPage} = useInfiniteFetch({
     queryFn: ({pageParam}) => {
       return apiCall(
         `/reviews?instructorId=${id}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
@@ -153,12 +153,12 @@ function InstructorDetail({id}: {id: number}) {
               </Typograpy>
             </Flex>
           ))}
+          <div ref={intersectedRef} style={{height: '3rem'}}></div>
           {loading && (
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
               <Loading />
             </div>
           )}
-          {hasNextPageParam && <div ref={intersectedRef} style={{height: '3rem'}}></div>}
         </Flex>
       </Flex>
     </>
