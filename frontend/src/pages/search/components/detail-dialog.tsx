@@ -7,11 +7,10 @@ import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
 import {Loading} from '@/components/loading'
 import {Rating} from '@/components/rating'
+import {useApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
 import {apiCall} from '@/utils/api'
-
-import {detailData} from '../data'
 
 interface DetailDialogProps {
   id: number
@@ -72,10 +71,34 @@ const DialogContent = styled.div(() => ({
   gap: '1rem',
 }))
 
+interface InstructorDetailResponse {
+  instructorInfo: {
+    id: number
+    name: string
+    phoneNumber: string
+    instructorImage: string
+    pricePerHour: number
+    introduction: string
+  }
+  academyInfo: {
+    name: string
+    latitude: number
+    longitude: number
+    cert: boolean
+  }
+  averageRating: number
+}
+
 const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
+  const instructorDetail = useApiCall<InstructorDetailResponse>(`/instructors/${id}`)
+  console.log(instructorDetail)
   // TODO: error handling
-  const {data, loading, fetchNextPage} = useInfiniteFetch({
+  const {
+    data: reviews,
+    loading,
+    fetchNextPage,
+  } = useInfiniteFetch({
     queryFn: ({pageParam}) => {
       return apiCall(
         `/reviews?instructorId=${id}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
@@ -94,9 +117,13 @@ function InstructorDetail({id}: {id: number}) {
     <>
       <Flex as="section" gap="1rem" flexDirection="column">
         <Flex gap="2rem" flexDirection="row" alignItems="center">
-          <Avartar src={detailData.instructorInfo.instructorImage} width="62" height="62" />
+          <Avartar
+            src={instructorDetail.data?.instructorInfo.instructorImage}
+            width="62"
+            height="62"
+          />
           <Typograpy color="gray700" size="2rem" weight="bold">
-            {detailData.instructorInfo.name}
+            {instructorDetail.data?.instructorInfo.name}
           </Typograpy>
         </Flex>
         <Flex as="ul">
@@ -105,13 +132,13 @@ function InstructorDetail({id}: {id: number}) {
           </Typograpy>
           <Divider orientation="vertical" flexItem style={{margin: '0.5rem'}} />
           <Typograpy as="li" color="gray600" weight="500" size="1.4rem">
-            시간당 {detailData.instructorInfo.pricePerHour.toLocaleString()}
+            시간당 {instructorDetail.data?.instructorInfo.pricePerHour.toLocaleString()}
           </Typograpy>
         </Flex>
         <Flex alignItems="center">
           <Icon name="building" width="2rem" height="2rem" color="gray600" />
           <Typograpy as="span" color="gray600" weight="500" size="1.4rem">
-            {detailData.academyInfo.name}
+            {instructorDetail.data?.academyInfo.name}
           </Typograpy>
         </Flex>
         <Actions>
@@ -125,7 +152,7 @@ function InstructorDetail({id}: {id: number}) {
           강사 소개
         </Typograpy>
         <Typograpy as="p" color="gray900" weight="500" size="1.4rem">
-          {detailData.instructorInfo.introduction}
+          {instructorDetail.data?.instructorInfo.introduction}
         </Typograpy>
       </Flex>
       <Divider />
@@ -134,10 +161,14 @@ function InstructorDetail({id}: {id: number}) {
           리뷰
         </Typograpy>
         <Flex as="ul" gap="2.5rem" flexDirection="column" style={{paddingBottom: '4rem'}}>
-          {data?.map((review) => (
+          {reviews?.map((review) => (
             <Flex as="li" flexDirection="column" gap="1.5rem" key={review.reviewId}>
               <Flex gap="1rem" alignItems="center">
-                <Avartar src={detailData.instructorInfo.instructorImage} width="30" height="30" />
+                <Avartar
+                  src={instructorDetail.data?.instructorInfo.instructorImage}
+                  width="30"
+                  height="30"
+                />
                 <Typograpy color="gray900" size="1.4rem" weight="bold">
                   {review.reviewerName}
                 </Typograpy>
