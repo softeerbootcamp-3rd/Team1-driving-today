@@ -46,7 +46,7 @@ public class ChatService {
                 .build();
         chatRoomRepository.save(chatRoom);
         log.info("CHAT ROOM WITH " + chatRoom.getId() + " CREATED WITH " + instructor.getName() + " and " + student.getName());
-        return ChatRoomInfo.from(chatRoom);
+        return ChatRoomInfo.from(chatRoom, student.getId().toString());
     }
 
 
@@ -71,7 +71,7 @@ public class ChatService {
 
     public ChatRoom createRoom() {
         String randomId = UUID.randomUUID().toString();
-        ChatRoom chatRoom = ChatRoom.builder()
+        ChatRoom chatRoom = ChatㅁRoom.builder()
                 .roomId(randomId)
                 //.name(name)
                 .build();

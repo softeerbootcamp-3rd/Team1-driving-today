@@ -17,12 +17,14 @@ public class ChatRoomInfo {
 
     private String roomId;
     //String name;
+    private String studentId;
 
     @JsonIgnore
     Set<WebSocketSession> sessions = new HashSet<>();
-    public static ChatRoomInfo from(ChatRoom chatRoom) {
+    public static ChatRoomInfo from(ChatRoom chatRoom, String StudentId) {
         return ChatRoomInfo.builder()
                 .roomId(chatRoom.getId().toString())
+                .studentId(StudentId)
                 .build();
         //this.name = name;
     }

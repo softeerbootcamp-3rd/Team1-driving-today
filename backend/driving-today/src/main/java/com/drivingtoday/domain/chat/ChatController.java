@@ -46,7 +46,7 @@ public class ChatController {
             chatRoomInfo = chatService.createRoom(instructor, student);
             log.info("room created with ID : " + chatRoomInfo.getRoomId());
         }else{
-            chatRoomInfo = ChatRoomInfo.from(room);
+            chatRoomInfo = ChatRoomInfo.from(room, student.getId().toString());
             log.info("room is already created with id : " + room.getId());
         }
         return ResponseEntity.ok().body(chatRoomInfo);
