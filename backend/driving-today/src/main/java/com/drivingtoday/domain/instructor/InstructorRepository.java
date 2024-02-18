@@ -35,4 +35,6 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
             Pageable pageable
     );
 
+    Optional<Instructor> findById(Long instructorId);
+
 }

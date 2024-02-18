@@ -44,7 +44,8 @@ public class ReservationAddService {
                 int startTime = reservation.getReservationTime();
                 int trainingTime = reservation.getTrainingTime();
                 int requestStartTime = reservationRequest.getReservationTime();
-                if(startTime <= requestStartTime && startTime+trainingTime > requestStartTime){
+                int requestTrainingTime = reservationRequest.getTrainingTime();
+                if((startTime <= requestStartTime && startTime+trainingTime > requestStartTime) || (requestStartTime+requestTrainingTime > startTime && requestStartTime+requestTrainingTime <= startTime+trainingTime)){
                     throw ReservationException.from(ReservationErrorCode.RESERVATION_ALREADY_EXISTS);
                 }
             }
