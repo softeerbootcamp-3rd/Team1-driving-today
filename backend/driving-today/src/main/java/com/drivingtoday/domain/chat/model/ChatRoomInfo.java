@@ -20,7 +20,7 @@ public class ChatRoomInfo {
     private String instructorId;
 
     @JsonIgnore
-    Set<WebSocketSession> sessions = new HashSet<>();
+    final Set<WebSocketSession> sessions = new HashSet<>();
     public static ChatRoomInfo from(ChatRoom chatRoom) {
         return ChatRoomInfo.builder()
                 .roomId(chatRoom.getId().toString())

@@ -43,8 +43,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             Set<WebSocketSession> sessions = sessionService.getSessionsByRoomId(chatMessage.getRoomId());
 
             if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
-                System.out.println(sessions);
-                //sessions.add(session);
+
                 sessionService.addSessionToRoom(chatMessage.getRoomId(),session);
                 chatMessage.setMessage(chatMessage.getSender() + "님이 입장했습니다.");
                 log.info("ENTER room id : "+chatMessage.getRoomId() + " session count : "+sessions.size());

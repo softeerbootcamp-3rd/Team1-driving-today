@@ -17,6 +17,4 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     @Query(value = "SELECT * FROM chat_room WHERE instructor_id = :instructorId", nativeQuery = true)
     ChatRoom findByInstructorId(@Param("instructorId") String instructorId);
-
-
 }
