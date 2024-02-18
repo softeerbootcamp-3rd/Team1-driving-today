@@ -37,7 +37,6 @@ public class ReservationController {
     @Operation(summary = "학생이 본인 예약리스트 확인하기 API")
     public ResponseEntity<List<ReservationStudentResponse>> reservationList(@RequestParam("pageNumber") Integer pageNumber,
                                                                            @RequestParam("pageSize") Integer pageSize){
-        System.out.println("id : " + JwtFilter.getAuthentication().getId());
         List<ReservationStudentResponse> allStudentReservation =
                 reservationListService.findAllStudentReservation(JwtFilter.getAuthentication().getId(), pageNumber, pageSize);
         return ResponseEntity.ok(allStudentReservation);
