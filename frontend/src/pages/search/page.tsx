@@ -6,9 +6,15 @@ import {useNavigate, useSearchParams} from 'react-router-dom'
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
+import {Loading} from '@/components/loading'
+import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
+import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {apiCall} from '@/utils/api'
 
 import {DetailDialog, SearchPreview} from './components'
 import {dummydata} from './data'
+
+const PAGE_SIZE = 5
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -23,6 +29,22 @@ export function SearchPage() {
   const latitude = Number(searchParams.get('latitude'))
   const longitude = Number(searchParams.get('longitude'))
   const reservationDate = searchParams.get('reservationDate')
+
+  // TODO: error handling
+  const {data, loading, hasNextPageParam, fetchNextPage} = useInfiniteFetch({
+    queryFn: ({pageParam}) => {
+      return apiCall(
+        `/instructors?latitude=${latitude}&longitude=${longitude}&trainingTime=${trainingTime}&reservationTime=${reservationTime}&reservationDate=${reservationDate}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
+      ).then((res) => res.json())
+    },
+    initialPageParam: 1,
+    getNextPageParam: ({pageParam, lastPage}) => {
+      const isLastPage = lastPage.length < PAGE_SIZE
+      const nextPageParam = pageParam + 1
+      return isLastPage ? undefined : nextPageParam
+    },
+  })
+  const intersectedRef = useIntersectionObserver(() => fetchNextPage())
 
   return (
     <>
@@ -39,7 +61,7 @@ export function SearchPage() {
           <Divider />
         </Box>
         <InstructorList>
-          {dummydata.map((instructor) => (
+          {data?.map((instructor) => (
             <Card.ReservationResult
               key={instructor.instructorId}
               instructorName={instructor.instructorName}
@@ -74,6 +96,12 @@ export function SearchPage() {
               }}
             />
           ))}
+          {loading && (
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Loading />
+            </div>
+          )}
+          {hasNextPageParam && <div ref={intersectedRef} style={{height: '3rem'}} />}
         </InstructorList>
         {selectedId && <DetailDialog id={selectedId} onClose={() => setSelectedId(null)} />}
       </SearchResultContainer>
