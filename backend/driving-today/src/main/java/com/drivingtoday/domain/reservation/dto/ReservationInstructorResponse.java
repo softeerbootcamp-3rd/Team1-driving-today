@@ -1,6 +1,7 @@
 package com.drivingtoday.domain.reservation.dto;
 
 import com.drivingtoday.domain.reservation.Reservation;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.cglib.core.Local;
@@ -16,6 +17,7 @@ public class ReservationInstructorResponse {
     private String studentImage;
     private String studentName;
     private String phoneNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate reservationDate;
     private Integer reservationTime;
     private Integer trainingTime;

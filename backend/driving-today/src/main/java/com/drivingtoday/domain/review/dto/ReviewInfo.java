@@ -1,6 +1,7 @@
 package com.drivingtoday.domain.review.dto;
 
 import com.drivingtoday.domain.review.Review;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ public class ReviewInfo {
     private Long reviewId;
     private String contents;
     private Double rating;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     private String reviewerName;
     private String reviewerImage;
