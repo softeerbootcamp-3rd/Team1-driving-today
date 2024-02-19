@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react'
 
-import {apiCall, getOrRegisterApiCache, invalidateApiCache} from '@/utils/api'
+import {apiCall, getApiCache, invalidateApiCache} from '@/utils/api'
 
 export interface UseApiResult<T> {
   data?: T
@@ -103,6 +103,6 @@ export function useSuspendedApiCall<T>(
     // invalidate cache every request
     return () => invalidateApiCache(path)
   }, [path])
-  const promise = getOrRegisterApiCache(path, init)
+  const promise = getApiCache(path, init)
   return {data: use(promise)}
 }

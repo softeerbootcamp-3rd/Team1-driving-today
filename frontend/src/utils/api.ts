@@ -14,7 +14,7 @@ export async function apiCall(path: string, init?: RequestInit) {
 
 const apiCallCache = new Map<string, ExtendedPromise<unknown>>()
 
-export function getOrRegisterApiCache(path: string, init?: RequestInit) {
+export function getApiCache(path: string, init?: RequestInit) {
   const res = apiCallCache.get(path)
   if (res) return res
   const newRes = createApiCallPromise(path, init)
