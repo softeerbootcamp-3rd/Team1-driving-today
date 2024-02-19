@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,37 +31,68 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        //request uri가 allowUriList 중 하나->토큰 검증하지 않아도 됨
-        if (checkAllowList(request.getRequestURI())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        // CORS 관련 헤더 추가
+        response.setHeader("Access-Control-Allow-Origin", "*"); // 모든 origin을 허용
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // 허용하는 HTTP 메소드
+        response.setHeader("Access-Control-Allow-Headers", "*"); // 모든 헤더를 허용
+        response.setHeader("Access-Control-Max-Age", "3600"); // CORS Preflight 요청에 대한 유효 시간 설정
 
-        //요청 헤더에 토큰이 없는 경우
-        if (!isContainToken(authorization)) {
-            log.warn("{} : {}", JwtErrorCode.EMPTY_JWT.getErrorCode(), JwtErrorCode.EMPTY_JWT.getMessage());
-            makeExceptionResponse(JwtErrorCode.EMPTY_JWT, response);
-            return;
-        }
-
-        //토큰 꺼내기
-        String accessToken = jwtProvider.resolveToken(authorization);
-        //토큰 검증
-        JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
-        if (jwtErrorCode == JwtErrorCode.VALID_JWT_TOKEN) {
-
-            auth.set(makeAuthentication(accessToken));
-            //request.setAttribute("Authentication", makeAuthentication(accessToken));
+        // OPTIONS 메소드에 대한 처리
+        if ("OPTIONS".equals(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
         } else {
-            log.warn("{} : {}", jwtErrorCode.getErrorCode(), jwtErrorCode.getMessage());
-            makeExceptionResponse(jwtErrorCode, response);
-            return;
+           // log.info("request url : " + request.getRequestURL());
+           // log.info("query : " + request.getQueryString());
+
+            String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+            if(authorization == null){
+                if(request.getRequestURI().contains("ws")){
+                    if(request.getQueryString() != null) authorization = "Bearer " + request.getQueryString().split("=")[1];
+                }
+            }
+
+            //log.info("request headers : ");
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                //System.out.println(headerName + ": " + request.getHeader(headerName));
+                if(headerName.contains("sec-websocket-protocol")){
+                    if(authorization == null){
+                        authorization = "Bearer " + request.getHeader(headerName);
+                    }
+                }
+            }
+           // log.info("authorization : "  + authorization);
+            //request uri가 allowUriList 중 하나->토큰 검증하지 않아도 됨
+            if (checkAllowList(request.getRequestURI())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            //요청 헤더에 토큰이 없는 경우
+            if (!isContainToken(authorization)) {
+                log.warn("{} : {}", JwtErrorCode.EMPTY_JWT.getErrorCode(), JwtErrorCode.EMPTY_JWT.getMessage());
+                makeExceptionResponse(JwtErrorCode.EMPTY_JWT, response);
+                return;
+            }
+            //토큰 꺼내기
+            String accessToken = jwtProvider.resolveToken(authorization);
+           // log.info("JWT TOKEN : "  + accessToken);
+            //토큰 검증
+            JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
+            if (jwtErrorCode == JwtErrorCode.VALID_JWT_TOKEN) {
+                auth.set(makeAuthentication(accessToken));
+            } else {
+                log.warn("{} : {}", jwtErrorCode.getErrorCode(), jwtErrorCode.getMessage());
+                makeExceptionResponse(jwtErrorCode, response);
+                return;
+            }
+
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
-
     }
+
 
     private Boolean checkAllowList(String uri) {
         return PatternMatchUtils.simpleMatch(allowUriList, uri);

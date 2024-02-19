@@ -6,7 +6,8 @@ import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
 import {Rating} from '@/components/rating'
-import {useFetch} from '@/hooks/use-fetch'
+import {useApiCall} from '@/hooks/use-api-call'
+import {apiCall} from '@/utils/api'
 import {API_BASE_URL} from '@/utils/constants'
 
 interface ReviewModalProps {
@@ -37,7 +38,7 @@ interface InstructorResponse {
 const DEFAULT_RATING = 5
 
 export function ReviewModal({onClose, reservationId, instructorId}: ReviewModalProps) {
-  const {data} = useFetch<InstructorResponse>(`${API_BASE_URL}/instructors/${instructorId}`)
+  const {data} = useApiCall<InstructorResponse>(`/instructors/${instructorId}`)
 
   const [submitting, setSubmitting] = useState<boolean>(false)
   const [rating, setRating] = useState<number>(DEFAULT_RATING)
@@ -46,7 +47,7 @@ export function ReviewModal({onClose, reservationId, instructorId}: ReviewModalP
   const submitReview = () => {
     if (submitting) return
     setSubmitting(true)
-    fetch(`${API_BASE_URL}/review`, {
+    apiCall('/review', {
       method: 'POST',
       body: JSON.stringify({
         rating,
@@ -110,7 +111,7 @@ interface StudentResponse {
 }
 
 export function StudentModal({onClose, studentId}: StudentModalProps) {
-  const {data} = useFetch<StudentResponse>(`${API_BASE_URL}/students/${studentId}`)
+  const {data} = useApiCall<StudentResponse>(`${API_BASE_URL}/students/${studentId}`)
 
   return (
     <Container>

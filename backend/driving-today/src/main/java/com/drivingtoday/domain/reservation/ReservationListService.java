@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,12 +28,23 @@ public class ReservationListService {
     }
 
     @Transactional
-    public List<ReservationInstructorResponse> findAllInstructorReservation(Long instructorId, Integer pageNumber, Integer pageSize){
+    public List<ReservationInstructorResponse> findAllInstructorReservation(Long instructorId, Integer pageNumber, Integer pageSize, Boolean isUpcoming){
 
-        List<Reservation> reservationList = reservationRepository.findAllByInstructorId(instructorId,
-                PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending())).getContent();
+        LocalDate currentDate = LocalDate.now();
+        int currentTime = LocalDateTime.now().getHour();
+        List<Reservation> reservations;
 
-        return reservationList.stream().map(ReservationInstructorResponse::from).toList();
+        if(isUpcoming) {
+            reservations = reservationRepository.findFutureReservationsByInstructor(instructorId,
+                            currentDate, currentTime, PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending()))
+                    .getContent();
+        } else {
+            reservations = reservationRepository.findPastReservationsByInstructor(instructorId,
+                            currentDate, currentTime, PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending()))
+                    .getContent();
+        }
+
+        return reservations.stream().map(ReservationInstructorResponse::from).toList();
     }
 
 
