@@ -20,9 +20,6 @@ export function purchaseLoader({request}: LoaderFunctionArgs) {
   const academyName = searchParams.get('academyName')
   const pricePerHour = searchParams.get('pricePerHour')
 
-  // console.log(Object.entries(searchParams.entries()))
-  // console.log()
-  console.log({trainingTime}, isValidTrainingTime(trainingTime))
   if (
     isNumber(instructorId) &&
     isValidTrainingTime(trainingTime) &&
