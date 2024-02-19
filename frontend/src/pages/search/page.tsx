@@ -1,45 +1,31 @@
 import styled from '@emotion/styled'
-import {useEffect, useRef, useState} from 'react'
+import {useRef, useState} from 'react'
 import {Map, MapMarker, MarkerClusterer} from 'react-kakao-maps-sdk'
-import {useNavigate, useSearchParams} from 'react-router-dom'
+import {useLoaderData, useNavigate, useSearchParams} from 'react-router-dom'
 
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
-import {
-  isValidLatitude,
-  isValidLongitude,
-  isValidReservationDate,
-  isValidReservationTime,
-  isValidTrainingTime,
-} from '@/utils/validate'
+import {objectToQS} from '@/utils/object-to-qs'
 
 import {DetailDialog, SearchPreview} from './components'
 import {dummydata} from './data'
 
+interface LoaderData {
+  reservationDate: string
+  reservationTime: number
+  trainingTime: number
+  longitude: number
+  latitude: number
+}
+
 export function SearchPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const {trainingTime, reservationTime, reservationDate, longitude, latitude} =
+    useLoaderData() as LoaderData
+  const [, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
-
-  const trainingTime = Number(searchParams.get('trainingTime'))
-  const reservationTime = Number(searchParams.get('reservationTime'))
-  const latitude = Number(searchParams.get('latitude'))
-  const longitude = Number(searchParams.get('longitude'))
-  const reservationDate = searchParams.get('reservationDate')
-  useEffect(() => {
-    if (
-      isValidTrainingTime(trainingTime) &&
-      isValidReservationTime(reservationTime) &&
-      isValidReservationDate(reservationDate) &&
-      isValidLongitude(longitude) &&
-      isValidLatitude(latitude)
-    ) {
-      return
-    }
-    navigate('/schedule')
-  }, [latitude, longitude, navigate, reservationDate, reservationTime, trainingTime])
 
   return (
     <>
@@ -67,17 +53,17 @@ export function SearchPage() {
               duration={trainingTime}
               rating={instructor.averageRating}
               onRequestReservation={() => {
-                navigate('/purchase', {
-                  state: {
-                    instructorId: instructor.instructorId,
-                    reservationDate,
-                    reservationTime,
-                    trainingTime,
-                    instructorName: instructor.instructorName,
-                    academyName: instructor.academyName,
-                    pricePerHour: instructor.pricePerHour,
-                  },
+                const {instructorId, instructorName, academyName, pricePerHour} = instructor
+                const searchParams = objectToQS({
+                  instructorId,
+                  reservationDate,
+                  reservationTime,
+                  trainingTime,
+                  instructorName,
+                  academyName,
+                  pricePerHour,
                 })
+                navigate(`/purchase?${searchParams}`)
               }}
               selected={instructor.instructorId === selectedId}
               onClick={() => {

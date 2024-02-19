@@ -14,8 +14,10 @@ import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
 import {LoginPage} from './pages/login/page'
 import {LandingPage} from './pages/page'
+import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
 import {StudentSchedule} from './pages/schedule/page'
+import {searchPageLoader} from './pages/search/loader'
 import {SearchPage} from './pages/search/page'
 
 export function App() {
@@ -50,10 +52,12 @@ const router = createBrowserRouter(
         />
         <Route
           path="/search"
+          loader={searchPageLoader}
           element={<RequireAuth>{({isStudent}) => isStudent && <SearchPage />}</RequireAuth>}
         />
         <Route
           path="/purchase"
+          loader={purchaseLoader}
           element={<RequireAuth>{({isStudent}) => isStudent && <StudentPurchase />}</RequireAuth>}
         />
       </Route>

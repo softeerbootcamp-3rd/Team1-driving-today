@@ -1,21 +1,15 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
-import {CSSProperties, useEffect, useState} from 'react'
-import {Location, useLocation, useNavigate} from 'react-router-dom'
+import {CSSProperties, useState} from 'react'
+import {useLoaderData, useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Checkbox} from '@/components/checkbox'
 import {Chip} from '@/components/chip'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
-import {
-  isString,
-  isValidReservationDate,
-  isValidReservationTime,
-  isValidTrainingTime,
-} from '@/utils/validate'
 
-interface State {
+interface LoaderData {
   instructorId: number
   reservationDate: string
   reservationTime: number
@@ -26,24 +20,7 @@ interface State {
 }
 
 export function StudentPurchase() {
-  const {state} = useLocation() as Location<State | null>
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (
-      state !== null &&
-      isValidTrainingTime(state.trainingTime) &&
-      isValidReservationTime(state.reservationTime) &&
-      isValidReservationDate(state.reservationDate) &&
-      !isNaN(state.instructorId) &&
-      isString(state.instructorName) &&
-      isString(state.academyName) &&
-      !isNaN(state.pricePerHour)
-    ) {
-      return
-    }
-    navigate('/schedule')
-  }, [navigate, state])
 
   return (
     <Box>
@@ -58,18 +35,14 @@ export function StudentPurchase() {
           <ReservationInfo />
           <PaymentMethod />
         </Flex>
-        <PurcheseResult />
+        <PurchaseResult />
       </Flex>
     </Box>
   )
 }
 
 function ReservationInfo() {
-  const {state} = useLocation() as Location<State | null>
-
-  if (state === null) {
-    return null
-  }
+  const state = useLoaderData() as LoaderData
 
   return (
     <ReservationInfoContainer>
@@ -133,17 +106,14 @@ function PaymentMethod() {
   )
 }
 
-function PurcheseResult() {
+function PurchaseResult() {
   const [checked, setChecked] = useState(false)
-  const {state} = useLocation() as Location<State | null>
+  const state = useLoaderData() as LoaderData
 
-  if (state === null) {
-    return null
-  }
   const totalPrice = state.pricePerHour * state.trainingTime
 
   return (
-    <PurcheseResultContainer>
+    <PurchaseResultContainer>
       <Flex justifyContent="space-between">
         <Typograpy color="gray900" size="1.6rem" weight="bold">
           최종 연수 금액
@@ -159,7 +129,7 @@ function PurcheseResult() {
         </Typograpy>
       </Flex>
       <Button disabled={!checked}>{totalPrice.toLocaleString()} 원 결제하기</Button>
-    </PurcheseResultContainer>
+    </PurchaseResultContainer>
   )
 }
 const Box = styled.div(() => ({
@@ -214,7 +184,7 @@ const PaymentMethodContainer = styled.section(({theme}) => ({
   border: `1px solid ${theme.color.gray200}`,
 }))
 
-const PurcheseResultContainer = styled.section(() => ({
+const PurchaseResultContainer = styled.section(() => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '2rem',
