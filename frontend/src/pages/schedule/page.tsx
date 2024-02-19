@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import {Map} from 'react-kakao-maps-sdk'
 import {useNavigate} from 'react-router-dom'
 
@@ -7,28 +7,25 @@ import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
 import {Header} from '@/components/header'
 
-interface ScheduleForm {
-  position: Pick<GeolocationCoordinates, 'latitude' | 'longitude'>
-  trainingTime: number | null
-  reservationTime: number | null
-  reservationDate: string
-}
+import {type Coord, useCurrentPosition} from './hooks'
+import type {ScheduleForm, ScheduleFormError} from './types'
+import {validateFormData} from './utils'
 
 // NOTE: 기본위치 - 서울시청 좌표
+const defaultPosition = {
+  latitude: 37.566,
+  longitude: 126.977,
+}
 const initialFormData: ScheduleForm = {
-  position: {
-    latitude: 37.566,
-    longitude: 126.977,
-  },
   trainingTime: null,
   reservationTime: null,
   reservationDate: '',
 }
 
-function searchPathFactory(formData: ScheduleForm) {
+function searchPathFactory({coord, formData}: {coord: Coord; formData: ScheduleForm}) {
   const queries = {
-    latitude: formData.position.latitude,
-    longitude: formData.position.longitude,
+    latitude: coord.latitude,
+    longitude: coord.longitude,
     trainingTime: formData.trainingTime,
     reservationTime: formData.reservationTime,
     reservationDate: formData.reservationDate,
@@ -48,26 +45,17 @@ function getInitialFormDataFrom() {
 export function StudentSchedule() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom)
+  const [formErrors, setFormErrors] = useState<ScheduleFormError>()
+  const coord = useCurrentPosition({defaultPosition})
 
-  useEffect(() => {
-    // TODO: 위치 상태값이 채워져 있지 않을 때만 현재 위치로 초기화
-    //   사용자가 승인하면 현재 위치 사용
-    //   사용자가 거절하면 null 주기
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData((prev) => ({...prev, position: position.coords}))
-        },
-        (error) => {
-          // TODO: 에러 처리
-          // 기본 위치 설정
-          console.error(error)
-        },
-      )
-    } else {
-      alert('현재 위치 정보를 제공하지 않는 브라우저 입니다.')
+  const handleSubmit = () => {
+    const errors = validateFormData(formData)
+    if (errors) {
+      setFormErrors(errors)
+      return
     }
-  }, [])
+    navigate(searchPathFactory({coord, formData}))
+  }
 
   return (
     <>
@@ -80,7 +68,22 @@ export function StudentSchedule() {
 
         <H1>연수 예약하기</H1>
         <SearchContainer>
-          <SearchField>
+          <SearchField className={formErrors?.reservationDate?.type === 'required' ? 'error' : ''}>
+            <SearchFieldTitle>원하는 일자를 선택해 주세요</SearchFieldTitle>
+            <DateInput
+              type="date"
+              value={formData.reservationDate}
+              onChange={(e) => {
+                setFormData((prev) => ({...prev, reservationDate: e.target.value}))
+                setFormErrors((prev) => (prev ? {...prev, reservationDate: undefined} : prev))
+              }}
+            />
+            {formErrors?.reservationDate?.type === 'required' && (
+              <ErrorMessage>{formErrors.reservationDate.message}</ErrorMessage>
+            )}
+          </SearchField>
+
+          <SearchField className={formErrors?.reservationTime?.type === 'required' ? 'error' : ''}>
             <SearchFieldTitle>원하는 시작 시간을 선택해주세요</SearchFieldTitle>
             <ul style={{display: 'flex', gap: 10, flexFlow: 'wrap'}}>
               {Array.from(Array(9), (_, i) => i + 9).map((time) => {
@@ -88,7 +91,12 @@ export function StudentSchedule() {
                   <li key={`time-${time}`}>
                     <Chip
                       selected={time === formData.reservationTime}
-                      onClick={() => setFormData((prev) => ({...prev, reservationTime: time}))}
+                      onClick={() => {
+                        setFormData((prev) => ({...prev, reservationTime: time}))
+                        setFormErrors((prev) =>
+                          prev ? {...prev, reservationTime: undefined} : prev,
+                        )
+                      }}
                     >
                       {`${time}:00`}
                     </Chip>
@@ -96,9 +104,12 @@ export function StudentSchedule() {
                 )
               })}
             </ul>
+            {formErrors?.reservationTime?.type === 'required' && (
+              <ErrorMessage>{formErrors.reservationTime.message}</ErrorMessage>
+            )}
           </SearchField>
 
-          <SearchField>
+          <SearchField className={formErrors?.trainingTime?.type === 'required' ? 'error' : ''}>
             <SearchFieldTitle>연수 타입을 선택해주세요</SearchFieldTitle>
             <ul style={{display: 'flex', gap: 10}}>
               {Array.from(Array(2), (_, i) => i + 1).map((type) => {
@@ -106,7 +117,10 @@ export function StudentSchedule() {
                   <li key={`type-${type}`}>
                     <Chip
                       selected={type === formData.trainingTime}
-                      onClick={() => setFormData((prev) => ({...prev, trainingTime: type}))}
+                      onClick={() => {
+                        setFormData((prev) => ({...prev, trainingTime: type}))
+                        setFormErrors((prev) => (prev ? {...prev, trainingTime: undefined} : prev))
+                      }}
                     >
                       {`${type} 시간`}
                     </Chip>
@@ -114,27 +128,20 @@ export function StudentSchedule() {
                 )
               })}
             </ul>
+            {formErrors?.trainingTime?.type === 'required' && (
+              <ErrorMessage>{formErrors.trainingTime.message}</ErrorMessage>
+            )}
           </SearchField>
 
-          <SearchField>
-            <SearchFieldTitle>원하는 일자를 선택해 주세요</SearchFieldTitle>
-            <DateInput
-              type="date"
-              value={formData.reservationDate}
-              onChange={(e) => setFormData((prev) => ({...prev, reservationDate: e.target.value}))}
-            />
-          </SearchField>
-
-          {/* TODO: form validate */}
-          <Button onClick={() => navigate(searchPathFactory(formData))}>다음</Button>
+          <Button onClick={handleSubmit}>다음</Button>
         </SearchContainer>
       </Box>
-      {/* TODO: 카카오 지도 */}
+
       <Map
         id="map"
         center={{
-          lat: formData.position?.latitude,
-          lng: formData.position?.longitude,
+          lat: coord.latitude,
+          lng: coord.longitude,
         }}
         style={{
           width: '100%',
@@ -176,6 +183,9 @@ const SearchField = styled.div(({theme}) => ({
   borderRadius: '1.6rem',
   gap: '1rem',
   padding: '1rem',
+  '&.error': {
+    border: `1.5px solid ${theme.color.warning}`,
+  },
 }))
 
 const SearchFieldTitle = styled.h2(({theme}) => ({
@@ -189,4 +199,10 @@ const DateInput = styled.input(({theme}) => ({
   borderRadius: '0.8rem',
   padding: '0.5rem',
   width: '20rem',
+  fontSize: '1.4rem',
+}))
+
+const ErrorMessage = styled.p(({theme}) => ({
+  fontSize: '1.4rem',
+  color: theme.color.warning,
 }))
