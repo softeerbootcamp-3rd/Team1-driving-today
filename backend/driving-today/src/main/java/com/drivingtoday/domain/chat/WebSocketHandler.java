@@ -21,6 +21,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
     private final ChatService chatService;
     private final SessionService sessionService;
+    private final ChatMessageService chatMessageService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -46,15 +47,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
             } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
 
                 sessionService.removeSessionFromRoom(chatMessage.getRoomId(), session);
-                log.info(chatMessage.getSender() + "님이 퇴장했습니다.");
                 chatMessage.setMessage(chatMessage.getSender() + "님이 퇴장했습니다.");
+                log.info(chatMessage.getSender() + "님이 퇴장했습니다.");
                 sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
 
             } else {
-
-                log.info("TALK room id : "+ chatMessage.getRoomId() + " session count : "+ sessions.size());
-                log.info("TALK message : "+ chatMessage.getMessage());
-                log.info("TALK message : "+ chatMessage.getSender());
+                // 채팅메시지 저장
+                chatMessageService.createChatMessage(chatMessage);
                 sendToEachSocket(sessions, message);
             }
         } catch (IOException e) {
@@ -66,7 +65,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         sessions.parallelStream().forEach(roomSession -> {
             try {
                 if (roomSession.isOpen()) {
-                    log.info("message : "+ message);
                     roomSession.sendMessage(message);
                 }
             } catch (IOException e) {
