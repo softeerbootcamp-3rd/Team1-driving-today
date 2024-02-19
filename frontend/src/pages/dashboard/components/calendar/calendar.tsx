@@ -171,11 +171,12 @@ export function DatePicker({
                     onClick={() => onChange?.(formattedDate)}
                     key={formattedDate}
                     day={day}
+                    type="SMALL"
                   />
                 )
               }
               // blank
-              return <Cell key={`${wi}-${di}`} />
+              return <Cell type="SMALL" key={`${wi}-${di}`} />
             })}
           </WeekDiv>
         ))}
@@ -188,6 +189,7 @@ interface CellProps extends HTMLAttributes<HTMLDivElement> {
   day?: number
   disabled?: boolean
   schedules?: ReservationSchedule[]
+  type?: 'SMALL' | 'LARGE'
   selected?: boolean
   scheduleClickHandler?: (schedule: ReservationSchedule) => void
 }
@@ -241,29 +243,39 @@ const CellSlice = styled.div<CellSliceProps>(({theme, start, duration}) => ({
 
 interface CellContainerProps {
   disabled?: boolean
+  type?: 'SMALL' | 'LARGE'
   selected?: boolean
 }
 
-const CellContainer = styled.div<CellContainerProps>(({disabled, theme, selected}) => ({
-  boxSizing: 'border-box',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexDirection: 'column',
-  width: '9rem',
-  height: '9rem',
-  borderLeft: `1px solid ${theme.color.white}`,
-  position: 'relative',
-  overflow: 'hidden',
-  ':first-of-type': {
-    borderLeft: 'none',
+const CellContainer = styled.div<CellContainerProps>(
+  ({disabled, theme, selected, type = 'LARGE'}) => {
+    const size = type === 'LARGE' ? '9rem' : '5rem'
+    return {
+      boxSizing: 'border-box',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'column',
+      width: size,
+      height: size,
+      borderLeft: `1px solid ${theme.color.white}`,
+      position: 'relative',
+      overflow: 'hidden',
+      ':first-of-type': {
+        borderLeft: 'none',
+      },
+      backgroundColor: disabled
+        ? theme.color.gray300
+        : selected
+        ? theme.color.white
+        : 'transparent',
+      pointerEvents: disabled ? 'none' : 'auto',
+      ':hover': {
+        backgroundColor: theme.color.gray100,
+      },
+    }
   },
-  backgroundColor: disabled ? theme.color.gray300 : selected ? theme.color.white : 'transparent',
-  pointerEvents: disabled ? 'none' : 'auto',
-  ':hover': {
-    backgroundColor: theme.color.gray100,
-  },
-}))
+)
 
 const Container = styled.div({
   display: 'inline-flex',
