@@ -1,13 +1,16 @@
-import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
-import {CSSProperties, useState} from 'react'
+import {useState} from 'react'
 import {useLoaderData, useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Checkbox} from '@/components/checkbox'
 import {Chip} from '@/components/chip'
 import {Divider} from '@/components/divider'
+import {Flex} from '@/components/flex'
 import {Header} from '@/components/header'
+import {Typography} from '@/components/typography'
+import {apiCall} from '@/utils/api'
+import {objectToQS} from '@/utils/object-to-qs'
 
 interface LoaderData {
   instructorId: number
@@ -46,41 +49,42 @@ function ReservationInfo() {
 
   return (
     <ReservationInfoContainer>
-      <Typograpy color="gray900" size="1.6rem" weight="bold">
+      <Typography color="gray900" size="1.6rem" weight="bold">
         수업 예약 정보
-      </Typograpy>
+      </Typography>
+      <Divider />
       <Flex>
-        <Typograpy color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
+        <Typography color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
           강사
-        </Typograpy>
-        <Typograpy color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
+        </Typography>
+        <Typography color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
           {state.instructorName}
-        </Typograpy>
+        </Typography>
       </Flex>
       <Flex>
-        <Typograpy color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
+        <Typography color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
           학원
-        </Typograpy>
-        <Typograpy color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
+        </Typography>
+        <Typography color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
           {state.academyName}
-        </Typograpy>
+        </Typography>
       </Flex>
       <Flex>
-        <Typograpy color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
+        <Typography color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
           수업길이
-        </Typograpy>
-        <Typograpy color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
+        </Typography>
+        <Typography color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
           {state.trainingTime}시간
-        </Typograpy>
+        </Typography>
       </Flex>
       <Flex>
-        <Typograpy color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
+        <Typography color="gray600" size="1.4rem" weight="500" style={{width: '10rem'}}>
           수업시간
-        </Typograpy>
-        <Typograpy color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
+        </Typography>
+        <Typography color="gray900" size="1.4rem" weight="500" style={{width: '20rem'}}>
           {state.reservationDate} {state.reservationTime}시 ~{' '}
           {state.reservationTime + state.trainingTime}시
-        </Typograpy>
+        </Typography>
       </Flex>
     </ReservationInfoContainer>
   )
@@ -89,13 +93,13 @@ function ReservationInfo() {
 function PaymentMethod() {
   return (
     <PaymentMethodContainer>
-      <Typograpy color="gray900" size="1.6rem" weight="bold">
+      <Typography color="gray900" size="1.6rem" weight="bold">
         결제 방식
-      </Typograpy>
+      </Typography>
       <Divider />
-      <Typograpy color="gray900" size="1.6rem" weight="500">
+      <Typography color="gray900" size="1.6rem" weight="500">
         간편 결제
-      </Typograpy>
+      </Typography>
       <Flex gap="0.6rem">
         <Chip large selected>
           토스 페이먼츠
@@ -111,24 +115,52 @@ function PurchaseResult() {
   const state = useLoaderData() as LoaderData
 
   const totalPrice = state.pricePerHour * state.trainingTime
+  const navigate = useNavigate()
+
+  const handleReservation = async () => {
+    if (!checked) return
+    const body = {
+      reservationDate: state.reservationDate,
+      reservationTime: state.reservationTime,
+      trainingTime: state.trainingTime,
+      instructorId: state.instructorId,
+    }
+    try {
+      const response = await apiCall('/reservations', {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify(body),
+      })
+      if (response.ok) {
+        navigate(`/purchase/success?${objectToQS(state)}`, {replace: true})
+        return
+      }
+    } catch (error) {
+      // TODO: error handling
+      console.error(error)
+      navigate('/purchase/error', {replace: true})
+    }
+  }
 
   return (
     <PurchaseResultContainer>
       <Flex justifyContent="space-between">
-        <Typograpy color="gray900" size="1.6rem" weight="bold">
+        <Typography color="gray900" size="1.6rem" weight="bold">
           최종 연수 금액
-        </Typograpy>
-        <Typograpy color="primary" size="1.6rem" weight="bold">
+        </Typography>
+        <Typography color="primary" size="1.6rem" weight="bold">
           {totalPrice.toLocaleString()} 원
-        </Typograpy>
+        </Typography>
       </Flex>
       <Flex alignItems="center">
         <Checkbox checked={checked} onChange={(e) => setChecked(e.target.checked)} />
-        <Typograpy color="gray900" size="1.4rem" weight="500">
+        <Typography color="gray900" size="1.4rem" weight="500">
           결제 내역을 확인하였으며 전자상거래법에 의거하여 환불이 진행되는 것에 동의합니다.
-        </Typograpy>
+        </Typography>
       </Flex>
-      <Button disabled={!checked}>{totalPrice.toLocaleString()} 원 결제하기</Button>
+      <Button disabled={!checked} onClick={handleReservation}>
+        {totalPrice.toLocaleString()} 원 결제하기
+      </Button>
     </PurchaseResultContainer>
   )
 }
@@ -138,37 +170,11 @@ const Box = styled.div(() => ({
   flexDirection: 'column',
 }))
 
-type FlexProps = Pick<
-  CSSProperties,
-  'justifyContent' | 'alignItems' | 'flexDirection' | 'flexWrap' | 'flexGrow' | 'gap'
->
-const Flex = styled.div<FlexProps>(
-  ({justifyContent, alignItems, flexDirection, flexGrow, flexWrap, gap}) => ({
-    display: 'flex',
-    justifyContent,
-    alignItems,
-    flexDirection,
-    flexGrow,
-    flexWrap,
-    gap,
-  }),
-)
-
-const Typograpy = styled.span<{
-  color: keyof Theme['color']
-  size: CSSProperties['fontSize']
-  weight: CSSProperties['fontWeight']
-}>(({theme, color, size, weight}) => ({
-  color: theme.color[color],
-  fontSize: size,
-  fontWeight: weight,
-}))
-
 const ReservationInfoContainer = styled.section(({theme}) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '2rem',
-  gap: '0.4rem',
+  gap: '1rem',
   borderRadius: '1.6rem',
   minWidth: '44.8rem',
   border: `1px solid ${theme.color.gray200}`,
