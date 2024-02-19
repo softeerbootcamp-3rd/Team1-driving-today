@@ -24,7 +24,7 @@ public class ReviewController {
     private final ReviewAddService reviewAddService;
 
     @Operation(summary = "특정 강사에 대한 리뷰들 조회 API")
-    @GetMapping("/reviews")
+    @GetMapping("/student/reviews")
     public ResponseEntity<List<ReviewInfo>> reviewList(@Valid @ModelAttribute ReviewFindRequest request) {
         log.info("dto: {}", request.getInstructorId());
         List<ReviewInfo> reviews = reviewFindService.findReviews(request);
@@ -32,7 +32,7 @@ public class ReviewController {
     }
     
     @Operation(summary = "리뷰 등록하기 API")
-    @PostMapping("/review")
+    @PostMapping("/student/review")
     public ResponseEntity<Void> reviewAdd(@RequestBody @Valid ReviewRequest reviewRequest) {
         Authentication authentication = JwtFilter.getAuthentication();
         Long newReviewId = reviewAddService.addReview(reviewRequest, authentication.getId());
