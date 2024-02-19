@@ -25,6 +25,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Page<Reservation> findPastReservationsByInstructor
             (Long instructorId, LocalDate currentDate, Integer currentTime, Pageable pageable);
 
-
-    List<Reservation> findAllByInstructorId(Long instructorId);
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.instructor.id = :instructorId AND r.reservationDate = :date " +
+            "AND ((r.reservationTime BETWEEN :startTime AND :startTime + :trainingTime - 1) " +
+            "OR (r.reservationTime + r.trainingTime - 1 BETWEEN :startTime AND :startTime + :trainingTime - 1))" )
+    Integer countConfilctTimeSlot(Long instructorId, int startTime, int trainingTime, LocalDate date);
 }
