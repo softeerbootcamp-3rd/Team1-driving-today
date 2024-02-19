@@ -22,7 +22,7 @@ public class ReservationController {
     private final ReservationDeleteService reservationDeleteService;
 
     @Operation(summary = "예약만들기 API")
-    @PostMapping("/reservations")
+    @PostMapping("/student/reservations")
     public ResponseEntity<Void> reservationAdd(@RequestBody ReservationRequest reservationRequest) {
         Long studentId = JwtFilter.getAuthentication().getId();
         Long newReservationId = reservationAddService.addReservation(reservationRequest, studentId);
@@ -30,7 +30,7 @@ public class ReservationController {
     }
 
     @Operation(summary = "학생이 본인 예약리스트 확인하기 API")
-    @GetMapping("/my/reservations")
+    @GetMapping("/student/reservations")
     public ResponseEntity<List<ReservationStudentResponse>> reservationList(@RequestParam("isUpcoming") Boolean isUpcoming) {
         Long studentId = JwtFilter.getAuthentication().getId();
         List<ReservationStudentResponse> allStudentReservation =
@@ -40,7 +40,7 @@ public class ReservationController {
 
 
     @Operation(summary = "강사가 본인 예약리스트 확인하기 API")
-    @GetMapping("/reservations")
+    @GetMapping("/instructor/reservations")
     public ResponseEntity<List<ReservationInstructorResponse>> instructorReservationList(@RequestParam("pageNumber") Integer pageNumber,
                                                                                          @RequestParam("pageSize") Integer pageSize,
                                                                                          @RequestParam("isUpcoming") Boolean isUpcoming) {
