@@ -1,6 +1,7 @@
 package com.drivingtoday.domain.instructor.dto;
 
 
+import com.drivingtoday.domain.academy.dto.AcademyInfo;
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.review.Review;
 import lombok.Builder;
