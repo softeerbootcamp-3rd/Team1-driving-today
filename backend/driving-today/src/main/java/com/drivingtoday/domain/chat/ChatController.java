@@ -8,6 +8,7 @@ import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentFindService;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
+import com.drivingtoday.global.auth.constants.Role;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,13 @@ public class ChatController {
     private final StudentFindService studentFindService;
 
     @Operation(summary = "강사가 본인한테 온 메시지 톡방들 리스트화")
-    @RequestMapping("/chat/rooms")  // /chat/roomList
-    public ResponseEntity<List<ChatRoomInfo>> chatList(){
-        List<ChatRoomInfo> roomList = chatService.findAllRooms();
+    @RequestMapping("/my/rooms")  // /chat/roomList
+    public ResponseEntity<List<ChatRoomInfo>> chatListInstructor(){
+        Authentication authentication = JwtFilter.getAuthentication();
+        if(authentication.getRole().equals("STUDENT")){
+            throw new RuntimeException("잘못된 접근");
+        }
+        List<ChatRoomInfo> roomList = chatService.findByInstructorId(authentication.getId().toString());
         return ResponseEntity.ok().body(roomList);
     }
 
