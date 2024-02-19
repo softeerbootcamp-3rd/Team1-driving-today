@@ -30,6 +30,6 @@ async function createApiCallPromise(path: string, init?: RequestInit) {
   const res = await apiCall(path, {
     ...init,
   })
-  if (res.status < 200 || res.status >= 300) throw new Error(res.status.toString())
+  if (!res.ok) throw new Error(res.status.toString())
   return await res.json()
 }
