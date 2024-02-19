@@ -1,5 +1,8 @@
 package com.drivingtoday.global.config;
 
+import com.drivingtoday.domain.chat.ChatRoom;
+import com.drivingtoday.domain.chat.ChatService;
+import com.drivingtoday.domain.chat.SessionService;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
 import com.drivingtoday.global.auth.constants.Role;
@@ -11,11 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,13 +37,11 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
 
         log.info("accessToken: " + accessToken);
 
-        //////////////////2/17 일 작업
         if(accessToken == null){
             if(request.getURI().getQuery() != null){
                 accessToken = request.getURI().getQuery().split("=")[1];
             }
         }
-        //////////////////
 
         assert accessToken != null;
         String subProtocol = accessToken;
@@ -52,7 +58,7 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
             if(Objects.equals(auth.getId(), loginedAuthentication.getId())){
                 log.info("logged in ID : " + loginedAuthentication.getId());
             }
-            return Objects.equals(auth.getId(), loginedAuthentication.getId()) && Objects.equals(loginedAuthentication.getRole(), Role.STUDENT.toString());
+            return Objects.equals(auth.getId(), loginedAuthentication.getId());
         }catch(Exception e){
             log.info("authorize 안됨");
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -64,6 +70,7 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
         Claims claims = jwtProvider.getClaims(token);
         return Authentication.of(claims.get(JwtProvider.CLAIM_ROLE, String.class), claims.get(JwtProvider.CLAIM_USERID, Long.class));
     }
+
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {

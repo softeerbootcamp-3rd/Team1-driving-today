@@ -1,6 +1,7 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {CSSProperties} from 'react'
+import {useLoaderData, useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Divider} from '@/components/divider'
@@ -11,7 +12,9 @@ import {useApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
 import {apiCall} from '@/utils/api'
+import {objectToQS} from '@/utils/object-to-qs'
 
+import type {LoaderData} from '../types'
 interface DetailDialogProps {
   id: number
   onClose: () => void
@@ -112,6 +115,10 @@ function InstructorDetail({id}: {id: number}) {
   })
   const intersectedRef = useIntersectionObserver(() => fetchNextPage())
 
+  const navigate = useNavigate()
+  const {trainingTime, reservationTime, reservationDate, longitude, latitude} =
+    useLoaderData() as LoaderData
+
   return (
     <>
       <Flex as="section" gap="1rem" flexDirection="column">
@@ -142,7 +149,23 @@ function InstructorDetail({id}: {id: number}) {
         </Flex>
         <Actions>
           <Button>문의</Button>
-          <Button>예약</Button>
+          <Button
+            onClick={() => {
+              const {instructorId, instructorName, academyName, pricePerHour} = instructor
+              const searchParams = objectToQS({
+                instructorId,
+                reservationDate,
+                reservationTime,
+                trainingTime,
+                instructorName,
+                academyName,
+                pricePerHour,
+              })
+              navigate(`/purchase?${searchParams}`)
+            }}
+          >
+            예약
+          </Button>
         </Actions>
       </Flex>
       <Divider />

@@ -20,9 +20,6 @@ public class ChatRoom {
     @Column(name = "chatroom_id")
     private Long id;
 
-    //@Column(unique = true)
-    //private String roomId;
-
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;

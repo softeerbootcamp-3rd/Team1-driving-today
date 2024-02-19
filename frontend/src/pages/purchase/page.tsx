@@ -1,7 +1,7 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {CSSProperties, useState} from 'react'
-import {Location, useLocation, useNavigate} from 'react-router-dom'
+import {useLoaderData, useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Checkbox} from '@/components/checkbox'
@@ -9,13 +9,14 @@ import {Chip} from '@/components/chip'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
 
-interface State {
+interface LoaderData {
   instructorId: number
   reservationDate: string
   reservationTime: number
   trainingTime: number
   instructorName: string
   academyName: string
+  pricePerHour: number
 }
 
 export function StudentPurchase() {
@@ -34,14 +35,14 @@ export function StudentPurchase() {
           <ReservationInfo />
           <PaymentMethod />
         </Flex>
-        <PurcheseResult />
+        <PurchaseResult />
       </Flex>
     </Box>
   )
 }
 
 function ReservationInfo() {
-  const {state} = useLocation() as Location<State>
+  const state = useLoaderData() as LoaderData
 
   return (
     <ReservationInfoContainer>
@@ -105,17 +106,20 @@ function PaymentMethod() {
   )
 }
 
-function PurcheseResult() {
+function PurchaseResult() {
   const [checked, setChecked] = useState(false)
+  const state = useLoaderData() as LoaderData
+
+  const totalPrice = state.pricePerHour * state.trainingTime
 
   return (
-    <PurcheseResultContainer>
+    <PurchaseResultContainer>
       <Flex justifyContent="space-between">
         <Typograpy color="gray900" size="1.6rem" weight="bold">
           최종 연수 금액
         </Typograpy>
         <Typograpy color="primary" size="1.6rem" weight="bold">
-          {Number(320000).toLocaleString()} 원
+          {totalPrice.toLocaleString()} 원
         </Typograpy>
       </Flex>
       <Flex alignItems="center">
@@ -124,8 +128,8 @@ function PurcheseResult() {
           결제 내역을 확인하였으며 전자상거래법에 의거하여 환불이 진행되는 것에 동의합니다.
         </Typograpy>
       </Flex>
-      <Button disabled={!checked}>{Number(320000).toLocaleString()} 원 결제하기</Button>
-    </PurcheseResultContainer>
+      <Button disabled={!checked}>{totalPrice.toLocaleString()} 원 결제하기</Button>
+    </PurchaseResultContainer>
   )
 }
 const Box = styled.div(() => ({
@@ -180,7 +184,7 @@ const PaymentMethodContainer = styled.section(({theme}) => ({
   border: `1px solid ${theme.color.gray200}`,
 }))
 
-const PurcheseResultContainer = styled.section(({theme}) => ({
+const PurchaseResultContainer = styled.section(() => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '2rem',

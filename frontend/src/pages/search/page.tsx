@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import {useRef, useState} from 'react'
 import {CustomOverlayMap, Map, MarkerClusterer} from 'react-kakao-maps-sdk'
-import {useNavigate, useSearchParams} from 'react-router-dom'
+import {useLoaderData, useNavigate, useSearchParams} from 'react-router-dom'
 
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
@@ -10,24 +10,21 @@ import {Loading} from '@/components/loading'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
 import {apiCall} from '@/utils/api'
+import {objectToQS} from '@/utils/object-to-qs'
 
 import {DetailDialog, SearchPreview} from './components'
+import type {LoaderData} from './types'
 
 const PAGE_SIZE = 5
 
 export function SearchPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const {trainingTime, reservationTime, reservationDate, longitude, latitude} =
+    useLoaderData() as LoaderData
+  const [, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [hoverInstructorId, setHoverInstructorId] = useState<number | null>(null)
-
-  // TODO: searchParms 가 모두 있는지 확인, 없다면 이전 페이지로 redirect
-  const trainingTime = Number(searchParams.get('trainingTime'))
-  const reservationTime = Number(searchParams.get('reservationTime'))
-  const latitude = Number(searchParams.get('latitude'))
-  const longitude = Number(searchParams.get('longitude'))
-  const reservationDate = searchParams.get('reservationDate')
 
   // TODO: error handling
   const {data, loading, fetchNextPage} = useInfiniteFetch({
@@ -68,19 +65,20 @@ export function SearchPage() {
               image={instructor.instructorImage}
               pricePerHour={instructor.pricePerHour}
               distance={instructor.distance}
-              duration={2}
-              rating={5}
+              duration={trainingTime}
+              rating={instructor.averageRating}
               onRequestReservation={() => {
-                navigate('/purchase', {
-                  state: {
-                    instructorId: instructor.instructorId,
-                    reservationDate,
-                    reservationTime,
-                    trainingTime,
-                    instructorName: instructor.instructorName,
-                    academyName: instructor.academyName,
-                  },
+                const {instructorId, instructorName, academyName, pricePerHour} = instructor
+                const searchParams = objectToQS({
+                  instructorId,
+                  reservationDate,
+                  reservationTime,
+                  trainingTime,
+                  instructorName,
+                  academyName,
+                  pricePerHour,
                 })
+                navigate(`/purchase?${searchParams}`)
               }}
               onMouseEnter={() => {
                 setHoverInstructorId(instructor.instructorId)
@@ -88,6 +86,7 @@ export function SearchPage() {
               onMouseOut={() => {
                 setHoverInstructorId(null)
               }}
+              selected={instructor.instructorId === selectedId}
               onClick={() => {
                 const latlng = new kakao.maps.LatLng(instructor.latitude, instructor.longitude)
                 mapRef.current?.panTo(latlng)

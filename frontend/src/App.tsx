@@ -13,8 +13,10 @@ import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
 import {loginAction, LoginPage} from './pages/login/page'
 import {LandingPage} from './pages/page'
+import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
 import {StudentSchedule} from './pages/schedule/page'
+import {searchPageLoader} from './pages/search/loader'
 import {SearchPage} from './pages/search/page'
 import {sessionProvider, UserRole} from './utils/session'
 
@@ -55,10 +57,12 @@ const router = createBrowserRouter(
         />
         <Route
           path="/search"
+          loader={searchPageLoader}
           element={<RequireRole>{(isStudent) => isStudent && <SearchPage />}</RequireRole>}
         />
         <Route
           path="/purchase"
+          loader={purchaseLoader}
           element={<RequireRole>{(isStudent) => isStudent && <StudentPurchase />}</RequireRole>}
         />
       </Route>

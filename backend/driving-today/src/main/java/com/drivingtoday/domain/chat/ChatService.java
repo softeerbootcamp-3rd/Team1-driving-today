@@ -35,12 +35,22 @@ public class ChatService {
         return chatRoomRepository.findByStudentIdAndInstructorId(studentId, instructorId);
     }
 
+    @Transactional
+    public List<ChatRoomInfo> findByInstructorId(String instructorId){
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByInstructorId(instructorId);
+        return chatRoomList.stream().map(ChatRoomInfo::from).toList();
+    }
+
+    @Transactional
+    public List<ChatRoomInfo> findAllRooms(){
+        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
+        return chatRooms.stream().map(ChatRoomInfo::from).toList();
+    }
 
     @Transactional
     public ChatRoomInfo createRoom(Instructor instructor, Student student) {
 
         ChatRoom chatRoom = ChatRoom.builder()
-                //.roomId(roomId)
                 .student(student)
                 .instructor(instructor)
                 .build();
@@ -48,36 +58,4 @@ public class ChatService {
         log.info("CHAT ROOM WITH " + chatRoom.getId() + " CREATED WITH " + instructor.getName() + " and " + student.getName());
         return ChatRoomInfo.from(chatRoom);
     }
-
-
-
-    /////////////////////////////////////////////////// 위가 새로운 코드
-    /*
-    private Map<String, ChatRoom> chatRooms;
-
-
-    @PostConstruct
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
-    }
-
-    public List<ChatRoom> findAllRoom() {
-       return new ArrayList<>(chatRooms.values());
-    }
-
-    public ChatRoom findRoomById(String roomId) {
-        return chatRooms.get(roomId);
-    }
-
-    public ChatRoom createRoom() {
-        String randomId = UUID.randomUUID().toString();
-        ChatRoom chatRoom = ChatㅁRoom.builder()
-                .roomId(randomId)
-                //.name(name)
-                .build();
-        chatRooms.put(randomId, chatRoom);
-        return chatRoom;
-    }
-
-     */
 }

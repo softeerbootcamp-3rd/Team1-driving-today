@@ -8,6 +8,8 @@ import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentFindService;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
+import com.drivingtoday.global.auth.constants.Role;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,20 @@ public class ChatController {
     private final InstructorFindService instructorFindService;
     private final StudentFindService studentFindService;
 
+    @Operation(summary = "강사가 본인한테 온 메시지 톡방들 리스트화")
+    @RequestMapping("/my/rooms")  // /chat/roomList
+    public ResponseEntity<List<ChatRoomInfo>> chatListInstructor(){
+        Authentication authentication = JwtFilter.getAuthentication();
+        if(authentication.getRole().equals("STUDENT")){
+            throw new RuntimeException("잘못된 접근");
+        }
+        List<ChatRoomInfo> roomList = chatService.findByInstructorId(authentication.getId().toString());
+        return ResponseEntity.ok().body(roomList);
+    }
+
+    @Operation(summary = "학생이 강사 채팅 버튼 눌러서 방 만들거나 이미 있던 방 들어가기")
     @PostMapping("/chat/room")  //방을 만들었으면 해당 방으로 가야지. /chat/createRoom
-    public ResponseEntity<ChatRoomInfo> createRoom(@RequestBody String instructorId) { // roomName이 아니라 사람 id 하고 엮어야 할 듯
+    public ResponseEntity<ChatRoomInfo> enterRoom(@RequestBody String instructorId) { // roomName이 아니라 사람 id 하고 엮어야 할 듯
         Authentication authentication = JwtFilter.getAuthentication();
         Instructor instructor = instructorFindService.findById(Long.parseLong(instructorId));
         Student student = studentFindService.findById(authentication.getId());
@@ -47,6 +61,7 @@ public class ChatController {
     public ResponseEntity<Void> showRoom() {
         return ResponseEntity.ok().build();
     }
+
 
     @GetMapping("/chat/enter")   // /chat/chatRoom
     public ResponseEntity<ChatRoom> chatRoom(@RequestParam("roomId") String roomId){
