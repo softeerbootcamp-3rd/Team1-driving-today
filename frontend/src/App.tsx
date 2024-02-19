@@ -15,7 +15,7 @@ import {loginAction, LoginPage} from './pages/login/page'
 import {LandingPage} from './pages/page'
 import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
-import {PurcheseSuccessPage} from './pages/purchase/success/page'
+import {PurchaseSuccessPage} from './pages/purchase/success/page'
 import {StudentSchedule} from './pages/schedule/page'
 import {searchPageLoader} from './pages/search/loader'
 import {SearchPage} from './pages/search/page'
@@ -68,7 +68,7 @@ const router = createBrowserRouter(
         />
         <Route
           path="/purchase/success"
-          element={<RequireRole>{(isStudent) => isStudent && <PurcheseSuccessPage />}</RequireRole>}
+          element={<RequireRole>{(isStudent) => isStudent && <PurchaseSuccessPage />}</RequireRole>}
         />
       </Route>
     </>,

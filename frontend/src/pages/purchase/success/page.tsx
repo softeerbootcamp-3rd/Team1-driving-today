@@ -11,7 +11,7 @@ function randomInRange(min: number, max: number) {
   return Math.random() * (max - min) + min
 }
 
-export function PurcheseSuccessPage() {
+export function PurchaseSuccessPage() {
   useEffect(() => {
     const handleClickConfetti = (event: MouseEvent) => {
       const x = event.x / window.innerWidth

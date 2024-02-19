@@ -8,7 +8,7 @@ export interface TypographyProps {
   weight: CSSProperties['fontWeight']
 }
 
-export const Typography = styled.span<TypographyProps>(({theme, color, size, weight}) => ({
+export const Typography = styled.p<TypographyProps>(({theme, color, size, weight}) => ({
   color: theme.color[color],
   fontSize: size,
   fontWeight: weight,
