@@ -32,6 +32,7 @@ const ModalContainer = styled.div({
 
 export function StudentHistory() {
   const [selected, setSelected] = useState<StudentReservation>()
+
   return (
     <RootLayout>
       <Header px="20rem">
@@ -44,6 +45,7 @@ export function StudentHistory() {
         <ModalContainer>
           {selected && (
             <ReviewModal
+              key={selected?.reservationId}
               onClose={() => setSelected(undefined)}
               reservationId={selected?.reservationId}
               instructorId={selected?.instructorId}

@@ -1,10 +1,13 @@
 import styled from '@emotion/styled'
-import {useState} from 'react'
+import {Suspense, useState} from 'react'
 
 import {Card} from '@/components/card'
+import {Loading} from '@/components/loading'
 import {Tab} from '@/components/tab'
-import {useApiCall} from '@/hooks/use-api-call'
-import {API_BASE_URL} from '@/utils/constants'
+import {useSuspendedApiCall} from '@/hooks/use-api-call'
+import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
+import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {apiCall} from '@/utils/api'
 
 export interface StudentReservation {
   instructorId: number
@@ -44,13 +47,7 @@ interface StudentCardlistProps {
   selected?: StudentReservation
 }
 
-function useStudentList() {
-  // todo: infinite scroll
-  return useApiCall<StudentReservation[]>('/my/reservations?pageNumber=1&pageSize=10')
-}
-
-export function StudentCardlist({onReviewClick, selected}: StudentCardlistProps) {
-  const {data: studentList} = useStudentList()
+export function StudentCardlist(props: StudentCardlistProps) {
   const [filter, setFilter] = useState('all')
   return (
     <Container>
@@ -61,30 +58,56 @@ export function StudentCardlist({onReviewClick, selected}: StudentCardlistProps)
           <Tab.Item label="예정" value="scheduled" />
           <Tab.Item label="완료" value="completed" />
         </Tab.ItemList>
-        {studentList && (
-          <List>
-            {studentList.map((v) => {
-              const canReview = isCompleted(v.reservationDate, v.reservationTime, v.trainingTime)
-              const reviewClick = canReview ? () => onReviewClick(v) : undefined
-              if ((filter === 'scheduled' && canReview) || (filter === 'completed' && !canReview))
-                return
-              return (
-                <Card.StudentHistory
-                  key={v.reservationId}
-                  instructorName={v.instructorName}
-                  academyName={v.academyName}
-                  dateStr={v.reservationDate}
-                  timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-                  image={v.instructorImage}
-                  onReviewClick={reviewClick}
-                  selected={selected?.reservationId === v.reservationId}
-                />
-              )
-            })}
-          </List>
-        )}
+        <List>
+          <Suspense fallback={<Loading />}>
+            <StudentCardListContent {...props} filter={filter} />
+          </Suspense>
+        </List>
       </Tab.Provider>
     </Container>
+  )
+}
+
+interface StudentCardListContentProps extends StudentCardlistProps {
+  filter: string
+}
+
+function StudentCardListContent({onReviewClick, selected, filter}: StudentCardListContentProps) {
+  // todo: probably have to sort this
+  const {data: pastList} = useSuspendedApiCall<StudentReservation[]>(
+    '/student/reservations?isUpcoming=false',
+  )
+  const {data: futureList} = useSuspendedApiCall<StudentReservation[]>(
+    '/student/reservations?isUpcoming=true',
+  )
+  return (
+    <>
+      {(filter === 'scheduled' || filter === 'all') &&
+        futureList?.map((v) => (
+          <Card.StudentHistory
+            key={v.reservationId}
+            instructorName={v.instructorName}
+            academyName={v.academyName}
+            dateStr={v.reservationDate}
+            timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+            image={v.instructorImage}
+            selected={selected?.reservationId === v.reservationId}
+          />
+        ))}
+      {(filter === 'completed' || filter === 'all') &&
+        pastList?.map((v) => (
+          <Card.StudentHistory
+            key={v.reservationId}
+            instructorName={v.instructorName}
+            academyName={v.academyName}
+            dateStr={v.reservationDate}
+            timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+            image={v.instructorImage}
+            onReviewClick={() => onReviewClick(v)}
+            selected={selected?.reservationId === v.reservationId}
+          />
+        ))}
+    </>
   )
 }
 
@@ -97,29 +120,46 @@ export interface InstructorReservation {
   reservationTime: number
   trainingTime: number
   studentId: number
+  isUpcoming: boolean
 }
 
 export type InstructorHistoryResponse = InstructorReservation[]
-
-function useInstructorList() {
-  // todo: infinite scroll
-  return useApiCall<InstructorReservation[]>(
-    `${API_BASE_URL}/reservations?pageNumber=1&pageSize=10`,
-  )
-}
 
 interface InstructorCardlistProps {
   onSelect: (item: InstructorReservation) => void
   selected?: InstructorReservation
 }
 
+const PAGE_SIZE = 5
+
 export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps) {
-  const {data} = useInstructorList()
+  const {data, loading, fetchNextPage} = useInfiniteFetch({
+    queryFn: ({pageParam}) => {
+      return apiCall(
+        `/instructor/reservations?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&isUpcoming=false`,
+      ).then((res) => res.json())
+    },
+    initialPageParam: 1,
+    getNextPageParam: ({pageParam, lastPage}) => {
+      const isLastPage = lastPage.length < PAGE_SIZE
+      const nextPageParam = pageParam + 1
+      return isLastPage ? undefined : nextPageParam
+    },
+  })
+
+  const intersectedRef = useIntersectionObserver(() => fetchNextPage())
   return (
-    data && (
-      <Container>
-        <List>
-          {data.map((v) => (
+    <Container>
+      <List>
+        {(data as InstructorReservation[])?.map((v) =>
+          v.isUpcoming ? (
+            <RejectableInstructorCard
+              key={v.reservationId}
+              v={v}
+              onSelect={onSelect}
+              selected={selected}
+            />
+          ) : (
             <Card.InstructorHistory
               key={v.reservationId}
               studentName={v.studentName}
@@ -130,19 +170,37 @@ export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps
               onClick={() => onSelect(v)}
               selected={selected?.reservationId === v.reservationId}
             />
-          ))}
-        </List>
-      </Container>
-    )
+          ),
+        )}
+        <div ref={intersectedRef} style={{height: '3rem'}} />
+        {loading && <Loading />}
+      </List>
+    </Container>
+  )
+}
+
+interface RejectableInstructorCardProps extends InstructorCardlistProps {
+  v: InstructorReservation
+}
+
+function RejectableInstructorCard({v, onSelect, selected}: RejectableInstructorCardProps) {
+  // const [deleting, setDeleting] = useState(false)
+  // todo: implement rejection
+  return (
+    <Card.InstructorHistory
+      key={v.reservationId}
+      studentName={v.studentName}
+      phoneStr={v.phoneNumber}
+      dateStr={v.reservationDate}
+      timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+      image={v.studentImage}
+      onClick={() => onSelect(v)}
+      onRejectClick={() => {}}
+      selected={selected?.reservationId === v.reservationId}
+    />
   )
 }
 
 function timeToStr(reservationTime: number, trainingTime: number) {
   return `${reservationTime}시~${reservationTime + trainingTime}시 (${trainingTime}시간)`
-}
-
-function isCompleted(reservationDate: string, reservationTime: number, trainingTime: number) {
-  const now = new Date()
-  const date = new Date(`${reservationDate} ${reservationTime + trainingTime}:00:00`)
-  return now > date
 }

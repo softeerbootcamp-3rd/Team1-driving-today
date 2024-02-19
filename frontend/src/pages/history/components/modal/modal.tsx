@@ -1,14 +1,14 @@
 import styled from '@emotion/styled'
-import {useRef, useState} from 'react'
+import {Suspense, useRef, useState} from 'react'
 
 import {Button} from '@/components/button'
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
+import {Loading} from '@/components/loading'
 import {Rating} from '@/components/rating'
-import {useApiCall} from '@/hooks/use-api-call'
+import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {apiCall} from '@/utils/api'
-import {API_BASE_URL} from '@/utils/constants'
 
 interface ReviewModalProps {
   onClose: () => void
@@ -24,8 +24,6 @@ interface InstructorResponse {
     instructorImage: string
     pricePerHour: number
     introduction: string
-    registerDate: string
-    rating: number
   }
   academyInfo: {
     name: string
@@ -33,25 +31,23 @@ interface InstructorResponse {
     longitude: number
     cert: boolean
   }
+  averageRating: number
 }
 
 const DEFAULT_RATING = 5
 
-export function ReviewModal({onClose, reservationId, instructorId}: ReviewModalProps) {
-  const {data} = useApiCall<InstructorResponse>(`/instructors/${instructorId}`)
-
+export function ReviewModal({onClose, ...props}: ReviewModalProps) {
   const [submitting, setSubmitting] = useState<boolean>(false)
-  const [rating, setRating] = useState<number>(DEFAULT_RATING)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const submitReview = () => {
+  const submitReview = (reservationId: number, rating: number, content?: string) => {
+    // todo: validation
     if (submitting) return
     setSubmitting(true)
-    apiCall('/review', {
+    apiCall('/student/review', {
       method: 'POST',
       body: JSON.stringify({
         rating,
-        contents: textareaRef.current?.value,
+        contents: content,
         reservationId,
       }),
       headers: {'Content-Type': 'application/json'},
@@ -68,33 +64,59 @@ export function ReviewModal({onClose, reservationId, instructorId}: ReviewModalP
         <Card.Name>리뷰 작성</Card.Name>
         <Icon name="close" color="black" width="1.4rem" height="1.4rem" onClick={onClose} />
       </HeaderContainer>
-      {data && (
-        <Content>
-          <InfoContainer>
-            <Card.ProfilePic
-              src={data.instructorInfo.instructorImage}
-              style={{flexBasis: '6rem', width: '6rem', height: '6rem'}}
-            />
-            <Card.Name>{data.instructorInfo.name}</Card.Name>
-          </InfoContainer>
-          <Card.MultipleDescriptionContainer>
-            <Card.Label color="gray600">{`평점 ${data.instructorInfo.rating}`}</Card.Label>
-            <Card.Label color="gray600">{`시간당 ${data.instructorInfo.pricePerHour} 원`}</Card.Label>
-          </Card.MultipleDescriptionContainer>
-          <Card.IconLabel icon="building" color="gray600">
-            {data.academyInfo.name}
-          </Card.IconLabel>
-          <Divider flexItem={true} />
-          <Rating defaultValue={5} onValueChange={setRating} readOnly={submitting} />
-          <TextArea ref={textareaRef} placeholder="내용을 작성해 주세요" rows={5} />
-          <ActionsContainer>
-            <Button style={{width: 'auto'}} onClick={submitReview}>
-              등록
-            </Button>
-          </ActionsContainer>
-        </Content>
-      )}
+      <Content>
+        <Suspense fallback={<Loading />}>
+          <ReviewModalContent {...props} onSubmitReview={submitReview} submitting={submitting} />
+        </Suspense>
+      </Content>
     </Container>
+  )
+}
+
+interface ReviewModalContentProps {
+  reservationId: number
+  instructorId: number
+  onSubmitReview: (reservationId: number, rating: number, content?: string) => void
+  submitting: boolean
+}
+
+function ReviewModalContent({
+  reservationId,
+  instructorId,
+  onSubmitReview,
+  submitting,
+}: ReviewModalContentProps) {
+  const {data} = useSuspendedApiCall<InstructorResponse>(`/student/instructors/${instructorId}`)
+  const [rating, setRating] = useState<number>(DEFAULT_RATING)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  return (
+    <>
+      <InfoContainer>
+        <Card.ProfilePic
+          src={data?.instructorInfo.instructorImage}
+          style={{flexBasis: '6rem', width: '6rem', height: '6rem'}}
+        />
+        <Card.Name>{data?.instructorInfo.name}</Card.Name>
+      </InfoContainer>
+      <Card.MultipleDescriptionContainer>
+        <Card.Label color="gray600">{`평점 ${data?.averageRating}`}</Card.Label>
+        <Card.Label color="gray600">{`시간당 ${data?.instructorInfo.pricePerHour} 원`}</Card.Label>
+      </Card.MultipleDescriptionContainer>
+      <Card.IconLabel icon="building" color="gray600">
+        {data?.academyInfo.name}
+      </Card.IconLabel>
+      <Divider flexItem={true} />
+      <Rating defaultValue={5} onValueChange={setRating} readOnly={submitting} />
+      <TextArea ref={textareaRef} placeholder="내용을 작성해 주세요" rows={5} />
+      <ActionsContainer>
+        <Button
+          style={{width: 'auto'}}
+          onClick={() => onSubmitReview(reservationId, rating, textareaRef.current?.value)}
+        >
+          등록
+        </Button>
+      </ActionsContainer>
+    </>
   )
 }
 
@@ -111,30 +133,39 @@ interface StudentResponse {
 }
 
 export function StudentModal({onClose, studentId}: StudentModalProps) {
-  const {data} = useApiCall<StudentResponse>(`${API_BASE_URL}/students/${studentId}`)
-
   return (
     <Container>
       <HeaderContainer>
         <Card.Name>학생 정보</Card.Name>
         <Icon name="close" color="black" width="1.4rem" height="1.4rem" onClick={onClose} />
       </HeaderContainer>
-      {data && (
-        <Content>
-          <InfoContainer>
-            <Card.ProfilePic
-              src={data.studentImage}
-              style={{flexBasis: '6rem', width: '6rem', height: '6rem'}}
-            />
-            <Card.Name>{data.name}</Card.Name>
-          </InfoContainer>
-          <Card.Label color="gray600">{data.nickname}</Card.Label>
-          <Card.IconLabel icon="call" color="gray600">
-            {data.phoneNumber}
-          </Card.IconLabel>
-        </Content>
-      )}
+      <Suspense fallback={<Loading />}>
+        <StudentModalContent studentId={studentId} />
+      </Suspense>
     </Container>
+  )
+}
+
+interface StudentModalContentProps {
+  studentId: number
+}
+
+function StudentModalContent({studentId}: StudentModalContentProps) {
+  const {data} = useSuspendedApiCall<StudentResponse>(`/instructor/students/${studentId}`)
+  return (
+    <Content>
+      <InfoContainer>
+        <Card.ProfilePic
+          src={data?.studentImage}
+          style={{flexBasis: '6rem', width: '6rem', height: '6rem'}}
+        />
+        <Card.Name>{data?.name}</Card.Name>
+      </InfoContainer>
+      <Card.Label color="gray600">{data?.nickname}</Card.Label>
+      <Card.IconLabel icon="call" color="gray600">
+        {data?.phoneNumber}
+      </Card.IconLabel>
+    </Content>
   )
 }
 
