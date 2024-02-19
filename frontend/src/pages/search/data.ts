@@ -9,6 +9,7 @@ export const dummydata = [
     pricePerHour: 29000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 4.7,
   },
   {
     distance: 36,
@@ -20,6 +21,7 @@ export const dummydata = [
     pricePerHour: 42000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 89,
@@ -31,6 +33,7 @@ export const dummydata = [
     pricePerHour: 19000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 21,
@@ -42,6 +45,7 @@ export const dummydata = [
     pricePerHour: 34000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 68,
@@ -53,6 +57,7 @@ export const dummydata = [
     pricePerHour: 47000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 45,
@@ -64,6 +69,7 @@ export const dummydata = [
     pricePerHour: 13000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 53,
@@ -75,6 +81,7 @@ export const dummydata = [
     pricePerHour: 29000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 86,
@@ -86,6 +93,7 @@ export const dummydata = [
     pricePerHour: 46000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 10,
@@ -97,6 +105,7 @@ export const dummydata = [
     pricePerHour: 32000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
   {
     distance: 93,
@@ -108,6 +117,7 @@ export const dummydata = [
     pricePerHour: 44000,
     instructorName: '오정진',
     academyName: '강남차동자전운문전학원',
+    averageRating: 3.7,
   },
 ]
 
