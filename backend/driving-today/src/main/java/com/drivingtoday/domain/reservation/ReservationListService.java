@@ -19,22 +19,29 @@ public class ReservationListService {
     private final ReservationRepository reservationRepository;
 
     @Transactional
-    public List<ReservationStudentResponse> findAllStudentReservation(Long studentId, Integer pageNumber, Integer pageSize){
-
-        List<Reservation> reservationList = reservationRepository.findAllByStudentId(studentId,
-                PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending())).getContent();
-
-        return reservationList.stream().map(ReservationStudentResponse::from).toList();
-    }
-
-    @Transactional
-    public List<ReservationInstructorResponse> findAllInstructorReservation(Long instructorId, Integer pageNumber, Integer pageSize, Boolean isUpcoming){
+    public List<ReservationStudentResponse> findAllStudentReservation(Long studentId, Boolean isUpcoming) {
 
         LocalDate currentDate = LocalDate.now();
         int currentTime = LocalDateTime.now().getHour();
         List<Reservation> reservations;
 
-        if(isUpcoming) {
+        if (isUpcoming) {
+            reservations = reservationRepository.findFutureReservationsByStudent(studentId, currentDate, currentTime);
+        } else {
+            reservations = reservationRepository.findPastReservationsByStudent(studentId, currentDate, currentTime);
+        }
+
+        return reservations.stream().map(ReservationStudentResponse::from).toList();
+    }
+
+    @Transactional
+    public List<ReservationInstructorResponse> findAllInstructorReservation(Long instructorId, Integer pageNumber, Integer pageSize, Boolean isUpcoming) {
+
+        LocalDate currentDate = LocalDate.now();
+        int currentTime = LocalDateTime.now().getHour();
+        List<Reservation> reservations;
+
+        if (isUpcoming) {
             reservations = reservationRepository.findFutureReservationsByInstructor(instructorId,
                             currentDate, currentTime, PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending()))
                     .getContent();
@@ -46,6 +53,5 @@ public class ReservationListService {
 
         return reservations.stream().map(ReservationInstructorResponse::from).toList();
     }
-
 
 }

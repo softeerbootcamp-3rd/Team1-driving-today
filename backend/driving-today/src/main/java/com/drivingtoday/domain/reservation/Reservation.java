@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class Reservation {
     @Id
@@ -52,8 +51,8 @@ public class Reservation {
     private Instructor instructor;
 
     @Builder
-    public Reservation(Boolean isAccepted, Integer reservationTime, Integer trainingTime, Student student, Instructor instructor, LocalDate reservationDate){
-        this.isAccepted = isAccepted;
+    public Reservation(Integer reservationTime, Integer trainingTime, Student student, Instructor instructor, LocalDate reservationDate){
+        this.isAccepted = true;
         this.reservationTime = reservationTime;
         this.trainingTime = trainingTime;
         this.student = student;
@@ -62,4 +61,8 @@ public class Reservation {
         this.reservationDate = reservationDate;
     }
 
+
+    public void reject() {
+        this.isAccepted = false;
+    }
 }
