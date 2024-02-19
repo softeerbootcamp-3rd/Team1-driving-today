@@ -36,13 +36,9 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatRoom findByStudentId(String studentId){
-        return chatRoomRepository.findByStudentId(studentId);
-    }
-
-    @Transactional
-    public ChatRoom findByInstructorId(String instructorId){
-        return chatRoomRepository.findByInstructorId(instructorId);
+    public List<ChatRoomInfo> findByInstructorId(String instructorId){
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByInstructorId(instructorId);
+        return chatRoomList.stream().map(ChatRoomInfo::from).toList();
     }
 
     @Transactional

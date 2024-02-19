@@ -13,8 +13,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     ChatRoom findByStudentIdAndInstructorId(@Param("studentId") String studentId, @Param("instructorId") String instructorId);
 
     @Query(value = "SELECT * FROM chat_room WHERE student_id = :studentId", nativeQuery = true)
-    ChatRoom findByStudentId(@Param("studentId") String studentId);
+    List<ChatRoom> findByStudentId(@Param("studentId") String studentId);
 
     @Query(value = "SELECT * FROM chat_room WHERE instructor_id = :instructorId", nativeQuery = true)
-    ChatRoom findByInstructorId(@Param("instructorId") String instructorId);
+    List<ChatRoom> findByInstructorId(@Param("instructorId") String instructorId);
 }
