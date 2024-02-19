@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react'
 
-import {apiCall} from '@/utils/api'
+import {apiCall, getApiCache, invalidateApiCache} from '@/utils/api'
 
 export interface UseApiResult<T> {
   data?: T
@@ -59,4 +59,50 @@ export function useApiCall<T>(path: string, params: UseApiParam<T> = {}): UseApi
   }, [doFetch])
 
   return {data, loading, error, reload: doFetch}
+}
+
+export interface ExtendedPromise<T> extends PromiseLike<T> {
+  status?: 'pending' | 'fulfilled' | 'rejected'
+  value?: T
+  reason?: unknown
+}
+
+export function use<T>(promise: ExtendedPromise<T>) {
+  if (promise.status === 'fulfilled') {
+    return promise.value
+  } else if (promise.status === 'rejected') {
+    throw promise.reason
+  } else if (promise.status === 'pending') {
+    throw promise
+  } else {
+    promise.status = 'pending'
+    promise.then(
+      (result) => {
+        promise.status = 'fulfilled'
+        promise.value = result
+      },
+      (reason) => {
+        promise.status = 'rejected'
+        promise.reason = reason
+      },
+    )
+    throw promise as ExtendedPromise<T>
+  }
+}
+
+interface UseSuspendedApiCallResult<T> {
+  data: T | undefined
+}
+
+export function useSuspendedApiCall<T>(
+  path: string,
+  init?: RequestInit,
+): UseSuspendedApiCallResult<T> {
+  // TODO: implement proper cache management
+  useEffect(() => {
+    // invalidate cache every request
+    return () => invalidateApiCache(path)
+  }, [path])
+  const promise = getApiCache(path, init)
+  return {data: use(promise)}
 }
