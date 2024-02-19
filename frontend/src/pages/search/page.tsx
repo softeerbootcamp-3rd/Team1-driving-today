@@ -1,23 +1,21 @@
 import styled from '@emotion/styled'
 import {useRef, useState} from 'react'
-import {Map, MapMarker, MarkerClusterer} from 'react-kakao-maps-sdk'
+import {CustomOverlayMap, Map, MarkerClusterer} from 'react-kakao-maps-sdk'
 import {useLoaderData, useNavigate, useSearchParams} from 'react-router-dom'
 
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Header} from '@/components/header'
+import {Loading} from '@/components/loading'
+import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
+import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {apiCall} from '@/utils/api'
 import {objectToQS} from '@/utils/object-to-qs'
 
 import {DetailDialog, SearchPreview} from './components'
-import {dummydata} from './data'
+import type {LoaderData} from './types'
 
-interface LoaderData {
-  reservationDate: string
-  reservationTime: number
-  trainingTime: number
-  longitude: number
-  latitude: number
-}
+const PAGE_SIZE = 5
 
 export function SearchPage() {
   const {trainingTime, reservationTime, reservationDate, longitude, latitude} =
@@ -26,6 +24,23 @@ export function SearchPage() {
   const navigate = useNavigate()
   const mapRef = useRef<kakao.maps.Map | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [hoverInstructorId, setHoverInstructorId] = useState<number | null>(null)
+
+  // TODO: error handling
+  const {data, loading, fetchNextPage} = useInfiniteFetch({
+    queryFn: ({pageParam}) => {
+      return apiCall(
+        `/instructors?latitude=${latitude}&longitude=${longitude}&trainingTime=${trainingTime}&reservationTime=${reservationTime}&reservationDate=${reservationDate}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
+      ).then((res) => res.json())
+    },
+    initialPageParam: 1,
+    getNextPageParam: ({pageParam, lastPage}) => {
+      const isLastPage = lastPage.length < PAGE_SIZE
+      const nextPageParam = pageParam + 1
+      return isLastPage ? undefined : nextPageParam
+    },
+  })
+  const intersectedRef = useIntersectionObserver(() => fetchNextPage())
 
   return (
     <>
@@ -42,7 +57,7 @@ export function SearchPage() {
           <Divider />
         </Box>
         <InstructorList>
-          {dummydata.map((instructor) => (
+          {data?.map((instructor) => (
             <Card.ReservationResult
               key={instructor.instructorId}
               instructorName={instructor.instructorName}
@@ -65,6 +80,12 @@ export function SearchPage() {
                 })
                 navigate(`/purchase?${searchParams}`)
               }}
+              onMouseEnter={() => {
+                setHoverInstructorId(instructor.instructorId)
+              }}
+              onMouseOut={() => {
+                setHoverInstructorId(null)
+              }}
               selected={instructor.instructorId === selectedId}
               onClick={() => {
                 const latlng = new kakao.maps.LatLng(instructor.latitude, instructor.longitude)
@@ -73,6 +94,12 @@ export function SearchPage() {
               }}
             />
           ))}
+          <div ref={intersectedRef} style={{height: '3rem'}} />
+          {loading && (
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Loading />
+            </div>
+          )}
         </InstructorList>
         {selectedId && <DetailDialog id={selectedId} onClose={() => setSelectedId(null)} />}
       </SearchResultContainer>
@@ -101,22 +128,40 @@ export function SearchPage() {
         }}
       >
         <MarkerClusterer averageCenter={true} minLevel={10}>
-          {dummydata.map((instructor) => (
-            <MapMarker
-              key={instructor.instructorId}
-              position={{
-                lat: instructor.latitude,
-                lng: instructor.longitude,
-              }}
-              image={{
-                src: '/marker.png',
-                size: {
-                  width: 38,
-                  height: 48,
-                },
-              }}
-            />
-          ))}
+          {data?.map((instructor) => {
+            const {instructorId: id, latitude, longitude} = instructor
+            return (
+              <CustomOverlayMap
+                key={id}
+                position={{
+                  lat: latitude,
+                  lng: longitude,
+                }}
+                clickable
+              >
+                <MarkerContainer
+                  className={selectedId === id ? 'hatch' : ''}
+                  selected={selectedId === id}
+                  hover={hoverInstructorId === id}
+                  onClick={() => {
+                    const latlng = new kakao.maps.LatLng(latitude, longitude)
+                    mapRef.current?.panTo(latlng)
+                    setSelectedId(id)
+                  }}
+                >
+                  <img
+                    src="/marker.svg"
+                    onMouseEnter={() => {
+                      setHoverInstructorId(id)
+                    }}
+                    onMouseOut={() => {
+                      setHoverInstructorId(null)
+                    }}
+                  />
+                </MarkerContainer>
+              </CustomOverlayMap>
+            )
+          })}
         </MarkerClusterer>
       </Map>
     </>
@@ -153,4 +198,16 @@ const InstructorList = styled.ul(() => ({
   flex: '1 1 0',
   overflowY: 'scroll',
   padding: '0 2rem 5rem',
+}))
+
+const MarkerContainer = styled.div<{selected: boolean; hover: boolean}>(({selected, hover}) => ({
+  cursor: 'pointer',
+  width: 24,
+  height: 34,
+  transition: 'all 0.3s',
+  transformOrigin: 'bottom center',
+  transform: selected || hover ? 'scale(1.5)' : 'scale(1)',
+  '&:hover': {
+    transform: 'scale(1.5)',
+  },
 }))

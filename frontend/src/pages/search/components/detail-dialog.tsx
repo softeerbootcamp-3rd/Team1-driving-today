@@ -1,15 +1,20 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {CSSProperties} from 'react'
-import {useNavigate, useSearchParams} from 'react-router-dom'
+import {useLoaderData, useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
+import {Loading} from '@/components/loading'
 import {Rating} from '@/components/rating'
+import {useApiCall} from '@/hooks/use-api-call'
+import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
+import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {apiCall} from '@/utils/api'
+import {objectToQS} from '@/utils/object-to-qs'
 
-import {detailData, reviewData} from '../data'
-
+import type {LoaderData} from '../types'
 interface DetailDialogProps {
   id: number
   onClose: () => void
@@ -33,7 +38,7 @@ export function DetailDialog({id, onClose}: DetailDialogProps) {
         </Icon>
       </DialogHeader>
       <DialogContent>
-        <InstructorDetail id={id} />
+        <InstructorDetail key={id} id={id} />
       </DialogContent>
     </Dialog>
   )
@@ -69,21 +74,63 @@ const DialogContent = styled.div(() => ({
   gap: '1rem',
 }))
 
+interface InstructorDetailResponse {
+  instructorInfo: {
+    id: number
+    name: string
+    phoneNumber: string
+    instructorImage: string
+    pricePerHour: number
+    introduction: string
+  }
+  academyInfo: {
+    name: string
+    latitude: number
+    longitude: number
+    cert: boolean
+  }
+  averageRating: number
+}
+
+const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
-  // TODO: 상세 정보, 리뷰 리스트 받아오기(무한스크롤)
+  // TODO: error handling
+  const instructorDetail = useApiCall<InstructorDetailResponse>(`/instructors/${id}`)
+
+  // TODO: error handling
+  const {
+    data: reviews,
+    loading,
+    fetchNextPage,
+  } = useInfiniteFetch({
+    queryFn: ({pageParam}) => {
+      return apiCall(
+        `/reviews?instructorId=${id}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
+      ).then((res) => res.json())
+    },
+    initialPageParam: 1,
+    getNextPageParam: ({pageParam, lastPage}) => {
+      const isLastPage = lastPage.length < PAGE_SIZE
+      const nextPageParam = pageParam + 1
+      return isLastPage ? undefined : nextPageParam
+    },
+  })
+  const intersectedRef = useIntersectionObserver(() => fetchNextPage())
+
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const trainingTime = Number(searchParams.get('trainingTime'))
-  const reservationTime = Number(searchParams.get('reservationTime'))
-  const reservationDate = searchParams.get('reservationDate')
+  const {trainingTime, reservationTime, reservationDate} = useLoaderData() as LoaderData
 
   return (
     <>
       <Flex as="section" gap="1rem" flexDirection="column">
         <Flex gap="2rem" flexDirection="row" alignItems="center">
-          <Avartar src={detailData.instructorInfo.instructorImage} width="62" height="62" />
+          <Avartar
+            src={instructorDetail.data?.instructorInfo.instructorImage}
+            width="62"
+            height="62"
+          />
           <Typograpy color="gray700" size="2rem" weight="bold">
-            {detailData.instructorInfo.name}
+            {instructorDetail.data?.instructorInfo.name}
           </Typograpy>
         </Flex>
         <Flex as="ul">
@@ -92,30 +139,29 @@ function InstructorDetail({id}: {id: number}) {
           </Typograpy>
           <Divider orientation="vertical" flexItem style={{margin: '0.5rem'}} />
           <Typograpy as="li" color="gray600" weight="500" size="1.4rem">
-            시간당 {detailData.instructorInfo.pricePerHour.toLocaleString()}
+            시간당 {instructorDetail.data?.instructorInfo.pricePerHour.toLocaleString()}
           </Typograpy>
         </Flex>
         <Flex alignItems="center">
           <Icon name="building" width="2rem" height="2rem" color="gray600" />
           <Typograpy as="span" color="gray600" weight="500" size="1.4rem">
-            {detailData.academyInfo.name}
+            {instructorDetail.data?.academyInfo.name}
           </Typograpy>
         </Flex>
         <Actions>
           <Button>문의</Button>
           <Button
             onClick={() => {
-              navigate('/purchase', {
-                state: {
-                  instructorId: detailData.instructorInfo.id,
-                  reservationDate,
-                  reservationTime,
-                  trainingTime,
-                  instructorName: detailData.instructorInfo.name,
-                  academyName: detailData.academyInfo.name,
-                  pricePerHour: detailData.instructorInfo.pricePerHour,
-                },
+              const searchParams = objectToQS({
+                instructorId: id,
+                reservationDate,
+                reservationTime,
+                trainingTime,
+                instructorName: instructorDetail.data?.instructorInfo.name,
+                academyName: instructorDetail.data?.academyInfo.name,
+                pricePerHour: instructorDetail.data?.instructorInfo.pricePerHour,
               })
+              navigate(`/purchase?${searchParams}`)
             }}
           >
             예약
@@ -128,7 +174,7 @@ function InstructorDetail({id}: {id: number}) {
           강사 소개
         </Typograpy>
         <Typograpy as="p" color="gray900" weight="500" size="1.4rem">
-          {detailData.instructorInfo.introduction}
+          {instructorDetail.data?.instructorInfo.introduction}
         </Typograpy>
       </Flex>
       <Divider />
@@ -137,10 +183,14 @@ function InstructorDetail({id}: {id: number}) {
           리뷰
         </Typograpy>
         <Flex as="ul" gap="2.5rem" flexDirection="column" style={{paddingBottom: '4rem'}}>
-          {reviewData.map((review) => (
+          {reviews?.map((review) => (
             <Flex as="li" flexDirection="column" gap="1.5rem" key={review.reviewId}>
               <Flex gap="1rem" alignItems="center">
-                <Avartar src={detailData.instructorInfo.instructorImage} width="30" height="30" />
+                <Avartar
+                  src={instructorDetail.data?.instructorInfo.instructorImage}
+                  width="30"
+                  height="30"
+                />
                 <Typograpy color="gray900" size="1.4rem" weight="bold">
                   {review.reviewerName}
                 </Typograpy>
@@ -156,6 +206,12 @@ function InstructorDetail({id}: {id: number}) {
               </Typograpy>
             </Flex>
           ))}
+          <div ref={intersectedRef} style={{height: '3rem'}}></div>
+          {loading && (
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Loading />
+            </div>
+          )}
         </Flex>
       </Flex>
     </>

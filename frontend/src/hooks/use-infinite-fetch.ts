@@ -1,9 +1,15 @@
-import {useCallback, useRef, useState} from 'react'
+import {useCallback, useMemo, useRef, useState} from 'react'
 
 export interface UseInfiniteFetchArg<TData, TPageParam> {
   queryFn: ({pageParam}: {pageParam: TPageParam}) => Promise<TData>
   initialPageParam: TPageParam
-  getNextPageParam: ({pageParam}: {pageParam: TPageParam}) => TPageParam
+  getNextPageParam: ({
+    pageParam,
+    lastPage,
+  }: {
+    pageParam: TPageParam
+    lastPage: TData
+  }) => TPageParam | undefined
 }
 
 export interface UseInfniteFetchReturn<TData> {
@@ -11,6 +17,7 @@ export interface UseInfniteFetchReturn<TData> {
   data?: TData[]
   error?: unknown
   loading: boolean
+  hasNextPage: boolean
 }
 
 export function useInfiniteFetch<TData, TPageParam>({
@@ -21,15 +28,25 @@ export function useInfiniteFetch<TData, TPageParam>({
   const [data, setData] = useState<TData[]>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>()
+  const [hasNextPage, setHasNextPage] = useState(true)
   const queryFnRef = useRef(queryFn)
-  const nextPageParamRef = useRef(initialPageParam)
+  const nextPageParamRef = useRef<TPageParam | undefined>(initialPageParam)
   const getNextPageParamRef = useRef(getNextPageParam)
 
   const fetchNextPage = useCallback(async () => {
+    if (!nextPageParamRef.current) {
+      return
+    }
     setLoading(true)
     try {
       const res = await queryFnRef.current({pageParam: nextPageParamRef.current})
-      nextPageParamRef.current = getNextPageParamRef.current({pageParam: nextPageParamRef.current})
+      nextPageParamRef.current = getNextPageParamRef.current({
+        pageParam: nextPageParamRef.current,
+        lastPage: res,
+      })
+      if (!nextPageParamRef.current) {
+        setHasNextPage(false)
+      }
       setData((prev) => (prev ? prev : []).concat(res))
       setError(null)
     } catch (error) {
@@ -39,5 +56,8 @@ export function useInfiniteFetch<TData, TPageParam>({
     }
   }, [])
 
-  return {fetchNextPage, data, loading, error}
+  return useMemo(
+    () => ({fetchNextPage, data, loading, error, hasNextPage}),
+    [fetchNextPage, data, loading, error, hasNextPage],
+  )
 }
