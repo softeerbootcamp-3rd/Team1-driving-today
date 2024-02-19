@@ -5,11 +5,11 @@ import com.drivingtoday.domain.reservation.dto.ReservationRequest;
 import com.drivingtoday.domain.reservation.dto.ReservationStudentResponse;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
 import java.util.List;
 
@@ -31,11 +31,10 @@ public class ReservationController {
 
     @Operation(summary = "학생이 본인 예약리스트 확인하기 API")
     @GetMapping("/my/reservations")
-    public ResponseEntity<List<ReservationStudentResponse>> reservationList(@RequestParam("pageNumber") Integer pageNumber,
-                                                                            @RequestParam("pageSize") Integer pageSize) {
+    public ResponseEntity<List<ReservationStudentResponse>> reservationList(@RequestParam("isUpcoming") Boolean isUpcoming) {
         Long studentId = JwtFilter.getAuthentication().getId();
         List<ReservationStudentResponse> allStudentReservation =
-                reservationListService.findAllStudentReservation(studentId, pageNumber, pageSize);
+                reservationListService.findAllStudentReservation(studentId, isUpcoming);
         return ResponseEntity.ok(allStudentReservation);
     }
 
@@ -51,10 +50,17 @@ public class ReservationController {
         return ResponseEntity.ok(allInstructorReservation);
     }
 
-    @Operation(summary = "예약 취소하기 API")
-    @DeleteMapping("/reservations/{reservation_id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable("reservation_id") Long reservationId) {
-        reservationDeleteService.deleteReservation(reservationId);
+    @Operation(summary = "학생이 예약 취소하기 API")
+    @DeleteMapping("/student/reservations/{reservation_id}")
+    public ResponseEntity<Void> cancelStudentReservation(@PathVariable("reservation_id") Long reservationId) {
+        reservationDeleteService.cancelStudentReservation(reservationId, JwtFilter.getAuthentication().getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "강사가 예약 거절하기 API")
+    @DeleteMapping("/instructor/reservations/{reservation_id}")
+    public ResponseEntity<Void> rejectInstructorReservation(@PathVariable("reservation_id") Long reservationId) {
+        reservationDeleteService.rejectInstructorReservation(reservationId, JwtFilter.getAuthentication().getId());
         return ResponseEntity.ok().build();
     }
 

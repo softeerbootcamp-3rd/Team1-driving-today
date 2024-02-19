@@ -15,9 +15,23 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r WHERE (r.reservationDate > :currentDate " +
             "OR (r.reservationDate = :currentDate AND r.reservationTime > :currentTime)) " +
+            "AND r.student.id = :studentId")
+    List<Reservation> findFutureReservationsByStudent
+            (Long studentId, LocalDate currentDate, Integer currentTime);
+
+
+    @Query("SELECT r FROM Reservation r WHERE (r.reservationDate < :currentDate " +
+            "OR (r.reservationDate = :currentDate AND r.reservationTime <= :currentTime)) " +
+            "AND r.student.id = :studentId")
+    List<Reservation> findPastReservationsByStudent
+            (Long studentId, LocalDate currentDate, Integer currentTime);
+
+    @Query("SELECT r FROM Reservation r WHERE (r.reservationDate > :currentDate " +
+            "OR (r.reservationDate = :currentDate AND r.reservationTime > :currentTime)) " +
             "AND r.instructor.id = :instructorId")
     Page<Reservation> findFutureReservationsByInstructor
             (Long instructorId, LocalDate currentDate, Integer currentTime, Pageable pageable);
+
 
     @Query("SELECT r FROM Reservation r WHERE (r.reservationDate < :currentDate " +
             "OR (r.reservationDate = :currentDate AND r.reservationTime <= :currentTime)) " +
