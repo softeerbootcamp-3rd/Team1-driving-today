@@ -94,7 +94,9 @@ interface InstructorDetailResponse {
 
 const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
+  // TODO: error handling
   const instructorDetail = useApiCall<InstructorDetailResponse>(`/instructors/${id}`)
+
   // TODO: error handling
   const {
     data: reviews,
@@ -116,8 +118,7 @@ function InstructorDetail({id}: {id: number}) {
   const intersectedRef = useIntersectionObserver(() => fetchNextPage())
 
   const navigate = useNavigate()
-  const {trainingTime, reservationTime, reservationDate, longitude, latitude} =
-    useLoaderData() as LoaderData
+  const {trainingTime, reservationTime, reservationDate} = useLoaderData() as LoaderData
 
   return (
     <>
@@ -151,15 +152,14 @@ function InstructorDetail({id}: {id: number}) {
           <Button>문의</Button>
           <Button
             onClick={() => {
-              const {instructorId, instructorName, academyName, pricePerHour} = instructor
               const searchParams = objectToQS({
-                instructorId,
+                instructorId: id,
                 reservationDate,
                 reservationTime,
                 trainingTime,
-                instructorName,
-                academyName,
-                pricePerHour,
+                instructorName: instructorDetail.data?.instructorInfo.name,
+                academyName: instructorDetail.data?.academyInfo.name,
+                pricePerHour: instructorDetail.data?.instructorInfo.pricePerHour,
               })
               navigate(`/purchase?${searchParams}`)
             }}
