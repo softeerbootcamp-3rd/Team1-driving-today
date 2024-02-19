@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
+    List<Reservation> findAllByInstructorId(Long instructorId);
+
     @Query("SELECT r FROM Reservation r WHERE r.isAccepted = true AND (r.reservationDate > :currentDate " +
             "OR (r.reservationDate = :currentDate AND r.reservationTime > :currentTime)) " +
             "AND r.student.id = :studentId")
