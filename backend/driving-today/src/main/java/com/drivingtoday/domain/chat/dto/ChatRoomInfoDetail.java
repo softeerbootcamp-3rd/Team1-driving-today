@@ -1,6 +1,7 @@
-package com.drivingtoday.domain.chat.model;
+package com.drivingtoday.domain.chat.dto;
 
 
+import com.drivingtoday.domain.chat.model.ChatMessage;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
