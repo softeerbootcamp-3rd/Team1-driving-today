@@ -7,20 +7,8 @@ import {Tab} from '@/components/tab'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {InstructorReservation, StudentReservation} from '@/types/reservation'
 import {apiCall} from '@/utils/api'
-
-export interface InstructorReservation {
-  instructorId: number
-  reservationId: number
-  instructorImage: string
-  instructorName: string
-  academyName: string
-  reservationDate: string
-  reservationTime: number
-  trainingTime: number
-}
-
-export type StudentHistoryResponse = InstructorReservation[]
 
 const Container = styled.div({
   display: 'flex',
@@ -110,20 +98,6 @@ function StudentCardListContent({onReviewClick, selected, filter}: StudentCardLi
     </>
   )
 }
-
-export interface StudentReservation {
-  reservationId: number
-  studentImage: string
-  studentName: string
-  phoneNumber: string
-  reservationDate: string
-  reservationTime: number
-  trainingTime: number
-  studentId: number
-  isUpcoming: boolean
-}
-
-export type InstructorHistoryResponse = StudentReservation[]
 
 interface InstructorCardlistProps {
   onSelect: (item: StudentReservation) => void

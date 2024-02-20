@@ -3,13 +3,9 @@ import {useState} from 'react'
 
 import {Header} from '@/components/header'
 import {Logo} from '@/components/logo'
+import {InstructorReservation, StudentReservation} from '@/types/reservation'
 
-import {
-  InstructorCardlist,
-  StudentReservation,
-  StudentCardlist,
-  InstructorReservation,
-} from '../history/components/cardlist'
+import {InstructorCardlist, StudentCardlist} from '../history/components/cardlist'
 import {ReviewModal, StudentModal} from './components/modal'
 
 const RootLayout = styled.div({display: 'flex', flexDirection: 'column', flexGrow: 1})
