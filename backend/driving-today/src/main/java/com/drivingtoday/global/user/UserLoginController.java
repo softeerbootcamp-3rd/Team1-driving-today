@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class UserLoginController {
-    
+
     private final UserLoginService userLoginService;
 
     @Operation(summary = "[학생] 로그인 api")
