@@ -18,15 +18,15 @@ import java.util.List;
 public class InstructorController {
     private final InstructorFindService instructorFindService;
 
-    @GetMapping("/student/instructors/{instructor_id}")
-    @Operation(summary = "강사 상세 정보 반환하는 API")
+    @Operation(summary = "[학생] 강사 상세 정보 반환하는 API")
+    @GetMapping("/instructors/{instructor_id}")
     public ResponseEntity<InstructorDetailResponse> instructorDetails(@PathVariable("instructor_id") Long instructorId) {
         InstructorDetailResponse response = instructorFindService.findInstructor(instructorId);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/student/instructors")
-    @Operation(summary = "예약 가능한 강사 리스트 보기 API")
+    @Operation(summary = "[학생] 예약 가능한 강사 리스트 보기 API")
+    @GetMapping("/instructors")
     public ResponseEntity<List<AvailableInstructorInfo>> instructorList(@ModelAttribute @Valid AvailableInstructorsRequest request) {
 
         List<AvailableInstructorInfo> availableInstructors =
