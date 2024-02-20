@@ -1,11 +1,7 @@
 package com.drivingtoday.global.config;
 
-import com.drivingtoday.domain.chat.ChatRoom;
-import com.drivingtoday.domain.chat.ChatService;
-import com.drivingtoday.domain.chat.SessionService;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
-import com.drivingtoday.global.auth.constants.Role;
 import com.drivingtoday.global.auth.exception.JwtErrorCode;
 import com.drivingtoday.global.auth.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
@@ -14,16 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor

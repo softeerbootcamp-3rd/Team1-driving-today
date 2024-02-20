@@ -1,17 +1,13 @@
 package com.drivingtoday.domain.chat;
 
-import com.drivingtoday.domain.chat.ChatRoom;
-import com.drivingtoday.domain.chat.model.ChatMessage;
-import com.drivingtoday.domain.chat.model.ChatRoomInfo;
-import com.drivingtoday.domain.chat.model.ChatRoomInfoConcise;
-import com.drivingtoday.domain.chat.model.ChatRoomInfoDetail;
+import com.drivingtoday.domain.chat.dto.*;
+import com.drivingtoday.domain.chat.model.*;
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorFindService;
 import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentFindService;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
-import com.drivingtoday.global.auth.constants.Role;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class ChatController {
@@ -33,7 +29,7 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @Operation(summary = "강사가 본인한테 온 메시지 톡방들 리스트화")
-    @GetMapping("/instructor/rooms")  // /chat/roomList
+    @GetMapping("/instructor/rooms")
     public ResponseEntity<List<ChatRoomInfoConcise>> chatListInstructor(){
         Authentication authentication = JwtFilter.getAuthentication();
         if(authentication.getRole().equals("STUDENT")){
@@ -41,7 +37,7 @@ public class ChatController {
         }
         List<ChatRoomInfo> roomInfoList = chatService.findByInstructorId(authentication.getId().toString());
         List<ChatRoomInfoConcise> chatRoomInfoConciseList = roomInfoList.stream().map(chatRoomInfo ->{
-            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId());
+            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId().toString());
             return ChatRoomInfoConcise.from(chatRoomInfo, chatMessageList);
         }).toList();
         return ResponseEntity.ok().body(chatRoomInfoConciseList);
@@ -56,7 +52,7 @@ public class ChatController {
         }
         List<ChatRoomInfo> roomInfoList = chatService.findByStudentId(authentication.getId().toString());
         List<ChatRoomInfoConcise> chatRoomInfoConciseList = roomInfoList.stream().map(chatRoomInfo ->{
-            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId());
+            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId().toString());
             return ChatRoomInfoConcise.from(chatRoomInfo, chatMessageList);
         }).toList();
         return ResponseEntity.ok().body(chatRoomInfoConciseList);
@@ -64,16 +60,17 @@ public class ChatController {
 
     @Operation(summary = "학생이 강사 채팅 버튼 눌러서 방 만들거나 이미 있던 방 들어가기")
     @PostMapping("/student/enter")
-    public ResponseEntity<ChatRoomInfoDetail> enterRoomByStudent(@RequestBody Map<String, String> requestBody) {
-        String instructorId = requestBody.get("instructorId");
+    public ResponseEntity<ChatRoomInfoDetail> enterRoomByStudent(@RequestBody StudentRequest requestBody) {
+
+        Long instructorId = requestBody.getInstructorId();
 
         Authentication authentication = JwtFilter.getAuthentication();
-        Instructor instructor = instructorFindService.findById(Long.parseLong(instructorId));
+        Instructor instructor = instructorFindService.findById(instructorId);
 
         Student student = studentFindService.findById(authentication.getId());
 
         log.info("want to know whether to create : instructorId : " + instructorId + " studentId : " + authentication.getId());
-        ChatRoom room = chatService.findByStudentIdAndInstructorId(authentication.getId().toString(), instructorId);
+        ChatRoom room = chatService.findByStudentIdAndInstructorId(authentication.getId().toString(), instructorId.toString());
         ChatRoomInfo chatRoomInfo;
         ChatRoomInfoDetail chatRoomInfoDetail;
 
@@ -93,16 +90,16 @@ public class ChatController {
 
     @Operation(summary = "강사가 학생 채팅 버튼 눌러서 이미 있던 방 들어가기")
     @PostMapping("/instructor/enter")
-    public ResponseEntity<ChatRoomInfoDetail> enterRoomByInstructor(@RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<ChatRoomInfoDetail> enterRoomByInstructor(@RequestBody InstructorRequest requestBody) {
 
-        String studentId = requestBody.get("studentId");
+        Long studentId = requestBody.getStudentId();
 
         Authentication authentication = JwtFilter.getAuthentication();
-        Student student = studentFindService.findById(Long.parseLong(studentId));
+        Student student = studentFindService.findById(studentId);
         Instructor instructor = instructorFindService.findById(authentication.getId());
 
         log.info("instructor enters student ID : " + studentId);
-        ChatRoom room = chatService.findByStudentIdAndInstructorId(studentId, authentication.getId().toString());
+        ChatRoom room = chatService.findByStudentIdAndInstructorId(studentId.toString(), authentication.getId().toString());
 
         List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(room.getId().toString());
         ChatRoomInfo chatRoomInfo = ChatRoomInfo.from(room);

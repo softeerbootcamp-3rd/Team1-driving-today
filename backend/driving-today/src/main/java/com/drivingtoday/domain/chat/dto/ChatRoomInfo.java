@@ -1,6 +1,6 @@
-package com.drivingtoday.domain.chat.model;
+package com.drivingtoday.domain.chat.dto;
 
-import com.drivingtoday.domain.chat.ChatRoom;
+import com.drivingtoday.domain.chat.model.ChatRoom;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,6 @@ import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -18,21 +17,21 @@ import java.util.Set;
 public class ChatRoomInfo {
 
     @NotNull
-    private String roomId;
+    private Long roomId;
 
     @NotNull
-    private String studentId;
+    private Long studentId;
 
     @NotNull
-    private String instructorId;
+    private Long instructorId;
 
     @JsonIgnore
     final Set<WebSocketSession> sessions = new HashSet<>();
     public static ChatRoomInfo from(ChatRoom chatRoom) {
         return ChatRoomInfo.builder()
-                .roomId(chatRoom.getId().toString())
-                .studentId(chatRoom.getStudent().getId().toString())
-                .instructorId(chatRoom.getInstructor().getId().toString())
+                .roomId(chatRoom.getId())
+                .studentId(chatRoom.getStudent().getId())
+                .instructorId(chatRoom.getInstructor().getId())
                 .build();
     }
 }
