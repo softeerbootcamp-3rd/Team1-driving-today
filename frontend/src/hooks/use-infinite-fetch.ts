@@ -20,7 +20,7 @@ export interface UseInfniteFetchReturn<TData> {
   hasNextPage: boolean
 }
 
-export function useInfiniteFetch<TData = unknown[], TPageParam = unknown>({
+export function useInfiniteFetch<TData extends unknown[] = unknown[], TPageParam = unknown>({
   queryFn,
   initialPageParam,
   getNextPageParam,
