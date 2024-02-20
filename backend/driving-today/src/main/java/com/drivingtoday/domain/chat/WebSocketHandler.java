@@ -12,7 +12,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -53,6 +57,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
             } else {
                 // 채팅메시지 저장
+                LocalDateTime currentDate = LocalDateTime.now();
+                long millis = currentDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                chatMessage.setTimestamp(millis);
+                chatMessage.setId(UUID.randomUUID().toString());
                 chatMessageService.createChatMessage(chatMessage);
                 sendToEachSocket(sessions, message);
             }
