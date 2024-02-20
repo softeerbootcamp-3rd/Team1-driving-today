@@ -8,11 +8,11 @@ import {
   useRouteLoaderData,
 } from 'react-router-dom'
 
-import {ChatModalContainer} from './pages/components'
+import {ChatModalContainer, LoginModal, RegisterModal} from './pages/components'
 import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
-import {loginAction, LoginPage} from './pages/login/page'
+import {loginAction} from './pages/login/page'
 import {LandingPage} from './pages/page'
 import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
@@ -34,13 +34,10 @@ export function App() {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route index path="/" element={<LandingPage />} />
-      <Route
-        path="/login"
-        action={loginAction}
-        element={<LoginPage />}
-        errorElement={<LoginPage />}
-      />
+      <Route path="/" action={loginAction} element={<LandingPage />} errorElement={<LandingPage />}>
+        <Route path="/login" element={<LoginModal />} errorElement={<LoginModal />} />
+        <Route path="/register" element={<RegisterModal />} errorElement={<LoginModal />} />
+      </Route>
       <Route id="root" loader={checkAuthLoader} element={<Layout />}>
         <Route
           path="/dashboard"
