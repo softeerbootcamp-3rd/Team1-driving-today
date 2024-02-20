@@ -20,7 +20,6 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class UserRegisterService {
-    
     private final S3UploadService s3UploadService;
     private final StudentRepository studentRepository;
     private final InstructorRepository instructorRepository;
