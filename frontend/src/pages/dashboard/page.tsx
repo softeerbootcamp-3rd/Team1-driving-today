@@ -17,7 +17,7 @@ export function StudentDashboard() {
           <StudentScheduleCard />
         </ContentContainer>
         <ModalContainer>
-          <MyProfileCard />
+          <MyProfileCard role="STUDENT" />
         </ModalContainer>
       </ContentLayout>
     </RootLayout>
@@ -35,7 +35,7 @@ export function InstructorDashboard() {
           <InstructorScheduleCard />
         </ContentContainer>
         <ModalContainer>
-          <MyProfileCard />
+          <MyProfileCard role="INSTRUCTOR" />
         </ModalContainer>
       </ContentLayout>
     </RootLayout>

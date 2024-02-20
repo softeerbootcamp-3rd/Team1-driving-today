@@ -29,20 +29,21 @@ export function StudentScheduleCard() {
 
 function StudentScheduleCardContent() {
   const {data: reservations} = useSuspendedApiCall<InstructorReservation[]>(
-    '/student/reservations?isUpcoming=true',
+    '/reservations/student?status=scheduled',
   )
   const calendarRef = useRef<CalendarRef>(null)
 
   const [selectedId, setSelectedId] = useState<number>()
 
-  const onCancelClick = async () => {
-    // todo: delete api call
-    // const res = await apiCall(`/reservations/${data.reservationId}`, {
-    //   method: 'DELETE',
-    // })
+  const [removed, setRemoved] = useState<Set<number>>(new Set())
+  const onCancelReservation = async (id: number) => {
+    // 중복 요청 들어가도 상관 없음
+    const res = await apiCall(`/reservations/${id}?role=student`, {method: 'DELETE'})
+    if (!res.ok) return
+    setRemoved((prev) => new Set(prev).add(id))
   }
 
-  const schedules = buildScheduleFromReservation(reservations)
+  const schedules = buildScheduleFromReservation(reservations, removed)
 
   const {setItemRef, listRef, scrollTo} = useScrollTo()
 
@@ -50,16 +51,15 @@ function StudentScheduleCardContent() {
 
   const date = new Date()
 
+  const filteredReservations = reservations?.filter((v) => !removed.has(v.reservationId))
+
   return (
     <>
-      {reservations?.length ? (
+      {filteredReservations?.length ? (
         <>
           <BoldLabel>운전 연수가 예정되어 있어요</BoldLabel>
           <CardList ref={listRef}>
-            {reservations?.map((data) => (
-              // <div key={data.reservationId} >
-              //   {data.reservationId}
-              // </div>
+            {filteredReservations?.map((data) => (
               <Card.StudentHistory
                 ref={(element) => setItemRef(data.reservationId, element)}
                 selected={selectedId === data.reservationId}
@@ -77,7 +77,7 @@ function StudentScheduleCardContent() {
                 dateStr={data.reservationDate}
                 timeStr={timeToStr(data.reservationTime, data.trainingTime)}
                 image={data.instructorImage}
-                onCancelClick={onCancelClick}
+                onCancelClick={() => onCancelReservation(data.reservationId)}
               />
             ))}
           </CardList>
@@ -114,7 +114,7 @@ export function InstructorScheduleCard() {
   const {data, loading, fetchNextPage} = useInfiniteFetch({
     queryFn: ({pageParam}) => {
       return apiCall(
-        `/instructor/reservations?isUpcoming=true&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
+        `/reservations/instructor?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&status=scheduled`,
       ).then((res) => res.json())
     },
     initialPageParam: 1,
@@ -129,15 +129,18 @@ export function InstructorScheduleCard() {
   // remove line below on issue solved
   const reservations = data as StudentReservation[]
 
+  const [removed, setRemoved] = useState<Set<number>>(new Set())
+  const onRejectReservation = async (id: number) => {
+    // 중복 요청 들어가도 상관 없음
+    const res = await apiCall(`/reservations/${id}?role=instructor`, {method: 'DELETE'})
+    if (!res.ok) return
+    setRemoved((prev) => new Set(prev).add(id))
+  }
+
   const intersectedRef = useIntersectionObserver(() => fetchNextPage())
   const {setItemRef, listRef, scrollTo} = useScrollTo()
 
-  const rejectReservationRequest = async (id: number) => {
-    // todo: API
-    // const res = await fetch(`${API_BASE_URL}/reservations/${id}`, {method: 'DELETE'})
-  }
-
-  const schedules = buildScheduleFromReservation(reservations)
+  const schedules = buildScheduleFromReservation(reservations, removed)
 
   const date = new Date()
 
@@ -145,26 +148,29 @@ export function InstructorScheduleCard() {
     <Container>
       <BoldLabel>운전 연수 예약 요청</BoldLabel>
       <CardList ref={listRef}>
-        {reservations?.map((v) => (
-          <Card.InstructorHistory
-            ref={(element) => setItemRef(v.reservationId, element)}
-            key={v.reservationId}
-            selected={v.reservationId === selectedId}
-            onClick={() => {
-              setSelectedId(v.reservationId)
-              calendarRef.current?.dispatch({
-                type: 'SET_DATE_STR',
-                payload: v.reservationDate,
-              })
-            }}
-            studentName={v.studentName}
-            phoneStr={v.phoneNumber}
-            dateStr={v.reservationDate}
-            timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-            image={v.studentImage}
-            onRejectClick={() => rejectReservationRequest(v.reservationId)}
-          />
-        ))}
+        {reservations?.map(
+          (v) =>
+            !removed.has(v.reservationId) && (
+              <Card.InstructorHistory
+                ref={(element) => setItemRef(v.reservationId, element)}
+                key={v.reservationId}
+                selected={v.reservationId === selectedId}
+                onClick={() => {
+                  setSelectedId(v.reservationId)
+                  calendarRef.current?.dispatch({
+                    type: 'SET_DATE_STR',
+                    payload: v.reservationDate,
+                  })
+                }}
+                studentName={v.studentName}
+                phoneStr={v.phoneNumber}
+                dateStr={v.reservationDate}
+                timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+                image={v.studentImage}
+                onRejectClick={() => onRejectReservation(v.reservationId)}
+              />
+            ),
+        )}
         <div ref={intersectedRef} style={{height: '3rem'}} />
         {loading && <Loading />}
       </CardList>
@@ -185,15 +191,19 @@ export function InstructorScheduleCard() {
 }
 
 function buildScheduleFromReservation(
-  reservations?: {
-    reservationDate: string
-    reservationId: number
-    reservationTime: number
-    trainingTime: number
-  }[],
+  reservations:
+    | {
+        reservationDate: string
+        reservationId: number
+        reservationTime: number
+        trainingTime: number
+      }[]
+    | undefined,
+  removed: Set<number>,
 ) {
   const schedules: Record<string, ReservationSchedule[]> = {}
   reservations?.forEach((schedule) => {
+    if (removed.has(schedule.reservationId)) return
     if (!schedules[schedule.reservationDate]) schedules[schedule.reservationDate] = []
     schedules[schedule.reservationDate].push({
       reservationId: schedule.reservationId,
