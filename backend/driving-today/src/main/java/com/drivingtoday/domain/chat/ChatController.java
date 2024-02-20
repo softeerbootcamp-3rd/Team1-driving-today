@@ -3,6 +3,7 @@ package com.drivingtoday.domain.chat;
 import com.drivingtoday.domain.chat.ChatRoom;
 import com.drivingtoday.domain.chat.model.ChatMessage;
 import com.drivingtoday.domain.chat.model.ChatRoomInfo;
+import com.drivingtoday.domain.chat.model.ChatRoomInfoConcise;
 import com.drivingtoday.domain.chat.model.ChatRoomInfoDetail;
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorFindService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -31,23 +33,39 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @Operation(summary = "강사가 본인한테 온 메시지 톡방들 리스트화")
-    @RequestMapping("/my/rooms")  // /chat/roomList
-    public ResponseEntity<List<ChatRoomInfoDetail>> chatListInstructor(){
+    @RequestMapping("/instructor/rooms")  // /chat/roomList
+    public ResponseEntity<List<ChatRoomInfoConcise>> chatListInstructor(){
         Authentication authentication = JwtFilter.getAuthentication();
         if(authentication.getRole().equals("STUDENT")){
             throw new RuntimeException("잘못된 접근");
         }
         List<ChatRoomInfo> roomInfoList = chatService.findByInstructorId(authentication.getId().toString());
-        List<ChatRoomInfoDetail> chatRoomInfoDetailList = roomInfoList.stream().map(chatRoomInfo ->{
+        List<ChatRoomInfoConcise> chatRoomInfoConciseList = roomInfoList.stream().map(chatRoomInfo ->{
             List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId());
-            return ChatRoomInfoDetail.from(chatRoomInfo, chatMessageList);
+            return ChatRoomInfoConcise.from(chatRoomInfo, chatMessageList);
         }).toList();
-        return ResponseEntity.ok().body(chatRoomInfoDetailList);
+        return ResponseEntity.ok().body(chatRoomInfoConciseList);
+    }
+
+    @Operation(summary = "학생이 보낸 메시지 톡방들 리스트화")
+    @RequestMapping("/student/rooms")  // /chat/roomList
+    public ResponseEntity<List<ChatRoomInfoConcise>> chatListStudent(){
+        Authentication authentication = JwtFilter.getAuthentication();
+        if(authentication.getRole().equals("INSTRUCTOR")){
+            throw new RuntimeException("잘못된 접근");
+        }
+        List<ChatRoomInfo> roomInfoList = chatService.findByStudentId(authentication.getId().toString());
+        List<ChatRoomInfoConcise> chatRoomInfoConciseList = roomInfoList.stream().map(chatRoomInfo ->{
+            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId());
+            return ChatRoomInfoConcise.from(chatRoomInfo, chatMessageList);
+        }).toList();
+        return ResponseEntity.ok().body(chatRoomInfoConciseList);
     }
 
     @Operation(summary = "학생이 강사 채팅 버튼 눌러서 방 만들거나 이미 있던 방 들어가기")
     @PostMapping("/student/enter")
-    public ResponseEntity<ChatRoomInfoDetail> enterRoomByStudent(@RequestBody String instructorId) {
+    public ResponseEntity<ChatRoomInfoDetail> enterRoomByStudent(@RequestBody Map<String, String> requestBody) {
+        String instructorId = requestBody.get("instructorId");
 
         Authentication authentication = JwtFilter.getAuthentication();
         Instructor instructor = instructorFindService.findById(Long.parseLong(instructorId));
@@ -75,7 +93,9 @@ public class ChatController {
 
     @Operation(summary = "강사가 학생 채팅 버튼 눌러서 방 만들거나 이미 있던 방 들어가기")
     @PostMapping("/instructor/enter")
-    public ResponseEntity<ChatRoomInfoDetail> enterRoomByInstructor(@RequestBody String studentId) {
+    public ResponseEntity<ChatRoomInfoDetail> enterRoomByInstructor(@RequestBody Map<String, String> requestBody) {
+
+        String studentId = requestBody.get("studentId");
 
         Authentication authentication = JwtFilter.getAuthentication();
         Student student = studentFindService.findById(Long.parseLong(studentId));
@@ -89,12 +109,5 @@ public class ChatController {
         ChatRoomInfoDetail chatRoomInfoDetail = ChatRoomInfoDetail.from(chatRoomInfo, chatMessageList);
 
         return ResponseEntity.ok().body(chatRoomInfoDetail);
-    }
-
-    @GetMapping("/chat/enter")
-    public ResponseEntity<ChatRoom> chatRoom(@RequestParam("roomId") String roomId){
-        ChatRoom room = chatService.findRoomById(Long.parseLong(roomId));
-        log.info(roomId + "entered");
-        return ResponseEntity.ok().body(room);
     }
 }
