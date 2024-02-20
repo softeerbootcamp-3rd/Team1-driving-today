@@ -1,8 +1,10 @@
 import styled from '@emotion/styled'
+import {Suspense} from 'react'
 
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
-import {useApiCall} from '@/hooks/use-api-call'
+import {Loading} from '@/components/loading'
+import {useSuspendedApiCall} from '@/hooks/use-api-call'
 
 interface MyInfoResponse {
   name: string
@@ -10,25 +12,32 @@ interface MyInfoResponse {
   nickname: string
 }
 export function MyProfileCard() {
-  const {data} = useApiCall<MyInfoResponse>('/my')
-
   return (
     <Container>
-      {data && (
-        <>
-          <Image src={data.image} />
-          <NameContainer>
-            <Name>{`안녕하세요 ${data.name}님!`}</Name>
-            <Nickname>{`@${data.nickname}`}</Nickname>
-          </NameContainer>
-          <Divider flexItem />
-          <TrailingIconLink href="/history">
-            <ButtonLabel>지난 예약 내역</ButtonLabel>
-            <Icon name="arrowForward" color="gray600" width="1.6rem" height="1.6rem" />
-          </TrailingIconLink>
-        </>
-      )}
+      <Suspense fallback={<Loading />}>
+        <MyProfileCardContent />
+      </Suspense>
     </Container>
+  )
+}
+
+function MyProfileCardContent() {
+  // todo: connect api on implementation
+  //const {data} = useSuspendedApiCall<MyInfoResponse>('/my')
+  const data = undefined
+  return (
+    <>
+      <Image src={data?.image} />
+      <NameContainer>
+        <Name>{`안녕하세요 ${data?.name}님!`}</Name>
+        <Nickname>{`@${data?.nickname}`}</Nickname>
+      </NameContainer>
+      <Divider flexItem />
+      <TrailingIconLink href="/history">
+        <ButtonLabel>지난 예약 내역</ButtonLabel>
+        <Icon name="arrowForward" color="gray600" width="1.6rem" height="1.6rem" />
+      </TrailingIconLink>
+    </>
   )
 }
 
