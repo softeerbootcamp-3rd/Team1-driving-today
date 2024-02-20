@@ -63,38 +63,54 @@ interface StudentCardListContentProps extends StudentCardlistProps {
 function StudentCardListContent({onReviewClick, selected, filter}: StudentCardListContentProps) {
   // todo: probably have to sort this
   const {data: pastList} = useSuspendedApiCall<InstructorReservation[]>(
-    '/student/reservations?isUpcoming=false',
+    '/reservations/student?status=past',
   )
   const {data: futureList} = useSuspendedApiCall<InstructorReservation[]>(
-    '/student/reservations?isUpcoming=true',
+    '/reservations/student?status=scheduled',
   )
+  const [removed, setRemoved] = useState<Set<number>>(new Set())
+  const onCancelReservation = async (id: number) => {
+    // 중복 요청 들어가도 상관 없음
+    const res = await apiCall(`/reservations/${id}?role=student`, {method: 'DELETE'})
+    if (!res.ok) return
+    setRemoved((prev) => new Set(prev).add(id))
+  }
+
   return (
     <>
       {(filter === 'scheduled' || filter === 'all') &&
-        futureList?.map((v) => (
-          <Card.StudentHistory
-            key={v.reservationId}
-            instructorName={v.instructorName}
-            academyName={v.academyName}
-            dateStr={v.reservationDate}
-            timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-            image={v.instructorImage}
-            selected={selected?.reservationId === v.reservationId}
-          />
-        ))}
+        futureList?.map(
+          (v) =>
+            !removed.has(v.reservationId) && (
+              // todo: add cancel button after #188
+              <Card.StudentHistory
+                key={v.reservationId}
+                instructorName={v.instructorName}
+                academyName={v.academyName}
+                dateStr={v.reservationDate}
+                timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+                image={v.instructorImage}
+                selected={selected?.reservationId === v.reservationId}
+                onCancelClick={() => onCancelReservation(v.reservationId)}
+              />
+            ),
+        )}
       {(filter === 'completed' || filter === 'all') &&
-        pastList?.map((v) => (
-          <Card.StudentHistory
-            key={v.reservationId}
-            instructorName={v.instructorName}
-            academyName={v.academyName}
-            dateStr={v.reservationDate}
-            timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-            image={v.instructorImage}
-            onReviewClick={() => onReviewClick(v)}
-            selected={selected?.reservationId === v.reservationId}
-          />
-        ))}
+        pastList?.map(
+          (v) =>
+            !removed.has(v.reservationId) && (
+              <Card.StudentHistory
+                key={v.reservationId}
+                instructorName={v.instructorName}
+                academyName={v.academyName}
+                dateStr={v.reservationDate}
+                timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+                image={v.instructorImage}
+                onReviewClick={() => onReviewClick(v)}
+                selected={selected?.reservationId === v.reservationId}
+              />
+            ),
+        )}
     </>
   )
 }
@@ -110,7 +126,7 @@ export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps
   const {data, loading, fetchNextPage} = useInfiniteFetch({
     queryFn: ({pageParam}) => {
       return apiCall(
-        `/instructor/reservations?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&isUpcoming=false`,
+        `/reservations/instructor?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&status=past`,
       ).then((res) => res.json())
     },
     initialPageParam: 1,

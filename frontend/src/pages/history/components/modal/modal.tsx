@@ -43,7 +43,7 @@ export function ReviewModal({onClose, ...props}: ReviewModalProps) {
     // todo: validation
     if (submitting) return
     setSubmitting(true)
-    apiCall('/student/review', {
+    apiCall('/review', {
       method: 'POST',
       body: JSON.stringify({
         rating,
@@ -86,7 +86,7 @@ function ReviewModalContent({
   onSubmitReview,
   submitting,
 }: ReviewModalContentProps) {
-  const {data} = useSuspendedApiCall<InstructorResponse>(`/student/instructors/${instructorId}`)
+  const {data} = useSuspendedApiCall<InstructorResponse>(`/instructors/${instructorId}`)
   const [rating, setRating] = useState<number>(DEFAULT_RATING)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   return (
@@ -99,7 +99,7 @@ function ReviewModalContent({
         <Card.Name>{data?.instructorInfo.name}</Card.Name>
       </InfoContainer>
       <Card.MultipleDescriptionContainer>
-        <Card.Label color="gray600">{`평점 ${data?.averageRating}`}</Card.Label>
+        <Card.Label color="gray600">{`평점 ${data?.averageRating.toPrecision(2)}`}</Card.Label>
         <Card.Label color="gray600">{`시간당 ${data?.instructorInfo.pricePerHour} 원`}</Card.Label>
       </Card.MultipleDescriptionContainer>
       <Card.IconLabel icon="building" color="gray600">
@@ -151,7 +151,7 @@ interface StudentModalContentProps {
 }
 
 function StudentModalContent({studentId}: StudentModalContentProps) {
-  const {data} = useSuspendedApiCall<StudentResponse>(`/instructor/students/${studentId}`)
+  const {data} = useSuspendedApiCall<StudentResponse>(`/students/${studentId}`)
   return (
     <Content>
       <InfoContainer>
