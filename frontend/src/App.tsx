@@ -8,6 +8,7 @@ import {
   useRouteLoaderData,
 } from 'react-router-dom'
 
+import {ChatModalContainer} from './pages/components'
 import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
@@ -22,7 +23,12 @@ import {SearchPage} from './pages/search/page'
 import {sessionProvider, UserRole} from './utils/session'
 
 export function App() {
-  return <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+  return (
+    <>
+      <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+      <ChatModalContainer />
+    </>
+  )
 }
 
 const router = createBrowserRouter(

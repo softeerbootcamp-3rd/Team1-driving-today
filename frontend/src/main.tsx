@@ -13,7 +13,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <ChatModalProvider>
         <App />
-        <div id="chat-modal" />
       </ChatModalProvider>
     </ThemeProvider>
   </React.StrictMode>,
