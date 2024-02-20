@@ -33,7 +33,7 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @Operation(summary = "강사가 본인한테 온 메시지 톡방들 리스트화")
-    @RequestMapping("/instructor/rooms")  // /chat/roomList
+    @GetMapping("/instructor/rooms")  // /chat/roomList
     public ResponseEntity<List<ChatRoomInfoConcise>> chatListInstructor(){
         Authentication authentication = JwtFilter.getAuthentication();
         if(authentication.getRole().equals("STUDENT")){
@@ -48,7 +48,7 @@ public class ChatController {
     }
 
     @Operation(summary = "학생이 보낸 메시지 톡방들 리스트화")
-    @RequestMapping("/student/rooms")  // /chat/roomList
+    @GetMapping("/student/rooms")  // /chat/roomList
     public ResponseEntity<List<ChatRoomInfoConcise>> chatListStudent(){
         Authentication authentication = JwtFilter.getAuthentication();
         if(authentication.getRole().equals("INSTRUCTOR")){
@@ -91,7 +91,7 @@ public class ChatController {
         return ResponseEntity.ok().body(chatRoomInfoDetail);
     }
 
-    @Operation(summary = "강사가 학생 채팅 버튼 눌러서 방 만들거나 이미 있던 방 들어가기")
+    @Operation(summary = "강사가 학생 채팅 버튼 눌러서 이미 있던 방 들어가기")
     @PostMapping("/instructor/enter")
     public ResponseEntity<ChatRoomInfoDetail> enterRoomByInstructor(@RequestBody Map<String, String> requestBody) {
 
