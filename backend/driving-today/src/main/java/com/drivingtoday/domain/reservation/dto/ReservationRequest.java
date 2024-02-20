@@ -8,6 +8,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class ReservationRequest {
 
