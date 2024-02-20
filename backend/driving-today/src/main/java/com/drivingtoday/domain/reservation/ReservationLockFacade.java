@@ -23,7 +23,7 @@ public class ReservationLockFacade {
             try {
                 boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
                 if (!available) {
-                    throw new IllegalArgumentException();
+                    throw new RuntimeException("처리할 수 없는 요청입니다. 다시 예약해 주세요.");
                 }
                 return reservationAddService.addReservation(reservationRequest, studentId);
             } catch (InterruptedException e) {
@@ -40,7 +40,7 @@ public class ReservationLockFacade {
             try {
                 boolean available = lock1.tryLock(10, 1, TimeUnit.SECONDS) && lock2.tryLock(10, 1, TimeUnit.SECONDS);
                 if (!available) {
-                    throw new IllegalArgumentException();
+                    throw new RuntimeException("처리할 수 없는 요청입니다. 다시 예약해 주세요.");
                 }
                 return reservationAddService.addReservation(reservationRequest, studentId);
             } catch (InterruptedException e) {
