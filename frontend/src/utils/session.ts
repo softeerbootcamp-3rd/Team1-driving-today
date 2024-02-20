@@ -10,19 +10,23 @@ export interface Session {
 
 export interface SessionProvider {
   session?: Session
-  login: (role: UserRole, email: string, password: string) => Promise<Session>
+  login: (arg: {role: UserRole; email: string; password: string}) => Promise<Session>
+  signup: (arg: {
+    role: UserRole
+    registerRequest: Record<string, unknown>
+    profileImg: FormDataEntryValue
+  }) => Promise<void>
   logout: () => void
   getAccessToken: () => string
 }
 
 export const sessionProvider: SessionProvider = {
-  async login(role: UserRole, email: string, password: string) {
+  async login({role, email, password}) {
     const body = JSON.stringify({
       email,
       password,
     })
 
-    // api request
     const res = await fetch(`${API_BASE_URL}${getLoginUrl(role)}`, {
       method: 'POST',
       body,
@@ -41,6 +45,24 @@ export const sessionProvider: SessionProvider = {
       accessToken: sessionResponse.jwt.accessToken,
     }
   },
+  signup: async ({role, registerRequest, profileImg}) => {
+    const formData = new FormData()
+    formData.append(
+      'registerRequest',
+      new Blob([JSON.stringify(registerRequest)], {type: 'application/json'}),
+    )
+    formData.append('profileImg', profileImg)
+
+    const res = await fetch(`${API_BASE_URL}${getSignupUrl(role)}`, {
+      method: 'POST',
+      body: formData,
+      headers: {'Content-Type': 'multipart/form-data'},
+    })
+
+    if (res.status !== 200) {
+      throw new Error('회원가입에 실패했습니다')
+    }
+  },
   logout: () => {},
   getAccessToken() {
     const token = this.session?.accessToken
@@ -55,6 +77,15 @@ function getLoginUrl(role: UserRole) {
       return '/student/login'
     case 'INSTRUCTOR':
       return '/instructor/login'
+  }
+}
+
+function getSignupUrl(role: UserRole) {
+  switch (role) {
+    case 'STUDENT':
+      return '/student/register'
+    case 'INSTRUCTOR':
+      return '/instructor/register'
   }
 }
 

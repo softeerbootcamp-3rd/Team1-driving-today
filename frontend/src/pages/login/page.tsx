@@ -73,7 +73,7 @@ export async function loginAction({request}: ActionFunctionArgs) {
   if (!email) throw new Error('이메일을 입력해주세요')
   if (!password) throw new Error('비밀번호를 입력해주세요')
 
-  const newSession = await sessionProvider.login(userRole, email, password)
+  const newSession = await sessionProvider.login({role: userRole, email, password})
   sessionProvider.session = newSession
 
   return redirect('/dashboard')

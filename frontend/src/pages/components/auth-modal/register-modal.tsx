@@ -1,6 +1,5 @@
-import styled from '@emotion/styled'
 import {useCallback, useState} from 'react'
-import {Form, useNavigate, useRouteError} from 'react-router-dom'
+import {ActionFunctionArgs, Form, redirect, useNavigate, useRouteError} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
@@ -8,9 +7,11 @@ import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
 import {Typography} from '@/components/typography'
 import {useEscapeKeydown} from '@/hooks/use-escape-keydown'
-import {UserRole} from '@/utils/session'
+import {sessionProvider, UserRole} from '@/utils/session'
 
-export function RegisterModal() {
+import {CloseButton, Dimmed, ErrorMessage, Input, Modal, ModalContainer} from './styles'
+
+function RegisterModalRoot() {
   const [userRole, setUserRole] = useState<UserRole>('STUDENT')
   const error = useRouteError() as Error
   const navigate = useNavigate()
@@ -47,7 +48,7 @@ export function RegisterModal() {
           </Flex>
         </Flex>
         <Form
-          action="/login"
+          action="/register"
           method="POST"
           style={{display: 'flex', flexDirection: 'column', width: '100%', gap: '2rem'}}
         >
@@ -74,51 +75,106 @@ export function RegisterModal() {
   )
 }
 
-const ModalContainer = styled(Flex)(() => ({
-  position: 'fixed',
-  inset: 0,
-}))
+function RegisterModalSuccess() {
+  return (
+    <ModalContainer>
+      <Dimmed />
+      <Modal>성공!</Modal>
+    </ModalContainer>
+  )
+}
 
-const Modal = styled(Flex)(({theme}) => ({
-  zIndex: 1000,
-  backgroundColor: theme.color.white,
-  padding: '2rem',
-  borderRadius: '1.6rem',
-  width: '100%',
-  maxWidth: '40rem',
-  margin: 'auto',
-  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-}))
+export const RegisterModal = Object.assign(RegisterModalRoot, {
+  Success: RegisterModalSuccess,
+})
 
-const Dimmed = styled.div(() => ({
-  position: 'fixed',
-  background: 'rgb(0, 0, 0, 20%)',
-  inset: 0,
-}))
+export async function registerAction(actionArg: ActionFunctionArgs) {
+  const formData = await actionArg.request.formData()
+  const userRole = formData.get('userRole') as UserRole
 
-const Input = styled.input(({theme}) => ({
-  border: `1px solid ${theme.color.gray300}`,
-  borderRadius: '1rem',
-  fontSize: '1.6rem',
-  padding: '1rem 1.6rem',
-  width: '100%',
-}))
+  switch (userRole) {
+    case 'INSTRUCTOR':
+      return registerInstructorAction(actionArg)
+    case 'STUDENT':
+      return registerStudentAction(actionArg)
+    default:
+  }
+}
+async function registerInstructorAction({request}: ActionFunctionArgs) {
+  const formData = await request.formData()
+  const userRole = formData.get('userRole') as UserRole
+  const name = formData.get('name')
+  const email = formData.get('email')
+  const password = formData.get('password')
+  const passwordConfirm = formData.get('passwordConfirm')
+  const phoneNumber = formData.get('phoneNumber')
+  const pricePerHour = formData.get('pricePerHour')
+  const academyId = formData.get('academyId')
+  const instruction = formData.get('instruction')
+  const profileImg = formData.get('profileImg')
 
-const ErrorMessage = styled.p(({theme}) => ({
-  fontSize: '1.6rem',
-  color: theme.color.warning,
-}))
+  const errors = {} as Record<string, string>
 
-const CloseButton = styled.button(({theme}) => ({
-  borderRadius: '50%',
-  backgroundColor: theme.color.gray100,
-  padding: '1rem',
-  cursor: 'pointer',
-  transition: 'all 0.3s',
-  '&:hover': {
-    backgroundColor: theme.color.gray200,
-  },
-  '&:active': {
-    backgroundColor: theme.color.gray300,
-  },
-}))
+  if (!email) errors.email = ''
+  if (!password) errors.password = ''
+  if (!passwordConfirm) errors.passwordConfirm = ''
+  if (!phoneNumber) errors.phoneNumber = ''
+  if (password !== passwordConfirm) errors.password = ''
+
+  if (Object.keys(errors).length) {
+    return errors
+  }
+
+  await sessionProvider.signup({
+    role: userRole,
+    registerRequest: {
+      name,
+      email,
+      password,
+      phoneNumber,
+      pricePerHour,
+      instruction,
+      academyId,
+    },
+    profileImg,
+  })
+  return redirect('/register/success')
+}
+
+async function registerStudentAction({request}: ActionFunctionArgs) {
+  const formData = await request.formData()
+  const userRole = formData.get('userRole') as UserRole
+  const name = formData.get('name')
+  const nickname = formData.get('nickname')
+  const email = formData.get('email')
+  const password = formData.get('password')
+  const passwordConfirm = formData.get('passwordConfirm')
+  const phoneNumber = formData.get('phoneNumber')
+  const pricePerHour = formData.get('pricePerHour')
+
+  const errors = {} as Record<string, string>
+
+  if (!email) errors.email = ''
+  if (!password) errors.password = ''
+  if (!passwordConfirm) errors.passwordConfirm = ''
+  if (!phoneNumber) errors.phoneNumber = ''
+  if (password !== passwordConfirm) errors.password = ''
+
+  if (Object.keys(errors).length) {
+    return errors
+  }
+
+  await sessionProvider.signup({
+    role: userRole,
+    registerRequest: {
+      name,
+      nickname,
+      email,
+      password,
+      phoneNumber,
+      pricePerHour,
+    },
+    profileImg,
+  })
+  return redirect('/register/success')
+}

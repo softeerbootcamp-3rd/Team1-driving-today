@@ -1,4 +1,3 @@
-import styled from '@emotion/styled'
 import {useCallback, useState} from 'react'
 import {Form, useNavigate, useRouteError} from 'react-router-dom'
 
@@ -9,6 +8,8 @@ import {Icon} from '@/components/icon'
 import {Typography} from '@/components/typography'
 import {useEscapeKeydown} from '@/hooks/use-escape-keydown'
 import {UserRole} from '@/utils/session'
+
+import {CloseButton, Dimmed, ErrorMessage, Input, Modal, ModalContainer} from './styles'
 
 export function LoginModal() {
   const [userRole, setUserRole] = useState<UserRole>('STUDENT')
@@ -73,52 +74,3 @@ export function LoginModal() {
     </ModalContainer>
   )
 }
-
-const ModalContainer = styled(Flex)(() => ({
-  position: 'fixed',
-  inset: 0,
-}))
-
-const Modal = styled(Flex)(({theme}) => ({
-  zIndex: 1000,
-  backgroundColor: theme.color.white,
-  padding: '2rem',
-  borderRadius: '1.6rem',
-  width: '100%',
-  maxWidth: '40rem',
-  margin: 'auto',
-  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-}))
-
-const Dimmed = styled.div(() => ({
-  position: 'fixed',
-  background: 'rgb(0, 0, 0, 20%)',
-  inset: 0,
-}))
-
-const Input = styled.input(({theme}) => ({
-  border: `1px solid ${theme.color.gray300}`,
-  borderRadius: '1rem',
-  fontSize: '1.6rem',
-  padding: '1rem 1.6rem',
-  width: '100%',
-}))
-
-const ErrorMessage = styled.p(({theme}) => ({
-  fontSize: '1.6rem',
-  color: theme.color.warning,
-}))
-
-const CloseButton = styled.button(({theme}) => ({
-  borderRadius: '50%',
-  backgroundColor: theme.color.gray100,
-  padding: '1rem',
-  cursor: 'pointer',
-  transition: 'all 0.3s',
-  '&:hover': {
-    backgroundColor: theme.color.gray200,
-  },
-  '&:active': {
-    backgroundColor: theme.color.gray300,
-  },
-}))
