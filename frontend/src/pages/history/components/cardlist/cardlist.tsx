@@ -9,7 +9,7 @@ import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
 import {apiCall} from '@/utils/api'
 
-export interface StudentReservation {
+export interface InstructorReservation {
   instructorId: number
   reservationId: number
   instructorImage: string
@@ -20,7 +20,7 @@ export interface StudentReservation {
   trainingTime: number
 }
 
-export type StudentHistoryResponse = StudentReservation[]
+export type StudentHistoryResponse = InstructorReservation[]
 
 const Container = styled.div({
   display: 'flex',
@@ -43,8 +43,8 @@ const Label = styled.p(({theme}) => ({
 }))
 
 interface StudentCardlistProps {
-  onReviewClick: (item: StudentReservation) => void
-  selected?: StudentReservation
+  onReviewClick: (item: InstructorReservation) => void
+  selected?: InstructorReservation
 }
 
 export function StudentCardlist(props: StudentCardlistProps) {
@@ -74,10 +74,10 @@ interface StudentCardListContentProps extends StudentCardlistProps {
 
 function StudentCardListContent({onReviewClick, selected, filter}: StudentCardListContentProps) {
   // todo: probably have to sort this
-  const {data: pastList} = useSuspendedApiCall<StudentReservation[]>(
+  const {data: pastList} = useSuspendedApiCall<InstructorReservation[]>(
     '/student/reservations?isUpcoming=false',
   )
-  const {data: futureList} = useSuspendedApiCall<StudentReservation[]>(
+  const {data: futureList} = useSuspendedApiCall<InstructorReservation[]>(
     '/student/reservations?isUpcoming=true',
   )
   return (
@@ -111,7 +111,7 @@ function StudentCardListContent({onReviewClick, selected, filter}: StudentCardLi
   )
 }
 
-export interface InstructorReservation {
+export interface StudentReservation {
   reservationId: number
   studentImage: string
   studentName: string
@@ -123,11 +123,11 @@ export interface InstructorReservation {
   isUpcoming: boolean
 }
 
-export type InstructorHistoryResponse = InstructorReservation[]
+export type InstructorHistoryResponse = StudentReservation[]
 
 interface InstructorCardlistProps {
-  onSelect: (item: InstructorReservation) => void
-  selected?: InstructorReservation
+  onSelect: (item: StudentReservation) => void
+  selected?: StudentReservation
 }
 
 const PAGE_SIZE = 5
@@ -147,11 +147,16 @@ export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps
     },
   })
 
+  // TODO: fix type bug #191
+  // returned data type from infiniteFetch is 2 dimensional array, when it actually is single dimension array
+  // remove line below on issue solved
+  const reservations = data as StudentReservation[]
+
   const intersectedRef = useIntersectionObserver(() => fetchNextPage())
   return (
     <Container>
       <List>
-        {(data as InstructorReservation[])?.map((v) =>
+        {reservations?.map((v) =>
           v.isUpcoming ? (
             <RejectableInstructorCard
               key={v.reservationId}
@@ -180,7 +185,7 @@ export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps
 }
 
 interface RejectableInstructorCardProps extends InstructorCardlistProps {
-  v: InstructorReservation
+  v: StudentReservation
 }
 
 function RejectableInstructorCard({v, onSelect, selected}: RejectableInstructorCardProps) {

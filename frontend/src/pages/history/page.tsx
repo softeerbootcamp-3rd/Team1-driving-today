@@ -6,9 +6,9 @@ import {Logo} from '@/components/logo'
 
 import {
   InstructorCardlist,
-  InstructorReservation,
-  StudentCardlist,
   StudentReservation,
+  StudentCardlist,
+  InstructorReservation,
 } from '../history/components/cardlist'
 import {ReviewModal, StudentModal} from './components/modal'
 
@@ -31,7 +31,7 @@ const ModalContainer = styled.div({
 })
 
 export function StudentHistory() {
-  const [selected, setSelected] = useState<StudentReservation>()
+  const [selected, setSelected] = useState<InstructorReservation>()
 
   return (
     <RootLayout>
@@ -58,7 +58,7 @@ export function StudentHistory() {
 }
 
 export function InstructorHistory() {
-  const [selected, setSelected] = useState<InstructorReservation>()
+  const [selected, setSelected] = useState<StudentReservation>()
   return (
     <RootLayout>
       <Header px="20rem">
