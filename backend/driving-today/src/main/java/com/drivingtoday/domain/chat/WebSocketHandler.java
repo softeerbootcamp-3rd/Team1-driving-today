@@ -1,7 +1,7 @@
 package com.drivingtoday.domain.chat;
 
 import com.drivingtoday.domain.chat.model.ChatMessage;
-import com.drivingtoday.domain.chat.ChatRoom;
+import com.drivingtoday.domain.chat.model.ChatRoom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Set;
