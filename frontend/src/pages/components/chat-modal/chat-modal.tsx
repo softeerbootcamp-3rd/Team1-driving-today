@@ -1,23 +1,21 @@
 import styled from '@emotion/styled'
 
-import {Portal} from '@/components/portal'
+import {useChatModal} from '@/providers'
 
-interface ChatModal {
-  open: boolean
-  onClose: () => void
-}
-
-export function ChatModal({open, onClose}: ChatModal) {
+export function ChatModalContainer() {
+  const {open, options, handleClose} = useChatModal()
   return (
-    <Portal id="chat-modal">
+    <div id="chat-modal">
       {open && (
-        <ChatModalContainer>
+        <ChatModal>
           Chat modal
-          <button onClick={onClose}>close modal</button>
-        </ChatModalContainer>
+          {options.content === 'HOME' && <>home</>}
+          {options.content === 'ROOM' && <>room</>}
+          <button onClick={handleClose}>close modal</button>
+        </ChatModal>
       )}
-    </Portal>
+    </div>
   )
 }
 
-const ChatModalContainer = styled.div(() => ({}))
+const ChatModal = styled.div(() => ({}))

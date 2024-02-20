@@ -12,6 +12,7 @@ export interface SessionProvider {
   session?: Session
   login: (role: UserRole, email: string, password: string) => Promise<Session>
   logout: () => void
+  getAccessToken: () => string
 }
 
 export const sessionProvider: SessionProvider = {
@@ -41,6 +42,11 @@ export const sessionProvider: SessionProvider = {
     }
   },
   logout: () => {},
+  getAccessToken() {
+    const token = this.session?.accessToken
+    if (!token) throw Error('no session')
+    return token
+  },
 }
 
 function getLoginUrl(role: UserRole) {
