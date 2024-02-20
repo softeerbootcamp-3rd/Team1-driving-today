@@ -36,6 +36,12 @@ public class ChatService {
     }
 
     @Transactional
+    public List<ChatRoomInfo> findByStudentId(String studentId){
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByStudentId(studentId);
+        return chatRoomList.stream().map(ChatRoomInfo::from).toList();
+    }
+
+    @Transactional
     public List<ChatRoomInfo> findByInstructorId(String instructorId){
         List<ChatRoom> chatRoomList = chatRoomRepository.findByInstructorId(instructorId);
         return chatRoomList.stream().map(ChatRoomInfo::from).toList();
