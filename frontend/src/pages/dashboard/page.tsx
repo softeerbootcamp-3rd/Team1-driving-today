@@ -3,9 +3,8 @@ import styled from '@emotion/styled'
 import {Header} from '@/components/header'
 import {Logo} from '@/components/logo'
 
-import {Cardlist} from './components/cardlist/cardlist'
 import {MyProfileCard} from './components/myprofile-card'
-import {ScheduleCard} from './components/schedule-card'
+import {InstructorScheduleCard, StudentScheduleCard} from './components/schedule-card'
 
 export function StudentDashboard() {
   return (
@@ -15,7 +14,7 @@ export function StudentDashboard() {
       </Header>
       <ContentLayout>
         <ContentContainer>
-          <ScheduleCard />
+          <StudentScheduleCard />
         </ContentContainer>
         <ModalContainer>
           <MyProfileCard />
@@ -33,7 +32,7 @@ export function InstructorDashboard() {
       </Header>
       <ContentLayout>
         <ContentContainer>
-          <Cardlist />
+          <InstructorScheduleCard />
         </ContentContainer>
         <ModalContainer>
           <MyProfileCard />

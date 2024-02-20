@@ -1,6 +1,7 @@
+/* eslint-disable react-refresh/only-export-components */
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
-import {HTMLAttributes, PropsWithChildren} from 'react'
+import {forwardRef, HTMLAttributes, PropsWithChildren} from 'react'
 
 import {Button} from '../button'
 import {Icon, IconName} from '../icon'
@@ -166,44 +167,49 @@ interface StudentHistoryProps extends CardProps {
   onCancelClick?: () => void
 }
 
-function StudentHistoryCard({
-  instructorName,
-  academyName,
-  dateStr,
-  timeStr,
-  image,
-  onReviewClick,
-  onCancelClick,
-  ...props
-}: StudentHistoryProps) {
-  return (
-    <BaseContainer {...props}>
-      <ProfilePic src={image} />
-      <ContentContainer>
-        <Name>{instructorName}</Name>
-        <IconLabel icon="building" color="gray500">
-          {academyName}
-        </IconLabel>
-        <MultipleDescriptionContainer>
-          <Label color="gray600">{dateStr}</Label>
-          <Label color="gray600">{timeStr}</Label>
-        </MultipleDescriptionContainer>
-        {onReviewClick && (
-          <ActionsContainer>
-            <Button onClick={onReviewClick}>리뷰 작성하기</Button>
-          </ActionsContainer>
-        )}
-        {onCancelClick && (
-          <ActionsContainer>
-            <Button onClick={onCancelClick} bgColor="warning">
-              예약 취소하기
-            </Button>
-          </ActionsContainer>
-        )}
-      </ContentContainer>
-    </BaseContainer>
-  )
-}
+const StudentHistoryCard = forwardRef<HTMLDivElement, StudentHistoryProps>(
+  function StudentHistoryCard(
+    {
+      instructorName,
+      academyName,
+      dateStr,
+      timeStr,
+      image,
+      onReviewClick,
+      onCancelClick,
+      ...props
+    }: StudentHistoryProps,
+    ref,
+  ) {
+    return (
+      <BaseContainer {...props} ref={ref}>
+        <ProfilePic src={image} />
+        <ContentContainer>
+          <Name>{instructorName}</Name>
+          <IconLabel icon="building" color="gray500">
+            {academyName}
+          </IconLabel>
+          <MultipleDescriptionContainer>
+            <Label color="gray600">{dateStr}</Label>
+            <Label color="gray600">{timeStr}</Label>
+          </MultipleDescriptionContainer>
+          {onReviewClick && (
+            <ActionsContainer>
+              <Button onClick={onReviewClick}>리뷰 작성하기</Button>
+            </ActionsContainer>
+          )}
+          {onCancelClick && (
+            <ActionsContainer>
+              <Button onClick={onCancelClick} bgColor="warning">
+                예약 취소하기
+              </Button>
+            </ActionsContainer>
+          )}
+        </ContentContainer>
+      </BaseContainer>
+    )
+  },
+)
 
 interface InstructorHistoryProps extends CardProps {
   studentName: string
@@ -214,38 +220,43 @@ interface InstructorHistoryProps extends CardProps {
   onRejectClick?: () => void
 }
 
-function InstructorHistoryCard({
-  studentName,
-  phoneStr,
-  dateStr,
-  timeStr,
-  image,
-  onRejectClick,
-  ...props
-}: InstructorHistoryProps) {
-  return (
-    <BaseContainer {...props}>
-      <ProfilePic src={image} />
-      <ContentContainer>
-        <Name>{studentName}</Name>
-        <IconLabel icon="call" color="gray500">
-          {phoneStr}
-        </IconLabel>
-        <MultipleDescriptionContainer>
-          <Label color="gray600">{dateStr}</Label>
-          <Label color="gray600">{timeStr}</Label>
-        </MultipleDescriptionContainer>
-        {onRejectClick && (
-          <ActionsContainer>
-            <Button onClick={onRejectClick} bgColor="warning">
-              거절
-            </Button>
-          </ActionsContainer>
-        )}
-      </ContentContainer>
-    </BaseContainer>
-  )
-}
+const InstructorHistoryCard = forwardRef<HTMLDivElement, InstructorHistoryProps>(
+  function InstructorHistoryCard(
+    {
+      studentName,
+      phoneStr,
+      dateStr,
+      timeStr,
+      image,
+      onRejectClick,
+      ...props
+    }: InstructorHistoryProps,
+    ref,
+  ) {
+    return (
+      <BaseContainer {...props} ref={ref}>
+        <ProfilePic src={image} />
+        <ContentContainer>
+          <Name>{studentName}</Name>
+          <IconLabel icon="call" color="gray500">
+            {phoneStr}
+          </IconLabel>
+          <MultipleDescriptionContainer>
+            <Label color="gray600">{dateStr}</Label>
+            <Label color="gray600">{timeStr}</Label>
+          </MultipleDescriptionContainer>
+          {onRejectClick && (
+            <ActionsContainer>
+              <Button onClick={onRejectClick} bgColor="warning">
+                거절
+              </Button>
+            </ActionsContainer>
+          )}
+        </ContentContainer>
+      </BaseContainer>
+    )
+  },
+)
 
 export const Card = {
   InstructorHistory: InstructorHistoryCard,

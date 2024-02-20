@@ -1,16 +1,12 @@
 import styled from '@emotion/styled'
 import {Suspense} from 'react'
+import {useNavigate} from 'react-router-dom'
 
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
 import {Loading} from '@/components/loading'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 
-interface MyInfoResponse {
-  name: string
-  image: string
-  nickname: string
-}
 export function MyProfileCard() {
   return (
     <Container>
@@ -21,10 +17,17 @@ export function MyProfileCard() {
   )
 }
 
+// interface MyInfoResponse {
+//   name: string
+//   image: string
+//   nickname: string
+// }
+
 function MyProfileCardContent() {
   // todo: connect api on implementation
   //const {data} = useSuspendedApiCall<MyInfoResponse>('/my')
   const data = undefined
+  const navigate = useNavigate()
   return (
     <>
       <Image src={data?.image} />
@@ -33,7 +36,7 @@ function MyProfileCardContent() {
         <Nickname>{`@${data?.nickname}`}</Nickname>
       </NameContainer>
       <Divider flexItem />
-      <TrailingIconLink href="/history">
+      <TrailingIconLink onClick={() => navigate('/history')}>
         <ButtonLabel>지난 예약 내역</ButtonLabel>
         <Icon name="arrowForward" color="gray600" width="1.6rem" height="1.6rem" />
       </TrailingIconLink>
