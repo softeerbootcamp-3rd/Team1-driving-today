@@ -58,33 +58,33 @@ public class InstructorFindServiceTest {
         assertThat(availableInstructors.size()).isEqualTo(5);
     }
 
-//    @Test
-//    @DisplayName("해당 날짜와 시간에 예약이 되어 있는 강사는 조회되면 안됨")
-//    public void 예약_테스트() {
-//        Instructor instructor1 = instructorRepository.findById(4L).get();
-//        Student student1 = studentRepository.findById(1L).get();
-//
-//        Instructor instructor2 = instructorRepository.findById(8L).get();
-//        Student student2 = studentRepository.findById(2L).get();
-//
-//        // 9시에 2시간 예약
-//        Reservation reservation1 = new Reservation(1L, true,
-//                LocalDateTime.now(), LocalDate.of(2024, 2, 8),
-//                9, 2, student1, instructor1);
-//        // 10시에 1시간 예약
-//        Reservation reservation2 = new Reservation(2L, true,
-//                LocalDateTime.now(), LocalDate.of(2024, 2, 8),
-//                10, 1, student2, instructor2);
-//        reservationRepository.save(reservation1);
-//        reservationRepository.save(reservation2);
-//        AvailableInstructorsRequest request = new AvailableInstructorsRequest(
-//                37.02, -122.13, 2, 9,
-//                LocalDate.of(2024, 2, 8), 1, 10);
-//
-//
-//        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
-//        assertThat(availableInstructors.size()).isEqualTo(8);
-//
-//    }
+    @Test
+    @DisplayName("해당 날짜와 시간에 예약이 되어 있는 강사는 조회되면 안됨")
+    public void 예약_테스트() {
+        Instructor instructor1 = instructorRepository.findById(4L).get();
+        Student student1 = studentRepository.findById(1L).get();
+
+        Instructor instructor2 = instructorRepository.findById(8L).get();
+        Student student2 = studentRepository.findById(2L).get();
+
+        // 9시에 2시간 예약
+        Reservation reservation1 = new Reservation(1L, true,
+                LocalDateTime.now(), LocalDate.of(2024, 2, 8),
+                9, 2, student1, instructor1);
+        // 10시에 1시간 예약
+        Reservation reservation2 = new Reservation(2L, true,
+                LocalDateTime.now(), LocalDate.of(2024, 2, 8),
+                10, 1, student2, instructor2);
+        reservationRepository.save(reservation1);
+        reservationRepository.save(reservation2);
+        AvailableInstructorsRequest request = new AvailableInstructorsRequest(
+                37.02, -122.13, 2, 9,
+                LocalDate.of(2024, 2, 8), 1, 10);
+
+
+        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
+        assertThat(availableInstructors.size()).isEqualTo(8);
+
+    }
 
 }
