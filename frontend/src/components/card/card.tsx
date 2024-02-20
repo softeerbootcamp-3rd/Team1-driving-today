@@ -163,6 +163,7 @@ interface StudentHistoryProps extends CardProps {
   dateStr: string
   timeStr: string
   onReviewClick?: () => void
+  onCancelClick?: () => void
 }
 
 function StudentHistoryCard({
@@ -172,6 +173,7 @@ function StudentHistoryCard({
   timeStr,
   image,
   onReviewClick,
+  onCancelClick,
   ...props
 }: StudentHistoryProps) {
   return (
@@ -189,6 +191,13 @@ function StudentHistoryCard({
         {onReviewClick && (
           <ActionsContainer>
             <Button onClick={onReviewClick}>리뷰 작성하기</Button>
+          </ActionsContainer>
+        )}
+        {onCancelClick && (
+          <ActionsContainer>
+            <Button onClick={onCancelClick} bgColor="warning">
+              예약 취소하기
+            </Button>
           </ActionsContainer>
         )}
       </ContentContainer>
