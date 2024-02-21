@@ -15,7 +15,7 @@ import {objectToQS} from '@/utils/object-to-qs'
 import {DetailDialog, SearchPreview} from './components'
 import type {LoaderData} from './types'
 
-type InstructorsResponse = {
+type InstructorsResponseItem = {
   distance: number
   instructorId: number
   latitude: number
@@ -26,7 +26,7 @@ type InstructorsResponse = {
   instructorName: string
   academyName: string
   averageRating: number
-}[]
+}
 
 const PAGE_SIZE = 5
 
@@ -40,15 +40,18 @@ export function SearchPage() {
   const [hoverInstructorId, setHoverInstructorId] = useState<number | null>(null)
 
   // TODO: error handling
-  const {data, loading, fetchNextPage} = useInfiniteFetch({
-    queryFn: ({pageParam}): Promise<InstructorsResponse> => {
-      return apiCall(
+  const {data, loading, fetchNextPage} = useInfiniteFetch<InstructorsResponseItem, number>({
+    queryFn: async ({pageParam}) => {
+      const res = await apiCall(
         `/instructors?latitude=${latitude}&longitude=${longitude}&trainingTime=${trainingTime}&reservationTime=${reservationTime}&reservationDate=${reservationDate}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
-      ).then((res) => res.json())
+      )
+      return {data: await res.json(), statusCode: res.status}
     },
     initialPageParam: 1,
     getNextPageParam: ({pageParam, lastPage}) => {
-      const isLastPage = lastPage.length < PAGE_SIZE
+      console.log(lastPage)
+      if (lastPage.statusCode !== 200) return
+      const isLastPage = lastPage.data.length < PAGE_SIZE
       const nextPageParam = pageParam + 1
       return isLastPage ? undefined : nextPageParam
     },
