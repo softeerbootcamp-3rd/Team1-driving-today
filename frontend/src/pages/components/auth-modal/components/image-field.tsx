@@ -17,7 +17,7 @@ export function ImageField({label, ...fileInputProps}: ImageFieldProps) {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files !== null) {
       const file = event.target.files[0]
-      if (file && file.type.substring(0, 5) === 'image') {
+      if (file && file.type.startsWith('image')) {
         const reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = () => {
@@ -28,6 +28,7 @@ export function ImageField({label, ...fileInputProps}: ImageFieldProps) {
       }
     }
   }
+
   return (
     <Flex gap="0.5rem" flexDirection="column">
       <Typography as="span" size="1.4rem" weight="bold" color="gray900">

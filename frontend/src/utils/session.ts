@@ -14,7 +14,7 @@ export interface SessionProvider {
   signup: (arg: {
     role: UserRole
     registerRequest: Record<string, unknown>
-    profileImg: FormDataEntryValue | null
+    profileImg: File | null
   }) => Promise<void>
   logout: () => void
   getAccessToken: () => string
@@ -51,15 +51,16 @@ export const sessionProvider: SessionProvider = {
       'registerRequest',
       new Blob([JSON.stringify(registerRequest)], {type: 'application/json'}),
     )
-    if (profileImg) formData.append('profileImg', profileImg)
+    if (profileImg && profileImg.type.startsWith('image')) {
+      formData.append('profileImg', profileImg)
+    }
 
     const res = await fetch(`${API_BASE_URL}${getSignupUrl(role)}`, {
       method: 'POST',
       body: formData,
-      headers: {'Content-Type': 'multipart/form-data'},
     })
 
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       throw new Error('회원가입에 실패했습니다')
     }
   },

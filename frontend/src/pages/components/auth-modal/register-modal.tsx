@@ -95,23 +95,22 @@ function RegisterModalRoot() {
           </>
         )}
 
-        <>
-          <Form
-            action={`/register?userRole=${userRole}`}
-            method="POST"
-            style={{
-              display: step === 'intro' ? 'none' : 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: '2rem',
-            }}
-          >
-            <input name="userRole" type="hidden" value={userRole} />
-            {step === 'student' && <StudentRegisterForm step={step} setStep={setStep} />}
-            {step === 'instructor' && <InstructorRegisterForm step={step} setStep={setStep} />}
-          </Form>
-          {error !== null && <ErrorMessage>{error.message}</ErrorMessage>}
-        </>
+        <Form
+          action={`/register?userRole=${userRole}`}
+          method="POST"
+          encType="multipart/form-data"
+          style={{
+            display: step === 'intro' ? 'none' : 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            gap: '2rem',
+          }}
+        >
+          <input name="userRole" type="hidden" value={userRole} />
+          {step === 'student' && <StudentRegisterForm step={step} setStep={setStep} />}
+          {step === 'instructor' && <InstructorRegisterForm step={step} setStep={setStep} />}
+        </Form>
+        {error !== null && <ErrorMessage>{error.message}</ErrorMessage>}
       </Modal>
     </ModalContainer>
   )
@@ -123,7 +122,7 @@ interface RegisterFormProps {
 }
 function StudentRegisterForm({setStep}: RegisterFormProps) {
   const errors = useActionData()
-  console.log(errors)
+
   return (
     <>
       <Flex gap="1rem" flexDirection="column">
@@ -190,7 +189,8 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
 
 function InstructorRegisterForm({setStep}: RegisterFormProps) {
   const errors = useActionData()
-  console.log(errors)
+
+  // TODO: 학원 검색 API 연동
   return (
     <>
       <Flex gap="2rem" flexDirection="column">
@@ -277,7 +277,6 @@ export const RegisterModal = Object.assign(RegisterModalRoot, {
 export async function registerAction(actionArg: ActionFunctionArgs) {
   const url = new URL(actionArg.request.url)
   const userRole = new URLSearchParams(url.search).get('userRole') as UserRole
-  console.log(userRole)
 
   switch (userRole) {
     case 'INSTRUCTOR':
@@ -295,12 +294,15 @@ async function registerInstructorAction({request}: ActionFunctionArgs) {
   const passwordConfirm = formData.get('passwordConfirm')
   const phoneNumber = formData.get('phoneNumber')
   const pricePerHour = formData.get('pricePerHour')
-  const academyId = formData.get('academyId')
+  // const academyId = formData.get('academyId')
+  // TODO: 학원 검색 API 연동 후 제거
+  const academyId = 1
   const instruction = formData.get('instruction')
-  const profileImg = formData.get('profileImg')
-  console.log(profileImg)
+  const profileImg = formData.get('profileImg') as File
+
   const errors = {} as Record<string, string>
 
+  // TODO: validate error
   if (!email) errors.email = ''
   if (!password) errors.password = ''
   if (!passwordConfirm) errors.passwordConfirm = ''
@@ -334,10 +336,11 @@ async function registerStudentAction({request}: ActionFunctionArgs) {
   const password = formData.get('password')
   const passwordConfirm = formData.get('passwordConfirm')
   const phoneNumber = formData.get('phoneNumber')
-  const profileImg = formData.get('profileImg')
+  const profileImg = formData.get('profileImg') as File
 
   const errors = {} as Record<string, string>
 
+  // TODO: validate error
   if (!email) errors.email = ''
   if (!password) errors.password = ''
   if (!passwordConfirm) errors.passwordConfirm = ''
@@ -348,7 +351,6 @@ async function registerStudentAction({request}: ActionFunctionArgs) {
     return errors
   }
 
-  console.log({name, nickname, email, password, phoneNumber, profileImg})
   await sessionProvider.signup({
     role: 'STUDENT',
     registerRequest: {

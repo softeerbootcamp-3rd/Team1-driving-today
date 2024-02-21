@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import {TextareaHTMLAttributes} from 'react'
 
 import {Flex} from '@/components/flex'
@@ -12,10 +13,24 @@ export interface TextAreaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaE
 export function TextAreaField({label, ...textAreaProps}: TextAreaFieldProps) {
   return (
     <Flex as="label" gap="0.5rem" flexDirection="column">
-      <Typography as="span" size="1.4rem" weight="bold" color="gray900">
+      <Label
+        as="span"
+        requried={textAreaProps.required}
+        size="1.4rem"
+        weight="bold"
+        color="gray900"
+      >
         {label}
-      </Typography>
+      </Label>
       <TextArea {...textAreaProps} />
     </Flex>
   )
 }
+
+const Label = styled(Typography)<{requried?: boolean}>(({theme, requried}) => ({
+  '&:after': requried && {
+    content: '"*"',
+    color: theme.color.warning,
+    marginLeft: '0.3rem',
+  },
+}))
