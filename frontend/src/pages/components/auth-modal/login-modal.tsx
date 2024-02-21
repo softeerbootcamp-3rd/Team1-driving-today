@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react'
-import {Form, useNavigate, useRouteError} from 'react-router-dom'
+import {Form, Link, useNavigate, useRouteError} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
@@ -39,10 +39,18 @@ export function LoginModal() {
             사용자 타입을 선택해주세요
           </Typography>
           <Flex gap="1rem">
-            <Chip selected={userRole === 'STUDENT'} onClick={() => setUserRole('STUDENT')}>
+            <Chip
+              selected={userRole === 'STUDENT'}
+              onClick={() => setUserRole('STUDENT')}
+              style={{flex: '1 1 0', height: '7rem', cursor: 'pointer'}}
+            >
               학생
             </Chip>
-            <Chip selected={userRole === 'INSTRUCTOR'} onClick={() => setUserRole('INSTRUCTOR')}>
+            <Chip
+              selected={userRole === 'INSTRUCTOR'}
+              onClick={() => setUserRole('INSTRUCTOR')}
+              style={{flex: '1 1 0', height: '7rem', cursor: 'pointer'}}
+            >
               강사
             </Chip>
           </Flex>
@@ -65,11 +73,29 @@ export function LoginModal() {
             <Input placeholder="문자, 숫자, 기호 조합 8자 이상" name="password" type="password" />
           </Flex>
           <input name="userRole" type="hidden" value={userRole} />
+          {error !== null && <ErrorMessage>{error.message}</ErrorMessage>}
           <Button type="submit" style={{marginTop: '1rem'}}>
             로그인
           </Button>
         </Form>
-        {error !== null && <ErrorMessage>{error.message}</ErrorMessage>}
+        <Typography
+          size="1.4rem"
+          weight="normar"
+          color="gray900"
+          style={{display: 'flex', gap: '1rem', justifyContent: 'center'}}
+        >
+          아직 계정이 없나요?
+          <Typography
+            size="1.4rem"
+            weight="normar"
+            color="primary"
+            style={{textDecoration: 'underline'}}
+          >
+            <Link to="/register" replace>
+              회원가입
+            </Link>
+          </Typography>
+        </Typography>
       </Modal>
     </ModalContainer>
   )

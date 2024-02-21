@@ -13,7 +13,9 @@ export const Modal = styled(Flex)(({theme}) => ({
   padding: '2rem',
   borderRadius: '1.6rem',
   width: '100%',
-  maxWidth: '40rem',
+  maxWidth: '45rem',
+  maxHeight: '85%',
+  overflowY: 'auto',
   margin: 'auto',
   boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
 }))
@@ -49,4 +51,17 @@ export const CloseButton = styled.button(({theme}) => ({
   '&:active': {
     backgroundColor: theme.color.gray300,
   },
+}))
+
+export const PrevButton = styled.button(() => ({
+  fontSize: '1.2rem',
+  textDecoration: 'underline',
+}))
+
+export const TextArea = styled.textarea(({theme}) => ({
+  borderRadius: '1.6rem',
+  backgroundColor: theme.color.gray200,
+  padding: '1rem',
+  width: '100%',
+  fontSize: '1.4rem',
 }))

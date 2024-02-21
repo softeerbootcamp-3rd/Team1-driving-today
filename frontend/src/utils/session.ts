@@ -14,7 +14,7 @@ export interface SessionProvider {
   signup: (arg: {
     role: UserRole
     registerRequest: Record<string, unknown>
-    profileImg: FormDataEntryValue
+    profileImg: FormDataEntryValue | null
   }) => Promise<void>
   logout: () => void
   getAccessToken: () => string
@@ -51,7 +51,7 @@ export const sessionProvider: SessionProvider = {
       'registerRequest',
       new Blob([JSON.stringify(registerRequest)], {type: 'application/json'}),
     )
-    formData.append('profileImg', profileImg)
+    if (profileImg) formData.append('profileImg', profileImg)
 
     const res = await fetch(`${API_BASE_URL}${getSignupUrl(role)}`, {
       method: 'POST',
