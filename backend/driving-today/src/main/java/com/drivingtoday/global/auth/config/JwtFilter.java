@@ -27,7 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static ThreadLocal<Authentication> auth = new ThreadLocal<>();
     private final JwtProvider jwtProvider;
     private final String[] allowUriList
-            = new String[]{"*/register", "*/login", "/swagger-ui/*", "**/api-docs**"};
+            = new String[]{"*/health", "*/register", "*/login", "/swagger-ui/*", "**/api-docs**"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -44,17 +44,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-            if(authorization == null){
-                if(request.getRequestURI().contains("ws")){
-                    if(request.getQueryString() != null) authorization = "Bearer " + request.getQueryString().split("=")[1];
+            if (authorization == null) {
+                if (request.getRequestURI().contains("ws")) {
+                    if (request.getQueryString() != null)
+                        authorization = "Bearer " + request.getQueryString().split("=")[1];
                 }
             }
 
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String headerName = headerNames.nextElement();
-                if(headerName.contains("sec-websocket-protocol")){
-                    if(authorization == null){
+                if (headerName.contains("sec-websocket-protocol")) {
+                    if (authorization == null) {
                         authorization = "Bearer " + request.getHeader(headerName);
                     }
                 }
@@ -101,7 +102,7 @@ public class JwtFilter extends OncePerRequestFilter {
         return Authentication.of(claims.get(JwtProvider.CLAIM_ROLE, String.class), claims.get(JwtProvider.CLAIM_USERID, Long.class));
     }
 
-    private void makeExceptionResponse(JwtErrorCode jwtErrorCode, HttpServletResponse response) throws IOException{
+    private void makeExceptionResponse(JwtErrorCode jwtErrorCode, HttpServletResponse response) throws IOException {
         String errorMessage = jwtErrorCode.getErrorCode() + ": " + jwtErrorCode.getMessage();
         byte[] messageBytes = errorMessage.getBytes(StandardCharsets.UTF_8);
         response.setCharacterEncoding("UTF-8");
@@ -111,7 +112,7 @@ public class JwtFilter extends OncePerRequestFilter {
         response.getOutputStream().write(messageBytes);
     }
 
-    public static Authentication getAuthentication(){
+    public static Authentication getAuthentication() {
         return auth.get();
     }
 }
