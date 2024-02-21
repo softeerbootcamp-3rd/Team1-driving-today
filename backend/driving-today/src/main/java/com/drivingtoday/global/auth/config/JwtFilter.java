@@ -27,7 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static ThreadLocal<Authentication> auth = new ThreadLocal<>();
     private final JwtProvider jwtProvider;
     private final String[] allowUriList
-            = new String[]{"*/join", "*/login", "/swagger-ui/*", "**/api-docs**"};
+            = new String[]{"*/register", "*/login", "/swagger-ui/*", "**/api-docs**"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
