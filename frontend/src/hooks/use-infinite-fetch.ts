@@ -14,18 +14,18 @@ export interface UseInfiniteFetchArg<TData, TPageParam> {
 
 export interface UseInfniteFetchReturn<TData> {
   fetchNextPage: () => Promise<unknown>
-  data?: TData[]
+  data?: TData
   error?: unknown
   loading: boolean
   hasNextPage: boolean
 }
 
-export function useInfiniteFetch<TData, TPageParam>({
+export function useInfiniteFetch<TData extends unknown[] = unknown[], TPageParam = unknown>({
   queryFn,
   initialPageParam,
   getNextPageParam,
 }: UseInfiniteFetchArg<TData, TPageParam>): UseInfniteFetchReturn<TData> {
-  const [data, setData] = useState<TData[]>()
+  const [data, setData] = useState<TData>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>()
   const [hasNextPage, setHasNextPage] = useState(true)
@@ -47,6 +47,8 @@ export function useInfiniteFetch<TData, TPageParam>({
       if (!nextPageParamRef.current) {
         setHasNextPage(false)
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       setData((prev) => (prev ? prev : []).concat(res))
       setError(null)
     } catch (error) {

@@ -92,6 +92,15 @@ interface InstructorDetailResponse {
   averageRating: number
 }
 
+type ReviewResponse = {
+  reviewId: number
+  contents: string
+  rating: number
+  createdAt: string
+  reviewerName: string
+  reviewerImage: string
+}[]
+
 const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
   // TODO: error handling
@@ -103,7 +112,7 @@ function InstructorDetail({id}: {id: number}) {
     loading,
     fetchNextPage,
   } = useInfiniteFetch({
-    queryFn: ({pageParam}) => {
+    queryFn: ({pageParam}): Promise<ReviewResponse> => {
       return apiCall(
         `/reviews?instructorId=${id}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
       ).then((res) => res.json())
