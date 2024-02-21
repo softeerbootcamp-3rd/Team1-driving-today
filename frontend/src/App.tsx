@@ -46,9 +46,8 @@ const router = createBrowserRouter(
           action={registerAction}
           element={<RegisterModal />}
           errorElement={<RegisterModal />}
-        >
-          <Route path="success" element={<RegisterModal.Success />} />
-        </Route>
+        />
+        <Route path="/register/success" element={<RegisterModal.Success />} />
       </Route>
       <Route id="root" loader={checkAuthLoader} element={<Layout />}>
         <Route

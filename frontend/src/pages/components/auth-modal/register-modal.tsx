@@ -1,4 +1,5 @@
-import {Dispatch, SetStateAction, useCallback, useState} from 'react'
+import confetti from 'canvas-confetti'
+import {Dispatch, SetStateAction, useCallback, useEffect, useState} from 'react'
 import {
   ActionFunctionArgs,
   Form,
@@ -14,6 +15,7 @@ import {Chip} from '@/components/chip'
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
 import {Typography} from '@/components/typography'
+import {useEscapeKeydown} from '@/hooks/use-escape-keydown'
 import {sessionProvider, UserRole} from '@/utils/session'
 
 import {ImageField, TextAreaField, TextField} from './components'
@@ -262,10 +264,63 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
 }
 
 function RegisterModalSuccess() {
+  const navigate = useNavigate()
+
+  const onDismiss = useCallback(() => {
+    navigate('/')
+  }, [navigate])
+
+  useEffect(() => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: {y: 0.6},
+    })
+  }, [])
+
+  useEscapeKeydown(onDismiss)
+
   return (
     <ModalContainer>
-      <Dimmed />
-      <Modal>성공!</Modal>
+      <Dimmed onClick={onDismiss} />
+      <Modal>
+        <Flex flexDirection="column" flexGrow="1">
+          <Flex justifyContent="space-between" flexGrow="1">
+            <Typography
+              as="h1"
+              size="2rem"
+              weight="bold"
+              color="gray900"
+              style={{display: 'flex', justifyContent: 'center', flex: '1 1 0'}}
+            >
+              회원가입이 완료됐어요!
+            </Typography>
+            <CloseButton onClick={onDismiss}>
+              <Icon name="close" width="1.4rem" height="1.4rem" color="black" />
+            </CloseButton>
+          </Flex>
+          <Flex flexDirection="column" gap="2rem" alignItems="center">
+            <img
+              src="/clapping-hands.svg"
+              className="floating"
+              width="100"
+              height="100"
+              alt="박수치는 손"
+              style={{margin: '2rem 0'}}
+            />
+            <Typography
+              size="1.4rem"
+              weight="bold"
+              color="primary"
+              style={{textDecoration: 'underline'}}
+            >
+              <Link to="/login" replace>
+                로그인 하러가기
+              </Link>
+            </Typography>
+          </Flex>
+        </Flex>
+      </Modal>
     </ModalContainer>
   )
 }
