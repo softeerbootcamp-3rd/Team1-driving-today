@@ -85,7 +85,9 @@ export const sessionProvider: SessionProvider = {
       throw new Error('회원가입에 실패했습니다')
     }
   },
-  logout: () => {},
+  logout: () => {
+    resetSession()
+  },
   getAccessToken() {
     const token = this.session?.accessToken
     if (!token) throw Error('no session')
