@@ -31,7 +31,7 @@ class ReviewAddServiceTest {
         //when: 존재하지 않는 예약
         //then
         assertThrows(RuntimeException.class, () -> {
-            reviewAddService.addReview(reviewRequest);
+            reviewAddService.addReview(reviewRequest, 1L);
         });
     }
 
@@ -42,7 +42,7 @@ class ReviewAddServiceTest {
         //given
         ReviewRequest reviewRequest = new ReviewRequest(4.3, "만족합니다.", 2L);
         //when 유효한 예약에 대한 리뷰
-        Long reviewId = reviewAddService.addReview(reviewRequest);
+        Long reviewId = reviewAddService.addReview(reviewRequest, 1L);
         //then
         assertNotNull(reviewRepository.findById(reviewId));
     }

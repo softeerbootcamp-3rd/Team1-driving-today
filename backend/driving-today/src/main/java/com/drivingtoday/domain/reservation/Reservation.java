@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class Reservation {
     @Id
@@ -23,7 +24,7 @@ public class Reservation {
     @Column(name = "reservation_id")
     private Long id;
 
-    @Column(name = "is_accepted")
+    @Column(name = "is_accepted", columnDefinition = "TINYINT(1)")
     @NotNull
     private Boolean isAccepted;
 

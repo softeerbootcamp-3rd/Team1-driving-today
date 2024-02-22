@@ -2,7 +2,10 @@ package com.drivingtoday.domain.chat;
 
 import com.drivingtoday.domain.chat.model.ChatMessage;
 import com.drivingtoday.domain.chat.model.ChatRoom;
+import com.drivingtoday.global.auth.constants.Authentication;
+import com.drivingtoday.global.auth.jwt.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ChatService chatService;
     private final SessionService sessionService;
     private final ChatMessageService chatMessageService;
+    private final JwtProvider jwtProvider;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -36,22 +40,25 @@ public class WebSocketHandler extends TextWebSocketHandler {
         try {
             String payload = message.getPayload();
             ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
-            log.info("getRoomId : " + chatMessage.getRoomId());
-            ChatRoom room = chatService.findRoomById(Long.parseLong(chatMessage.getRoomId()));
 
-            Set<WebSocketSession> sessions = sessionService.getSessionsByRoomId(chatMessage.getRoomId());
+            log.info("getRoomId : " + chatMessage.getRoomId());
+            log.info("message sender ID : "+ chatMessage.getUserId());
+            log.info("message sender TYPE : " + chatMessage.getUserType());
+            ChatRoom room = chatService.findRoomById(chatMessage.getRoomId());
+
+            Set<WebSocketSession> sessions = sessionService.getSessionsByRoomId(chatMessage.getRoomId().toString());
             if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
 
-                sessionService.addSessionToRoom(chatMessage.getRoomId(),session);
-                chatMessage.setMessage(chatMessage.getSender() + "님이 입장했습니다.");
-                log.info(chatMessage.getSender() + "님이 입장했습니다.");
+                sessionService.addSessionToRoom(chatMessage.getRoomId().toString(),session);
+                chatMessage.setMessage(chatMessage.getUserId() + "님이 입장했습니다.");
+                log.info(chatMessage.getUserId() + "님이 입장했습니다.");
                 sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
 
             } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
 
-                sessionService.removeSessionFromRoom(chatMessage.getRoomId(), session);
-                chatMessage.setMessage(chatMessage.getSender() + "님이 퇴장했습니다.");
-                log.info(chatMessage.getSender() + "님이 퇴장했습니다.");
+                sessionService.removeSessionFromRoom(chatMessage.getRoomId().toString(), session);
+                chatMessage.setMessage(chatMessage.getUserId() + "님이 퇴장했습니다.");
+                log.info(chatMessage.getUserId() + "님이 퇴장했습니다.");
                 sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
 
             } else {
@@ -83,5 +90,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // Logic for handling connection closure
+    }
+
+    private Authentication makeAuthentication(String token) {
+        Claims claims = jwtProvider.getClaims(token);
+        return Authentication.of(claims.get(JwtProvider.CLAIM_ROLE, String.class), claims.get(JwtProvider.CLAIM_USERID, Long.class));
     }
 }

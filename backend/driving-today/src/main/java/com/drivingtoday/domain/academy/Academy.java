@@ -25,7 +25,7 @@ public class Academy {
     @NotNull
     private Double longitude;
 
-    @Column(name = "cert")
+    @Column(name = "cert", columnDefinition = "TINYINT(1)")
     @NotNull
     private Boolean cert;
 

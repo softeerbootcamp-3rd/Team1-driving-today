@@ -17,15 +17,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationController {
 
-    private final ReservationAddService reservationAddService;
     private final ReservationListService reservationListService;
     private final ReservationDeleteService reservationDeleteService;
+    private final ReservationLockFacade reservationLockFacade;
 
     @Operation(summary = "[학생] 예약만들기 API")
     @PostMapping("/reservation")
     public ResponseEntity<Void> reservationAdd(@RequestBody ReservationRequest reservationRequest) {
         Long studentId = JwtFilter.getAuthentication().getId();
-        Long newReservationId = reservationAddService.addReservation(reservationRequest, studentId);
+        Long newReservationId = reservationLockFacade.addReservation(reservationRequest, studentId);
         return ResponseEntity.created(URI.create("/reservation/" + newReservationId)).build();
     }
 
