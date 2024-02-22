@@ -1,6 +1,6 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
-import {Suspense, useRef} from 'react'
+import {Suspense, useCallback, useRef} from 'react'
 
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
@@ -8,6 +8,7 @@ import {Loading} from '@/components/loading'
 import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {ChatRoomEnterResponse, useChatSocket} from '@/hooks/use-chat-socket'
+import {useEnterKeydown} from '@/hooks/use-enter-keydown'
 import {useChatModal} from '@/providers'
 import {InstructorInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
@@ -24,7 +25,7 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const {data} = useSuspendedApiCall<InstructorInfoResponse>(`/instructors/${instructorId}`)
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (!inputRef.current) return
     const message = inputRef.current.value
     if (!message || !message.trim()) return
@@ -35,7 +36,9 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
     })
     inputRef.current.value = ''
     inputRef.current.focus()
-  }
+  }, [chat])
+
+  useEnterKeydown(handleSendMessage)
 
   if (!data) return null
   const {academyInfo, instructorInfo, averageRating} = data
