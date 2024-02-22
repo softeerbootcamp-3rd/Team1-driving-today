@@ -44,7 +44,7 @@ export const sessionProvider: SessionProvider = {
       password,
     })
 
-    const res = await fetch(`${API_BASE_URL}${getLoginUrl(role)}`, {
+    const res = await fetch(`${API_BASE_URL}${loginUrlMap[role]}`, {
       method: 'POST',
       body,
       headers: {'Content-Type': 'application/json'},
@@ -76,7 +76,7 @@ export const sessionProvider: SessionProvider = {
       formData.append('profileImg', profileImg)
     }
 
-    const res = await fetch(`${API_BASE_URL}${getSignupUrl(role)}`, {
+    const res = await fetch(`${API_BASE_URL}${signupUrlMap[role]}`, {
       method: 'POST',
       body: formData,
     })
@@ -95,22 +95,14 @@ export const sessionProvider: SessionProvider = {
   },
 }
 
-function getLoginUrl(role: UserRole) {
-  switch (role) {
-    case 'STUDENT':
-      return '/student/login'
-    case 'INSTRUCTOR':
-      return '/instructor/login'
-  }
+const loginUrlMap: Record<UserRole, string> = {
+  STUDENT: '/student/login',
+  INSTRUCTOR: '/instructor/login',
 }
 
-function getSignupUrl(role: UserRole) {
-  switch (role) {
-    case 'STUDENT':
-      return '/student/register'
-    case 'INSTRUCTOR':
-      return '/instructor/register'
-  }
+const signupUrlMap: Record<UserRole, string> = {
+  STUDENT: '/student/register',
+  INSTRUCTOR: '/instructor/register',
 }
 
 interface LoginResponse {
