@@ -123,11 +123,17 @@ interface InstructorCardlistProps {
 const PAGE_SIZE = 5
 
 export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps) {
-  const {data, loading, fetchNextPage} = useInfiniteFetch({
-    queryFn: ({pageParam}) => {
-      return apiCall(
+  const {
+    data: reservations,
+    loading,
+    fetchNextPage,
+  } = useInfiniteFetch({
+    queryFn: async ({pageParam}) => {
+      const res = await apiCall(
         `/reservations/instructor?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&status=past`,
-      ).then((res) => res.json())
+      )
+      if (!res.ok) throw new Error('server error')
+      return (await res.json()) as StudentReservation[]
     },
     initialPageParam: 1,
     getNextPageParam: ({pageParam, lastPage}) => {
@@ -137,62 +143,26 @@ export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps
     },
   })
 
-  // TODO: fix type bug #191
-  // returned data type from infiniteFetch is 2 dimensional array, when it actually is single dimension array
-  // remove line below on issue solved
-  const reservations = data as StudentReservation[]
-
   const intersectedRef = useIntersectionObserver(() => fetchNextPage())
   return (
     <Container>
       <List>
-        {reservations?.map((v) =>
-          v.isUpcoming ? (
-            <RejectableInstructorCard
-              key={v.reservationId}
-              v={v}
-              onSelect={onSelect}
-              selected={selected}
-            />
-          ) : (
-            <Card.InstructorHistory
-              key={v.reservationId}
-              studentName={v.studentName}
-              phoneStr={v.phoneNumber}
-              dateStr={v.reservationDate}
-              timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-              image={v.studentImage}
-              onClick={() => onSelect(v)}
-              selected={selected?.reservationId === v.reservationId}
-            />
-          ),
-        )}
+        {reservations?.map((v) => (
+          <Card.InstructorHistory
+            key={v.reservationId}
+            studentName={v.studentName}
+            phoneStr={v.phoneNumber}
+            dateStr={v.reservationDate}
+            timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+            image={v.studentImage}
+            onClick={() => onSelect(v)}
+            selected={selected?.reservationId === v.reservationId}
+          />
+        ))}
         <div ref={intersectedRef} style={{height: '3rem'}} />
         {loading && <Loading />}
       </List>
     </Container>
-  )
-}
-
-interface RejectableInstructorCardProps extends InstructorCardlistProps {
-  v: StudentReservation
-}
-
-function RejectableInstructorCard({v, onSelect, selected}: RejectableInstructorCardProps) {
-  // const [deleting, setDeleting] = useState(false)
-  // todo: implement rejection
-  return (
-    <Card.InstructorHistory
-      key={v.reservationId}
-      studentName={v.studentName}
-      phoneStr={v.phoneNumber}
-      dateStr={v.reservationDate}
-      timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-      image={v.studentImage}
-      onClick={() => onSelect(v)}
-      onRejectClick={() => {}}
-      selected={selected?.reservationId === v.reservationId}
-    />
   )
 }
 
