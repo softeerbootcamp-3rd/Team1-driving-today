@@ -28,7 +28,7 @@ export const ChatList = styled.ul(() => ({
   flexDirection: 'column',
   width: '100%',
   height: '100%',
-  paddingBottom: '2rem',
+  padding: '2rem 0',
   gap: '1rem',
 }))
 

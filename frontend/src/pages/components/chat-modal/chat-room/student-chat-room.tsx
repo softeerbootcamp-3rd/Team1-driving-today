@@ -10,7 +10,7 @@ import {useEnterKeypress} from '@/hooks/use-enter-keypress'
 import {useChatModal} from '@/providers'
 import {StudentInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
-import {timestampToHHMM} from '@/utils/time'
+import {isDifferenceOneDay, timestampToHHMM} from '@/utils/time'
 
 import {ChatRoomLayout} from './chat-room-layout'
 import {Avartar, ChatInput, ChatList, ChatMessage, ChatTime, SendButton, TimeStemp} from './styles'
@@ -150,46 +150,54 @@ function StudentChatList({
         </Flex>
       ) : (
         <>
-          {messages.map((chat) => {
-            if (chat.type !== 'TALK') return
-            const {userId} = chat
-            const isOther = userId === studentId
+          {messages.map((chat, index, currentMessages) => {
+            const isOther = chat.userId === studentId
+            const isDay =
+              index === 0 ||
+              isDifferenceOneDay(chat.timestamp, currentMessages[index - 1].timestamp)
             return (
-              <Flex
-                as="li"
-                key={chat.id}
-                justifyContent={isOther ? 'flex-start' : 'flex-end'}
-                style={{
-                  paddingLeft: isOther ? '1rem' : 0,
-                  paddingRight: isOther ? 0 : '1rem',
-                }}
-              >
-                {isOther && (
-                  <Avartar
-                    style={{marginRight: '1rem'}}
-                    alt={`${name}의 프로필 사진`}
-                    src={image}
-                    width="3.6rem"
-                    height="3.6rem"
-                  />
+              <>
+                {isDay && (
+                  <TimeStemp>
+                    <div>{new Date(chat.timestamp).toLocaleDateString()}</div>
+                  </TimeStemp>
                 )}
-                <Flex flexDirection="column">
+                <Flex
+                  as="li"
+                  key={chat.id}
+                  justifyContent={isOther ? 'flex-start' : 'flex-end'}
+                  style={{
+                    paddingLeft: isOther ? '1rem' : 0,
+                    paddingRight: isOther ? 0 : '1rem',
+                  }}
+                >
                   {isOther && (
-                    <Typography weight="normal" size="1.2rem" color="gray500">
-                      {name}
-                    </Typography>
+                    <Avartar
+                      style={{marginRight: '1rem'}}
+                      alt={`${name}의 프로필 사진`}
+                      src={image}
+                      width="3.6rem"
+                      height="3.6rem"
+                    />
                   )}
-                  <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
-                    <ChatMessage
-                      bgColor={isOther ? 'gray200' : 'primary'}
-                      color={isOther ? 'gray900' : 'white'}
-                    >
-                      {chat.message}
-                    </ChatMessage>
-                    <ChatTime>{timestampToHHMM(chat.timestamp)}</ChatTime>
+                  <Flex flexDirection="column">
+                    {isOther && (
+                      <Typography weight="normal" size="1.2rem" color="gray500">
+                        {name}
+                      </Typography>
+                    )}
+                    <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
+                      <ChatMessage
+                        bgColor={isOther ? 'gray200' : 'primary'}
+                        color={isOther ? 'gray900' : 'white'}
+                      >
+                        {chat.message}
+                      </ChatMessage>
+                      <ChatTime>{timestampToHHMM(chat.timestamp)}</ChatTime>
+                    </Flex>
                   </Flex>
                 </Flex>
-              </Flex>
+              </>
             )
           })}
         </>

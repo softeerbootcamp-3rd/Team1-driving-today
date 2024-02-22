@@ -170,7 +170,6 @@ function InstructorChatList({
       ) : (
         <>
           {messages.map((chat, index, currentMessages) => {
-            if (chat.type !== 'TALK') return
             const isOther = chat.userId === instructorId
             const isDay =
               index === 0 ||
