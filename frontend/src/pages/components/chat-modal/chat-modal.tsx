@@ -7,6 +7,7 @@ import {Icon} from '@/components/icon'
 import {useChatModal} from '@/providers'
 
 import {ChatHome} from '.'
+import {ChatRoom} from './chat-room'
 
 export function ChatModalContainer() {
   const {open, options, handleClose} = useChatModal()
@@ -43,7 +44,7 @@ export function ChatModalContainer() {
             <Icon name="close" color="black" width="1.5rem" height="1.5rem" />
           </Button>
           {options.content === 'HOME' && <ChatHome />}
-          {options.content === 'ROOM' && <>room</>}
+          {options.content === 'ROOM' && <ChatRoom userId={options.id} />}
         </ChatModal>
       </Container>
     )

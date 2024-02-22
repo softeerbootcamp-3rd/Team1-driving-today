@@ -9,3 +9,11 @@ export function timestampToString(millis: number) {
   if (diff >= MINUTE) return `${Math.floor(diff / MINUTE)}분 전`
   return `방금전`
 }
+
+export function timestampToHHMM(timestamp: number) {
+  const date = new Date(timestamp)
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+
+  return hours + ':' + minutes
+}

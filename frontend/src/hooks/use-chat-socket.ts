@@ -3,9 +3,47 @@ import {useCallback, useEffect, useRef, useState} from 'react'
 import {apiCall} from '@/utils/api'
 import {sessionProvider} from '@/utils/session'
 
+interface ChatRoomEnterResponse {
+  chatRoomInfo: ChatRoomInfo
+  chatMessageList: ChatMessageHistory[] | null
+}
+
+export interface ChatRoomInfo {
+  roomId: number
+  studentId: number
+  instructorId: number
+}
+
+export type ChatMessage = (
+  | {type: 'ENTER'}
+  | {type: 'TALK'; userId: number; userType: 'INSTRUCTOR' | 'STUDENT'}
+  | {type: 'QUIT'}
+) & {roomId: number; message: string}
+
+export type ChatMessageHistory = ChatMessage & {
+  timestamp: number
+  id: string
+}
+
+export type UseChatSocketReturn = {
+  chatRoomInfo: ChatRoomInfo
+  messages: ChatMessageHistory[]
+  isReady: boolean
+  handleSendMessage: ({
+    userId,
+    userType,
+    message,
+  }: {
+    userId: number
+    userType: 'INSTRUCTOR' | 'STUDENT'
+    message: string
+  }) => void
+  handleQuitRoom: () => void
+}
+
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
 
-export function useChatSocket(id: number) {
+export function useChatSocket(id: number): UseChatSocketReturn {
   const [chatRoomInfo, setChatRoomInfo] = useState<ChatRoomInfo>()
   const [messages, setMessages] = useState<ChatMessageHistory[] | null>(null)
   const socketRef = useRef<WebSocket>()
@@ -19,7 +57,6 @@ export function useChatSocket(id: number) {
     const msg: ChatMessage = {
       type: 'QUIT',
       roomId: chatRoomInfo.roomId,
-      sender: sessionProvider.getAccessToken(),
       message: '',
     }
     socketRef.current?.send(JSON.stringify(msg))
@@ -27,13 +64,22 @@ export function useChatSocket(id: number) {
   }, [chatRoomInfo])
 
   const handleSendMessage = useCallback(
-    (message: string) => {
+    ({
+      userId,
+      userType,
+      message,
+    }: {
+      userId: number
+      userType: 'INSTRUCTOR' | 'STUDENT'
+      message: string
+    }) => {
       if (!chatRoomInfo) return
       const msg: ChatMessage = {
         type: 'TALK',
         roomId: chatRoomInfo?.roomId,
-        sender: sessionProvider.getAccessToken(),
         message: message,
+        userId,
+        userType,
       }
       socketRef.current?.send(JSON.stringify(msg))
     },
@@ -62,7 +108,6 @@ export function useChatSocket(id: number) {
       const msg: ChatMessage = {
         type: 'ENTER',
         roomId: chatRoomInfo.roomId,
-        sender: sessionProvider.getAccessToken(),
         message: '',
       }
       socketRef.current?.send(JSON.stringify(msg))
@@ -85,27 +130,4 @@ export function useChatSocket(id: number) {
   }, [chatRoomInfo, handleQuitRoom])
 
   return {chatRoomInfo, messages, isReady, handleQuitRoom, handleSendMessage}
-}
-
-interface ChatRoomEnterResponse {
-  chatRoomInfo: ChatRoomInfo
-  chatMessageList: ChatMessageHistory[] | null
-}
-
-export interface ChatRoomInfo {
-  roomId: number
-  studentId: number
-  instructorId: number
-}
-
-export interface ChatMessage {
-  type: 'TALK' | 'QUIT' | 'ENTER'
-  roomId: number
-  sender: string
-  message: string
-}
-
-export interface ChatMessageHistory extends ChatMessage {
-  timestamp: number
-  id: string
 }
