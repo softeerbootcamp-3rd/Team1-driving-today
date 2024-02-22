@@ -1,27 +1,28 @@
 package com.drivingtoday.domain.review;
 
-import com.drivingtoday.domain.review.dto.ReviewFindRequest;
-import com.drivingtoday.domain.review.dto.ReviewInfo;
+import com.drivingtoday.global.dto.SliceResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewFindService {
 
     private final ReviewRepository reviewRepository;
 
     @Transactional
-    public List<ReviewInfo> findReviews(ReviewFindRequest request) {
+    public SliceResponse<Review> findReviews(Long instructorId, Integer pageNumber, Integer pageSize) {
         // 페이지 번호 1부터 입력받게 설정, 최신 순으로 정렬해서 반환
-        List<Review> reviews = reviewRepository.findAllByInstructorId(request.getInstructorId(),
-                PageRequest.of(request.getPageNumber() - 1, request.getPageSize(),
-                        Sort.by("createdAt").descending())).getContent();
-        return reviews.stream().map(ReviewInfo::from).toList();
+        Slice<Review> reviews = reviewRepository.findAllByInstructorId(instructorId,
+                PageRequest.of(pageNumber - 1, pageSize,
+                        Sort.by("createdAt").descending()));
+        log.info("slice : {}", reviews.getContent());
+        return new SliceResponse<>(reviews);
     }
 }

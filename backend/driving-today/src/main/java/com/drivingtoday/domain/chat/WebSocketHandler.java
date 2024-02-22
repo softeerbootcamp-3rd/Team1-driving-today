@@ -1,7 +1,7 @@
 package com.drivingtoday.domain.chat;
 
 import com.drivingtoday.domain.chat.model.ChatMessage;
-import com.drivingtoday.domain.chat.ChatRoom;
+import com.drivingtoday.domain.chat.model.ChatRoom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,10 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -21,6 +24,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
     private final ChatService chatService;
     private final SessionService sessionService;
+    private final ChatMessageService chatMessageService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -46,15 +50,17 @@ public class WebSocketHandler extends TextWebSocketHandler {
             } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
 
                 sessionService.removeSessionFromRoom(chatMessage.getRoomId(), session);
-                log.info(chatMessage.getSender() + "님이 퇴장했습니다.");
                 chatMessage.setMessage(chatMessage.getSender() + "님이 퇴장했습니다.");
+                log.info(chatMessage.getSender() + "님이 퇴장했습니다.");
                 sendToEachSocket(sessions, new TextMessage(objectMapper.writeValueAsString(chatMessage)));
 
             } else {
-
-                log.info("TALK room id : "+ chatMessage.getRoomId() + " session count : "+ sessions.size());
-                log.info("TALK message : "+ chatMessage.getMessage());
-                log.info("TALK message : "+ chatMessage.getSender());
+                // 채팅메시지 저장
+                LocalDateTime currentDate = LocalDateTime.now();
+                long millis = currentDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                chatMessage.setTimestamp(millis);
+                chatMessage.setId(UUID.randomUUID().toString());
+                chatMessageService.createChatMessage(chatMessage);
                 sendToEachSocket(sessions, message);
             }
         } catch (IOException e) {
@@ -66,7 +72,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         sessions.parallelStream().forEach(roomSession -> {
             try {
                 if (roomSession.isOpen()) {
-                    log.info("message : "+ message);
                     roomSession.sendMessage(message);
                 }
             } catch (IOException e) {

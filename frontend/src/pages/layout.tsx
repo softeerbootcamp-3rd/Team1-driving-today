@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import {Outlet, useLoaderData} from 'react-router-dom'
 
 import {Sidebar} from '@/components/sidebar'
+import {useChatModal} from '@/providers'
 
 import {UserRole} from '../utils/session'
 
@@ -22,6 +23,7 @@ const LayoutContainer = styled.main(() => ({
 }))
 
 function StudentSidebar() {
+  const {handleOpen} = useChatModal()
   return (
     <Sidebar.Root>
       <Sidebar.LinkList>
@@ -30,13 +32,14 @@ function StudentSidebar() {
         <Sidebar.Link icon="makeReservation" to="/schedule" label="연수 예약" />
       </Sidebar.LinkList>
       <Sidebar.Footer>
-        <Sidebar.ChatButton />
+        <Sidebar.ChatButton onClick={() => handleOpen({content: 'HOME'})} />
       </Sidebar.Footer>
     </Sidebar.Root>
   )
 }
 
 function InstructorSidebar() {
+  const {handleOpen} = useChatModal()
   return (
     <Sidebar.Root>
       <Sidebar.LinkList>
@@ -44,7 +47,7 @@ function InstructorSidebar() {
         <Sidebar.Link icon="history" to="/history" label="지난 연수" />
       </Sidebar.LinkList>
       <Sidebar.Footer>
-        <Sidebar.ChatButton />
+        <Sidebar.ChatButton onClick={() => handleOpen({content: 'HOME'})} />
       </Sidebar.Footer>
     </Sidebar.Root>
   )

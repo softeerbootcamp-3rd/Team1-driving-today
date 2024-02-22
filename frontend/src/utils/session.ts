@@ -12,9 +12,27 @@ export interface SessionProvider {
   session?: Session
   login: (role: UserRole, email: string, password: string) => Promise<Session>
   logout: () => void
+  getAccessToken: () => string
+}
+
+const SESSION_KEY = 'session'
+
+function getSessionFromStorage() {
+  const sessionStr = localStorage.getItem(SESSION_KEY)
+  if (!sessionStr) return
+  return JSON.parse(sessionStr) as Session
+}
+
+function saveSessionToStorage(session: Session) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+}
+
+function resetSession() {
+  localStorage.removeItem(SESSION_KEY)
 }
 
 export const sessionProvider: SessionProvider = {
+  session: getSessionFromStorage(),
   async login(role: UserRole, email: string, password: string) {
     const body = JSON.stringify({
       email,
@@ -34,13 +52,22 @@ export const sessionProvider: SessionProvider = {
 
     const sessionResponse = (await res.json()) as LoginResponse
 
-    return {
+    const session = {
       id: sessionResponse.id,
       role: role,
       accessToken: sessionResponse.jwt.accessToken,
-    }
+    } as Session
+
+    saveSessionToStorage(session)
+
+    return session
   },
   logout: () => {},
+  getAccessToken() {
+    const token = this.session?.accessToken
+    if (!token) throw Error('no session')
+    return token
+  },
 }
 
 function getLoginUrl(role: UserRole) {

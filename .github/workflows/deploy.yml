@@ -1,7 +1,8 @@
-name: deploy_test
+name: deploy
 on:
   push:
     branches:
+      - main
       - dev
     paths:
       - 'backend/**'
@@ -35,7 +36,6 @@ jobs:
           echo "${{ secrets.APPLICATION_SECRET }}" > ./application.yml
         shell: bash
 
-        ## gradle build
       - name: Build with Gradle
         run: |
           cd ./backend/driving-today
@@ -47,20 +47,42 @@ jobs:
           cd ..
           cp ./backend/driving-today/build/libs/driving-today-0.0.1-SNAPSHOT.jar driving-today-0.0.1-SNAPSHOT.jar
 
-      - name: Send jar to server with SCP (for dev branch)
+      - name: Send jar to server1 with SCP
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.TEST_HOST }}
+          host: ${{ secrets.SERVER1 }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "driving-today-0.0.1-SNAPSHOT.jar"
           target: "/home/ubuntu/"
 
-      - name: Deploy to test server
+      - name: Deploy to server1
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.TEST_HOST }}
+          host: ${{ secrets.SERVER1 }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/ubuntu/
+            nohup sh deploy.sh
+
+      - name: Send jar to server2 with SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER2 }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "driving-today-0.0.1-SNAPSHOT.jar"
+          target: "/home/ubuntu/"
+
+      ## deploy to server1
+      - name: Deploy to server2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER2 }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}

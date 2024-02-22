@@ -8,6 +8,7 @@ import {
   useRouteLoaderData,
 } from 'react-router-dom'
 
+import {ChatModalContainer} from './pages/components'
 import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
@@ -15,13 +16,19 @@ import {loginAction, LoginPage} from './pages/login/page'
 import {LandingPage} from './pages/page'
 import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
+import {PurchaseSuccessPage} from './pages/purchase/success/page'
 import {StudentSchedule} from './pages/schedule/page'
 import {searchPageLoader} from './pages/search/loader'
 import {SearchPage} from './pages/search/page'
 import {sessionProvider, UserRole} from './utils/session'
 
 export function App() {
-  return <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+  return (
+    <>
+      <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+      <ChatModalContainer />
+    </>
+  )
 }
 
 const router = createBrowserRouter(
@@ -64,6 +71,10 @@ const router = createBrowserRouter(
           path="/purchase"
           loader={purchaseLoader}
           element={<RequireRole>{(isStudent) => isStudent && <StudentPurchase />}</RequireRole>}
+        />
+        <Route
+          path="/purchase/success"
+          element={<RequireRole>{(isStudent) => isStudent && <PurchaseSuccessPage />}</RequireRole>}
         />
       </Route>
     </>,

@@ -2,6 +2,7 @@ package com.drivingtoday.domain.reservation;
 
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.student.Student;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class Reservation {
     @Id
@@ -28,10 +30,12 @@ public class Reservation {
 
     @Column(name = "created_at")
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @Column(name = "reservation_date")
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate reservationDate;
 
     @Column(name = "reservation_time")

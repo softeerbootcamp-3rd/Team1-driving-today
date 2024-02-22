@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
+    List<Reservation> findAllByInstructorId(Long instructorId);
+
     @Query("SELECT r FROM Reservation r WHERE r.isAccepted = true AND (r.reservationDate > :currentDate " +
             "OR (r.reservationDate = :currentDate AND r.reservationTime > :currentTime)) " +
             "AND r.student.id = :studentId")
@@ -40,4 +42,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND ((r.reservationTime BETWEEN :startTime AND :startTime + :trainingTime - 1) " +
             "OR (r.reservationTime + r.trainingTime - 1 BETWEEN :startTime AND :startTime + :trainingTime - 1))" )
     Integer countConfilctTimeSlot(Long instructorId, int startTime, int trainingTime, LocalDate date);
+
+
 }

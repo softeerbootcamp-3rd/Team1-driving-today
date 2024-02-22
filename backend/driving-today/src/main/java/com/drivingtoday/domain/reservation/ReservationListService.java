@@ -19,13 +19,13 @@ public class ReservationListService {
     private final ReservationRepository reservationRepository;
 
     @Transactional
-    public List<ReservationStudentResponse> findAllStudentReservation(Long studentId, Boolean isUpcoming) {
+    public List<ReservationStudentResponse> findAllStudentReservation(Long studentId, String status) {
 
         LocalDate currentDate = LocalDate.now();
         int currentTime = LocalDateTime.now().getHour();
         List<Reservation> reservations;
 
-        if (isUpcoming) {
+        if (status.equals("scheduled")) {
             reservations = reservationRepository.findFutureReservationsByStudent(studentId, currentDate, currentTime);
         } else {
             reservations = reservationRepository.findPastReservationsByStudent(studentId, currentDate, currentTime);
@@ -35,13 +35,13 @@ public class ReservationListService {
     }
 
     @Transactional
-    public List<ReservationInstructorResponse> findAllInstructorReservation(Long instructorId, Integer pageNumber, Integer pageSize, Boolean isUpcoming) {
+    public List<ReservationInstructorResponse> findAllInstructorReservation(Long instructorId, Integer pageNumber, Integer pageSize, String status) {
 
         LocalDate currentDate = LocalDate.now();
         int currentTime = LocalDateTime.now().getHour();
         List<Reservation> reservations;
 
-        if (isUpcoming) {
+        if (status.equals("scheduled")) {
             reservations = reservationRepository.findFutureReservationsByInstructor(instructorId,
                             currentDate, currentTime, PageRequest.of(pageNumber - 1, pageSize, Sort.by("createdAt").descending()))
                     .getContent();

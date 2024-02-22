@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class InstructorJoinRequest {
+public class InstructorRegisterRequest {
+
     @NotNull
     private String name;
 
