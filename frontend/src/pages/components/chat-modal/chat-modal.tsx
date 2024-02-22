@@ -27,7 +27,7 @@ export function ChatModalContainer() {
           transform: 'translateY(5rem)',
         },
       ],
-      {easing: 'ease', duration: 500},
+      {easing: 'ease', duration: 500, fill: 'forwards'},
     )
     animation.addEventListener('finish', handleClose)
   }
