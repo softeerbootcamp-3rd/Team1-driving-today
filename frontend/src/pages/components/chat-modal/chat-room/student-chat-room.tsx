@@ -1,6 +1,6 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
-import {Suspense, useRef} from 'react'
+import {Suspense, useCallback, useEffect, useRef} from 'react'
 
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
@@ -8,7 +8,7 @@ import {Loading} from '@/components/loading'
 import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {ChatRoomEnterResponse, useChatSocket} from '@/hooks/use-chat-socket'
-import {useEnterKeydown} from '@/hooks/use-enter-keydown'
+import {useEnterKeypress} from '@/hooks/use-enter-keypress'
 import {useChatModal} from '@/providers'
 import {StudentInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
@@ -24,26 +24,38 @@ export function StudentChatRoom({studentId}: StudentChatRoomProps) {
   const chatModal = useChatModal()
   const inputRef = useRef<HTMLInputElement>(null)
   const {data} = useSuspendedApiCall<StudentInfoResponse>(`/students/${studentId}`)
+  const scrolledRef = useRef<HTMLDivElement>(null)
 
-  const handleSendMessage = () => {
-    if (!inputRef.current) return
-    const message = inputRef.current.value
+  const handleSendMessage = useCallback(() => {
+    const chatInputEle = inputRef.current
+    const scrolledEle = scrolledRef.current
+    if (!chatInputEle || !scrolledEle) return
+    const message = chatInputEle.value
     if (!message || !message.trim()) return
     chat.handleSendMessage({
       userId: sessionProvider.session?.id as number,
       userType: 'STUDENT',
       message,
     })
-    inputRef.current.value = ''
-    inputRef.current.focus()
-  }
+    chatInputEle.value = ''
+    chatInputEle.focus()
+    scrolledEle.scrollTo(0, scrolledEle.scrollHeight)
+  }, [chat])
 
-  useEnterKeydown(handleSendMessage)
+  useEffect(() => {
+    const scrolledEle = scrolledRef.current
+    if (!scrolledEle) return
+    if (chat.chatMessageList?.length !== 0) {
+      scrolledEle.scrollTo(0, scrolledEle.scrollHeight)
+    }
+  }, [chat])
+
+  useEnterKeypress(handleSendMessage)
 
   if (!data) return null
   const {name: studentName, studentImage} = data
   return (
-    <ChatRoomLayout>
+    <ChatRoomLayout ref={scrolledRef}>
       <ChatRoomLayout.Header>
         <Flex justifyContent="space-between" alignItems="center" style={{padding: '2rem'}}>
           <Icon
