@@ -1,6 +1,8 @@
 import styled from '@emotion/styled'
 import {HTMLAttributes, Suspense} from 'react'
 
+import {Flex} from '@/components/flex'
+import {Icon} from '@/components/icon'
 import {Loading} from '@/components/loading'
 import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
@@ -10,12 +12,24 @@ import {InstructorInfoResponse, StudentInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
 import {timestampToString} from '@/utils/time'
 
-export function ChatHome() {
+export function ChatHome({onCloseClick}: {onCloseClick: () => void}) {
   if (!sessionProvider.session) throw new Error('no session')
   const role = sessionProvider.session.role
   return (
     <Container>
-      <Title>채팅 목록</Title>
+      <Flex justifyContent="space-between" alignItems="center" style={{padding: '2rem'}}>
+        <Typography size="2rem" weight="bold" color="gray900">
+          채팅 목록
+        </Typography>
+        <Icon
+          name="close"
+          color="gray900"
+          width="1.5rem"
+          height="1.5rem"
+          style={{cursor: 'pointer'}}
+          onClick={onCloseClick}
+        />
+      </Flex>
       <Suspense fallback={<Loading />}>
         {role === 'STUDENT' ? <StudentChatHomeContent /> : <InstructorChatHomeContent />}
       </Suspense>
@@ -25,7 +39,7 @@ export function ChatHome() {
 
 interface ExtendedChatRoomInfo {
   chatRoomInfo: ChatRoomInfo
-  lastMessage: ChatMessageHistory
+  lastMessage: ChatMessageHistory | null
 }
 
 type ChatRoomsResponse = ExtendedChatRoomInfo[]
@@ -77,8 +91,14 @@ function ChatRoomInstructorInfoCardContent({info}: ChatRoomInfoCardProps) {
           </Typography>
         </SingleLineDescriptions>
         <LastMessageContainer>
-          <LastMessage>{info.lastMessage.message}</LastMessage>
-          <TimeStamp>{timestampToString(info.lastMessage.timestamp)}</TimeStamp>
+          {info.lastMessage ? (
+            <>
+              <LastMessage>{info.lastMessage.message}</LastMessage>
+              <TimeStamp>{timestampToString(info.lastMessage.timestamp)}</TimeStamp>
+            </>
+          ) : (
+            <LastMessage>{data?.instructorInfo.name}님과 새로운 대화를 시작해보세요!</LastMessage>
+          )}
         </LastMessageContainer>
       </InfoContainer>
     </>
@@ -128,20 +148,19 @@ function ChatRoomStudentInfoCardContent({info}: ChatRoomInfoCardProps) {
           </Typography>
         </SingleLineDescriptions>
         <LastMessageContainer>
-          <LastMessage>{info.lastMessage.message}</LastMessage>
-          <TimeStamp>{timestampToString(info.lastMessage.timestamp)}</TimeStamp>
+          {info.lastMessage ? (
+            <>
+              <LastMessage>{info.lastMessage.message}</LastMessage>
+              <TimeStamp>{timestampToString(info.lastMessage.timestamp)}</TimeStamp>
+            </>
+          ) : (
+            <LastMessage>{data?.name}님과 새로운 대화를 시작해보세요!</LastMessage>
+          )}
         </LastMessageContainer>
       </InfoContainer>
     </>
   )
 }
-
-const Title = styled.h1(({theme}) => ({
-  color: theme.color.gray800,
-  fontSize: '2rem',
-  fontWeight: 700,
-  padding: '1.3rem',
-}))
 
 const SingleLineDescriptions = styled.div({
   display: 'flex',
@@ -182,6 +201,7 @@ const CardContainer = styled.div(({theme}) => ({
   gap: '0.5rem',
   alignItems: 'center',
   minWidth: 'auto',
+  cursor: 'pointer',
 }))
 
 const Picture = styled.img(({theme}) => ({

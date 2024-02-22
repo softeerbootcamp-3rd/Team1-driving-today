@@ -2,15 +2,14 @@ import {keyframes} from '@emotion/react'
 import styled from '@emotion/styled'
 import {useRef} from 'react'
 
-import {Button} from '@/components/button'
-import {Icon} from '@/components/icon'
+import {useEscapeKeydown} from '@/hooks/use-escape-keydown'
 import {useChatModal} from '@/providers'
 
 import {ChatHome} from './chat-home'
 import {ChatRoom} from './chat-room'
 
 export function ChatModalContainer() {
-  const {open, options, handleOpen, handleClose} = useChatModal()
+  const {open, options, handleClose} = useChatModal()
   const chatModalRef = useRef<HTMLDivElement>(null)
 
   const onCloseClick = () => {
@@ -32,16 +31,13 @@ export function ChatModalContainer() {
     animation.addEventListener('finish', handleClose)
   }
 
+  useEscapeKeydown(onCloseClick)
+
   return (
     open && (
       <Container>
         <ChatModal ref={chatModalRef}>
-          {options.content === 'HOME' && (
-            <>
-              <Button onClick={() => handleOpen({content: 'ROOM', id: 3})}>채팅방가기</Button>
-            </>
-          )}
-          {/* {options.content === 'HOME' && <ChatHome />} */}
+          {options.content === 'HOME' && <ChatHome onCloseClick={onCloseClick} />}
           {options.content === 'ROOM' && <ChatRoom userId={options.id} />}
         </ChatModal>
       </Container>
@@ -53,11 +49,10 @@ const Container = styled.div({
   position: 'fixed',
   bottom: 0,
   left: '8rem',
-  padding: '1rem',
   width: '40rem',
   maxHeight: '80rem',
   height: '100%',
-  zIndex: 2,
+  zIndex: 1500,
 })
 
 const ChatModal = styled.div(({theme}) => ({
@@ -65,7 +60,7 @@ const ChatModal = styled.div(({theme}) => ({
   width: '100%',
   height: '100%',
   backgroundColor: theme.color.white,
-  padding: '1rem',
+  padding: '0 1rem',
   overflow: 'hidden',
   borderRadius: '1.6rem',
   boxShadow: '0px 2px 20px 10px rgba(0, 0, 0, 0.1)',
