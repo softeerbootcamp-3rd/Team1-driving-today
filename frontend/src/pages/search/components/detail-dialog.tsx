@@ -101,6 +101,14 @@ type ReviewResponseItem = {
   reviewerImage: string
 }
 
+interface ReviewResponse {
+  content: ReviewResponseItem[]
+  currentPage: number
+  first: boolean
+  last: boolean
+  size: number
+}
+
 const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
   // TODO: error handling
@@ -111,17 +119,18 @@ function InstructorDetail({id}: {id: number}) {
     data: reviews,
     loading,
     fetchNextPage,
-  } = useInfiniteFetch<ReviewResponseItem, number>({
-    queryFn: async ({pageParam}) => {
+  } = useInfiniteFetch({
+    queryFn: async ({pageParam}): Promise<ReviewResponseItem[]> => {
       const res = await apiCall(
         `/reviews?instructorId=${id}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
       )
-      return {data: await res.json(), statusCode: res.status}
+      if (!res.ok) throw new Error('server error')
+      const reviewResponse = (await res.json()) as ReviewResponse
+      return reviewResponse.content
     },
     initialPageParam: 1,
     getNextPageParam: ({pageParam, lastPage}) => {
-      if (lastPage.statusCode !== 200) return
-      const isLastPage = lastPage.data.length < PAGE_SIZE
+      const isLastPage = lastPage.length < PAGE_SIZE
       const nextPageParam = pageParam + 1
       return isLastPage ? undefined : nextPageParam
     },

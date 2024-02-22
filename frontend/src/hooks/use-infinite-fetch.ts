@@ -1,25 +1,20 @@
 import {useCallback, useMemo, useRef, useState} from 'react'
 
-export interface UseInfiniteFetchArg<TData, TPageParam> {
-  queryFn: ({pageParam}: {pageParam: TPageParam}) => Promise<UseInfiniteFetchResponse<TData>>
+export interface UseInfiniteFetchArg<TDataArray, TPageParam> {
+  queryFn: ({pageParam}: {pageParam: TPageParam}) => Promise<TDataArray>
   initialPageParam: TPageParam
   getNextPageParam: ({
     pageParam,
     lastPage,
   }: {
     pageParam: TPageParam
-    lastPage: UseInfiniteFetchResponse<TData>
+    lastPage: TDataArray
   }) => TPageParam | undefined
 }
 
-export interface UseInfiniteFetchResponse<TData> {
-  data: TData
-  statusCode: number
-}
-
-export interface UseInfniteFetchReturn<TData> {
+export interface UseInfniteFetchReturn<TDataArray> {
   fetchNextPage: () => Promise<unknown>
-  data?: TData
+  data?: TDataArray
   error?: unknown
   loading: boolean
   hasNextPage: boolean
@@ -52,7 +47,7 @@ export function useInfiniteFetch<TData, TPageParam = unknown>({
       if (!nextPageParamRef.current) {
         setHasNextPage(false)
       }
-      setData((prev) => (prev ?? []).concat(res.data))
+      setData((prev) => (prev ?? []).concat(res))
       setError(null)
     } catch (error) {
       setError(error)

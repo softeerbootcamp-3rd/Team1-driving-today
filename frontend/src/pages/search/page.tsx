@@ -40,18 +40,17 @@ export function SearchPage() {
   const [hoverInstructorId, setHoverInstructorId] = useState<number | null>(null)
 
   // TODO: error handling
-  const {data, loading, fetchNextPage} = useInfiniteFetch<InstructorsResponseItem, number>({
+  const {data, loading, fetchNextPage} = useInfiniteFetch({
     queryFn: async ({pageParam}) => {
       const res = await apiCall(
         `/instructors?latitude=${latitude}&longitude=${longitude}&trainingTime=${trainingTime}&reservationTime=${reservationTime}&reservationDate=${reservationDate}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
       )
-      return {data: await res.json(), statusCode: res.status}
+      if (!res.ok) throw new Error('server error')
+      return (await res.json()) as InstructorsResponseItem[]
     },
     initialPageParam: 1,
     getNextPageParam: ({pageParam, lastPage}) => {
-      console.log(lastPage)
-      if (lastPage.statusCode !== 200) return
-      const isLastPage = lastPage.data.length < PAGE_SIZE
+      const isLastPage = lastPage.length < PAGE_SIZE
       const nextPageParam = pageParam + 1
       return isLastPage ? undefined : nextPageParam
     },
