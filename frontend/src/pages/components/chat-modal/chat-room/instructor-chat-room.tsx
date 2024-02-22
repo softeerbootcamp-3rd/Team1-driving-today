@@ -2,7 +2,6 @@ import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 import {Suspense, useRef} from 'react'
 
-import {Button} from '@/components/button'
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
 import {Loading} from '@/components/loading'
@@ -13,6 +12,8 @@ import {useChatModal} from '@/providers'
 import {InstructorInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
 import {timestampToHHMM} from '@/utils/time'
+
+import {ChatRoomLayout} from './chat-room-layout'
 
 interface InstructorChatRoomProps {
   instructorId: number
@@ -39,17 +40,8 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   }
 
   return (
-    <div style={{position: 'absolute', inset: 0, overflow: 'hidden scroll'}}>
-      <header
-        style={{
-          position: 'sticky',
-          top: 0,
-          right: 0,
-          left: 0,
-          zIndex: 1030,
-          backgroundColor: 'white',
-        }}
-      >
+    <ChatRoomLayout>
+      <ChatRoomLayout.Header>
         <Flex justifyContent="space-between" style={{padding: '2rem'}}>
           <Typography size="2rem" weight="bold" color="gray900">
             채팅 목록
@@ -66,30 +58,24 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
             }}
           />
         </Flex>
-      </header>
+      </ChatRoomLayout.Header>
 
-      <div style={{minHeight: 'calc(100% - 6rem)'}}>
-        <div style={{position: 'relative', overflow: 'hidden', width: '100%'}}>
-          <div style={{width: '100%', height: 'auto', transform: 'translate(0px)'}}>
-            <section style={{position: 'relative', height: 'auto'}}>
-              <Suspense fallback={<Loading />}>
-                <InstructorDetail instructorId={instructorId} />
-              </Suspense>
-              <Suspense>
-                <InstructorChatList instructorId={instructorId} messages={chat.messages} />
-              </Suspense>
-            </section>
-          </div>
-        </div>
-      </div>
+      <ChatRoomLayout.ChatList>
+        <Suspense fallback={<Loading />}>
+          <InstructorDetail instructorId={instructorId} />
+        </Suspense>
+        <Suspense>
+          <InstructorChatList instructorId={instructorId} messages={chat.messages} />
+        </Suspense>
+      </ChatRoomLayout.ChatList>
 
-      <ChatControlContainer>
+      <ChatRoomLayout.Controls>
         <ChatInput placeholder="메세지를 입력해주세요" type="text" ref={inputRef} />
         <SendButton type="button" onClick={handleSendMessage}>
           <Icon color="white" name="paperAirplane" width="1.6rem" height="1.6rem" />
         </SendButton>
-      </ChatControlContainer>
-    </div>
+      </ChatRoomLayout.Controls>
+    </ChatRoomLayout>
   )
 }
 
@@ -218,19 +204,6 @@ const ChatTime = styled.span(({theme}) => ({
   fontSize: '1.2rem',
   color: theme.color.gray700,
   alignSelf: 'flex-end',
-}))
-
-const ChatControlContainer = styled.div(({theme}) => ({
-  position: 'sticky',
-  gap: '1rem',
-  display: 'flex',
-  bottom: 0,
-  width: '100%',
-  right: 0,
-  left: 0,
-  zIndex: 1030,
-  padding: '1rem',
-  backgroundColor: theme.color.white,
 }))
 
 const ChatInput = styled.input(({theme}) => ({
