@@ -15,7 +15,7 @@ import {objectToQS} from '@/utils/object-to-qs'
 import {DetailDialog, SearchPreview} from './components'
 import type {LoaderData} from './types'
 
-type InstructorsResponse = {
+type InstructorsResponseItem = {
   distance: number
   instructorId: number
   latitude: number
@@ -26,7 +26,7 @@ type InstructorsResponse = {
   instructorName: string
   academyName: string
   averageRating: number
-}[]
+}
 
 const PAGE_SIZE = 5
 
@@ -41,10 +41,12 @@ export function SearchPage() {
 
   // TODO: error handling
   const {data, loading, fetchNextPage} = useInfiniteFetch({
-    queryFn: ({pageParam}): Promise<InstructorsResponse> => {
-      return apiCall(
+    queryFn: async ({pageParam}) => {
+      const res = await apiCall(
         `/instructors?latitude=${latitude}&longitude=${longitude}&trainingTime=${trainingTime}&reservationTime=${reservationTime}&reservationDate=${reservationDate}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
-      ).then((res) => res.json())
+      )
+      if (!res.ok) throw new Error('server error')
+      return (await res.json()) as InstructorsResponseItem[]
     },
     initialPageParam: 1,
     getNextPageParam: ({pageParam, lastPage}) => {
