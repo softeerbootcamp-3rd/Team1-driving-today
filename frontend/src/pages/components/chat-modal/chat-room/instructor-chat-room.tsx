@@ -33,6 +33,7 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
       userType: 'STUDENT',
       message,
     })
+    inputRef.current.value = ''
     inputRef.current.focus()
   }
 
@@ -97,14 +98,14 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   )
 }
 
-interface IntroctorDetail {
+interface IntroctorDetailProps {
   image: string
   name: string
   academyName: string
   averageRating: number
 }
 
-function InstructorDetail({image, name, academyName, averageRating}: IntroctorDetail) {
+function InstructorDetail({image, name, academyName, averageRating}: IntroctorDetailProps) {
   return (
     <Flex flexDirection="column" gap="0.5rem" alignItems="center">
       <Avartar src={image} width="8rem" height="8rem" />
@@ -138,8 +139,6 @@ function InstructorChatList({
   instuctorImage: string
   messages: ChatRoomEnterResponse['chatMessageList']
 }) {
-  console.log('InstructorChatList: ', messages)
-
   return (
     <ChatList>
       {messages === null || messages.length === 0 ? (
