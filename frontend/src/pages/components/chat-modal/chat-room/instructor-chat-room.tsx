@@ -1,6 +1,6 @@
 import {Theme} from '@emotion/react'
 import styled from '@emotion/styled'
-import {Suspense, useCallback, useRef} from 'react'
+import {Fragment, Suspense, useCallback, useRef} from 'react'
 
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
@@ -12,7 +12,7 @@ import {useEnterKeydown} from '@/hooks/use-enter-keydown'
 import {useChatModal} from '@/providers'
 import {InstructorInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
-import {timestampToHHMM} from '@/utils/time'
+import {isDifferenceOneDay, timestampToHHMM} from '@/utils/time'
 
 import {ChatRoomLayout} from './chat-room-layout'
 
@@ -158,46 +158,54 @@ function InstructorChatList({
         </Flex>
       ) : (
         <>
-          {messages.map((chat) => {
+          {messages.map((chat, index, currentMessages) => {
             if (chat.type !== 'TALK') return
-            const {userId} = chat
-            const isOther = userId === instructorId
+            const isOther = chat.userId === instructorId
+            const isDay =
+              index === 0 ||
+              isDifferenceOneDay(chat.timestamp, currentMessages[index - 1].timestamp)
             return (
-              <Flex
-                as="li"
-                key={chat.id}
-                justifyContent={isOther ? 'flex-start' : 'flex-end'}
-                style={{
-                  paddingLeft: isOther ? '1rem' : 0,
-                  paddingRight: isOther ? 0 : '1rem',
-                }}
-              >
-                {isOther && (
-                  <Avartar
-                    style={{marginRight: '1rem'}}
-                    alt={`${instructorName}의 프로필 사진`}
-                    src={instuctorImage}
-                    width="3.6rem"
-                    height="3.6rem"
-                  />
+              <Fragment key={chat.id}>
+                {isDay && (
+                  <TimeStemp>
+                    <div>{new Date(chat.timestamp).toLocaleDateString()}</div>
+                  </TimeStemp>
                 )}
-                <Flex flexDirection="column">
+                <Flex
+                  as="li"
+                  justifyContent={isOther ? 'flex-start' : 'flex-end'}
+                  style={{
+                    paddingLeft: isOther ? '1rem' : 0,
+                    paddingRight: isOther ? 0 : '1rem',
+                  }}
+                >
                   {isOther && (
-                    <Typography weight="normal" size="1.2rem" color="gray500">
-                      {instructorName}
-                    </Typography>
+                    <Avartar
+                      style={{marginRight: '1rem'}}
+                      alt={`${instructorName}의 프로필 사진`}
+                      src={instuctorImage}
+                      width="3.6rem"
+                      height="3.6rem"
+                    />
                   )}
-                  <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
-                    <ChatMessage
-                      bgColor={isOther ? 'gray200' : 'primary'}
-                      color={isOther ? 'gray900' : 'white'}
-                    >
-                      {chat.message}
-                    </ChatMessage>
-                    <ChatTime>{timestampToHHMM(chat.timestamp)}</ChatTime>
+                  <Flex flexDirection="column">
+                    {isOther && (
+                      <Typography weight="normal" size="1.2rem" color="gray500">
+                        {instructorName}
+                      </Typography>
+                    )}
+                    <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
+                      <ChatMessage
+                        bgColor={isOther ? 'gray200' : 'primary'}
+                        color={isOther ? 'gray900' : 'white'}
+                      >
+                        {chat.message}
+                      </ChatMessage>
+                      <ChatTime>{timestampToHHMM(chat.timestamp)}</ChatTime>
+                    </Flex>
                   </Flex>
                 </Flex>
-              </Flex>
+              </Fragment>
             )
           })}
         </>
@@ -205,6 +213,28 @@ function InstructorChatList({
     </ChatList>
   )
 }
+
+const TimeStemp = styled.li(({theme}) => ({
+  display: 'flex',
+  alignItems: 'center',
+  '& > div': {
+    borderRadius: '9999px',
+    textAlign: 'center',
+    border: `1px solid ${theme.color.gray300}`,
+    backgroundColor: theme.color.white,
+    color: theme.color.gray900,
+    fontSize: '1.4rem',
+    padding: '0.5rem 1rem',
+    flex: '0.8 1 0',
+  },
+  '&:before, &:after': {
+    content: '""',
+    width: '100%',
+    height: '1px',
+    backgroundColor: theme.color.gray300,
+    flex: '1 1 0',
+  },
+}))
 
 const ChatList = styled.ul(() => ({
   display: 'flex',

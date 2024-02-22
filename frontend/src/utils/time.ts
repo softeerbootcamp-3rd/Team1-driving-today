@@ -17,3 +17,11 @@ export function timestampToHHMM(timestamp: number) {
 
   return hours + ':' + minutes
 }
+
+export function isDifferenceOneDay(timestamp1: number, timestamp2: number) {
+  const diff = Math.abs(timestamp1 - timestamp2)
+
+  const oneDayInMilliseconds = 24 * 60 * 60 * 1000
+
+  return diff === oneDayInMilliseconds
+}
