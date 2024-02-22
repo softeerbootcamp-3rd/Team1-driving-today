@@ -2,6 +2,7 @@ package com.drivingtoday.domain.review;
 
 
 import com.drivingtoday.domain.instructor.Instructor;
+import com.drivingtoday.domain.reservation.Reservation;
 import com.drivingtoday.domain.student.Student;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -49,11 +50,16 @@ public class Review {
     @JsonIgnore
     private Student student;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id")
     @NotNull
     @JsonIgnore
     private Instructor instructor;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id")
+    @NotNull
+    @JsonIgnore
+    private Reservation reservation;
 }
 
