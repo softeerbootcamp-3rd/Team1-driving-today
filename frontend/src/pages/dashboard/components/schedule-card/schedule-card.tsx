@@ -109,25 +109,26 @@ function StudentScheduleCardContent() {
 export function InstructorScheduleCard() {
   const [selectedId, setSelectedId] = useState<number>()
   const calendarRef = useRef<CalendarRef>(null)
-  // TODO: error handling
 
-  const {data, loading, fetchNextPage} = useInfiniteFetch({
-    queryFn: ({pageParam}) => {
-      return apiCall(
+  const {
+    data: reservations,
+    loading,
+    fetchNextPage,
+  } = useInfiniteFetch({
+    queryFn: async ({pageParam}) => {
+      const res = await apiCall(
         `/reservations/instructor?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&status=scheduled`,
-      ).then((res) => res.json())
+      )
+      if (!res.ok) throw new Error('server error')
+      return (await res.json()) as StudentReservation[]
     },
     initialPageParam: 1,
     getNextPageParam: ({pageParam, lastPage}) => {
-      const isLastPage = (lastPage as StudentReservation[]).length < PAGE_SIZE
+      const isLastPage = lastPage.length < PAGE_SIZE
       const nextPageParam = pageParam + 1
       return isLastPage ? undefined : nextPageParam
     },
   })
-  // TODO: fix type bug #191
-  // returned data type from infiniteFetch is 2 dimensional array, when it actually is single dimension array
-  // remove line below on issue solved
-  const reservations = data as StudentReservation[]
 
   const [removed, setRemoved] = useState<Set<number>>(new Set())
   const onRejectReservation = async (id: number) => {
