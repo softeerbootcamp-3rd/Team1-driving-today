@@ -14,11 +14,14 @@ export interface ChatRoomInfo {
   instructorId: number
 }
 
-type ChatMessage = (
-  | {type: 'ENTER'}
-  | {type: 'TALK'; userId: number; userType: 'INSTRUCTOR' | 'STUDENT'}
-  | {type: 'QUIT'}
-) & {roomId: number; message: string}
+type ChatMessage = {
+  type: 'ENTER' | 'TALK' | 'QUIT'
+  userId: number
+  userType: 'INSTRUCTOR' | 'STUDENT'
+  roomId: number
+  message: string
+  timestamp?: number
+}
 
 export type ChatMessageHistory = ChatMessage & {
   timestamp: number
@@ -59,10 +62,12 @@ export function useChatSocket(id: number): UseChatSocketReturn {
       type: 'QUIT',
       roomId: chatRoomInfo.roomId,
       message: '',
+      userId: id,
+      userType: role,
     }
     socketRef.current?.send(JSON.stringify(msg))
     socketRef.current?.close()
-  }, [chatRoomInfo])
+  }, [id, role, chatRoomInfo])
 
   const handleSendMessage = useCallback(
     ({
@@ -81,6 +86,7 @@ export function useChatSocket(id: number): UseChatSocketReturn {
         message: message,
         userId,
         userType,
+        timestamp: new Date().getTime(),
       }
       socketRef.current?.send(JSON.stringify(msg))
     },
@@ -109,6 +115,8 @@ export function useChatSocket(id: number): UseChatSocketReturn {
       const msg: ChatMessage = {
         type: 'ENTER',
         roomId: chatRoomInfo.roomId,
+        userId: id,
+        userType: role,
         message: '',
       }
       socketRef.current?.send(JSON.stringify(msg))
@@ -130,7 +138,7 @@ export function useChatSocket(id: number): UseChatSocketReturn {
     return () => {
       handleQuitRoom()
     }
-  }, [chatRoomInfo, handleQuitRoom])
+  }, [id, role, chatRoomInfo, handleQuitRoom])
 
   return {chatRoomInfo, chatMessageList: messages, isReady, handleQuitRoom, handleSendMessage}
 }
