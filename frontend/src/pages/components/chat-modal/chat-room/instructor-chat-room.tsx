@@ -24,7 +24,7 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   const chat = useChatSocket(instructorId)
   const chatModal = useChatModal()
   const inputRef = useRef<HTMLInputElement>(null)
-  const messages = dummyData.chatMessageList
+  // const messages = dummyData.chatMessageList
 
   const handleSendMessage = () => {
     if (!inputRef.current) return
@@ -40,19 +40,36 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
 
   return (
     <div style={{position: 'absolute', inset: 0, overflow: 'hidden scroll'}}>
-      <header style={{position: 'absolute', top: 0, right: 0, left: 0, zIndex: 1030}}>
-        <Button
-          onClick={() => {
-            console.log('quit')
-            chatModal.handleOpen({content: 'HOME'})
-          }}
-        >
-          나가기
-        </Button>
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          right: 0,
+          left: 0,
+          zIndex: 1030,
+          backgroundColor: 'white',
+        }}
+      >
+        <Flex justifyContent="space-between" style={{padding: '2rem'}}>
+          <Typography size="2rem" weight="bold" color="gray900">
+            채팅 목록
+          </Typography>
+          <Icon
+            name="close"
+            color="black"
+            width="1.5rem"
+            height="1.5rem"
+            style={{cursor: 'pointer'}}
+            onClick={() => {
+              console.log('quit')
+              chatModal.handleOpen({content: 'HOME'})
+            }}
+          />
+        </Flex>
       </header>
 
       <div style={{minHeight: 'calc(100% - 6rem)'}}>
-        <div style={{position: 'relative', overflow: 'hidden', paddingTop: '6rem', width: '100%'}}>
+        <div style={{position: 'relative', overflow: 'hidden', width: '100%'}}>
           <div style={{width: '100%', height: 'auto', transform: 'translate(0px)'}}>
             <section style={{position: 'relative', height: 'auto'}}>
               <Suspense fallback={<Loading />}>
@@ -165,6 +182,13 @@ function InstructorChatList({
   )
 }
 
+const Title = styled.h1(({theme}) => ({
+  color: theme.color.gray800,
+  fontSize: '2rem',
+  fontWeight: 700,
+  padding: '1.3rem',
+}))
+
 const ChatList = styled.ul(() => ({
   display: 'flex',
   flexDirection: 'column',
@@ -250,182 +274,52 @@ const dummyData = {
       userType: 'INSTRUCTOR',
     },
     {
+      id: new Date().getTime() - 600000,
+      timestamp: new Date().getTime() - 600000,
+      type: 'TALK',
+      roomId: 1,
+      sender: sessionProvider.getAccessToken(),
+      message: 'hello world',
+      userId: 3,
+      userType: 'INSTRUCTOR',
+    },
+    {
+      id: new Date().getTime() - 600000,
+      timestamp: new Date().getTime() - 600000,
+      type: 'TALK',
+      roomId: 1,
+      sender: sessionProvider.getAccessToken(),
+      message: 'hello world',
+      userId: 3,
+      userType: 'INSTRUCTOR',
+    },
+    {
+      id: new Date().getTime() - 600000,
+      timestamp: new Date().getTime() - 600000,
+      type: 'TALK',
+      roomId: 1,
+      sender: sessionProvider.getAccessToken(),
+      message: 'hello world',
+      userId: 3,
+      userType: 'INSTRUCTOR',
+    },
+    {
+      id: new Date().getTime() - 600000,
+      timestamp: new Date().getTime() - 600000,
+      type: 'TALK',
+      roomId: 1,
+      sender: sessionProvider.getAccessToken(),
+      message: 'hello world',
+      userId: 3,
+      userType: 'INSTRUCTOR',
+    },
+    {
       id: new Date().getTime() - 300000,
       timestamp: new Date().getTime() - 300000,
       type: 'TALK',
       roomId: 1,
       sender: sessionProvider.getAccessToken(),
       message: 'ojj1123',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
       userId: 2,
       userType: 'STUDENT',
     },

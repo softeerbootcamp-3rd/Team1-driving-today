@@ -10,7 +10,7 @@ import {ChatHome} from './chat-home'
 import {ChatRoom} from './chat-room'
 
 export function ChatModalContainer() {
-  const {open, options, handleClose} = useChatModal()
+  const {open, options, handleOpen, handleClose} = useChatModal()
   const chatModalRef = useRef<HTMLDivElement>(null)
 
   const onCloseClick = () => {
@@ -36,14 +36,12 @@ export function ChatModalContainer() {
     open && (
       <Container>
         <ChatModal ref={chatModalRef}>
-          <Button
-            bgColor="white"
-            style={{width: 'auto', position: 'absolute', right: '0.5rem', top: '0.5rem'}}
-            onClick={onCloseClick}
-          >
-            <Icon name="close" color="black" width="1.5rem" height="1.5rem" />
-          </Button>
-          {options.content === 'HOME' && <ChatHome />}
+          {options.content === 'HOME' && (
+            <>
+              <Button onClick={() => handleOpen({content: 'ROOM', id: 3})}>채팅방가기</Button>
+            </>
+          )}
+          {/* {options.content === 'HOME' && <ChatHome />} */}
           {options.content === 'ROOM' && <ChatRoom userId={options.id} />}
         </ChatModal>
       </Container>
