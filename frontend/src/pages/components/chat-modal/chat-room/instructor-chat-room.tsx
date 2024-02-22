@@ -129,7 +129,7 @@ function InstructorDetail({image, name, academyName, averageRating}: IntroctorDe
       <Flex gap="0.5rem" alignItems="center">
         <Icon name="building" width="1.6rem" height="1.6rem" color="gray500" />
         <Typography size="1.4rem" weight="normal" color="gray900">
-          {academyName}
+          {academyName} 운전전문학원
         </Typography>
       </Flex>
       <Flex gap="0.5rem" alignItems="center">
