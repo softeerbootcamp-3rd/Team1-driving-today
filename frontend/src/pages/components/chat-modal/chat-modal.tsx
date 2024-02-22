@@ -6,7 +6,7 @@ import {Button} from '@/components/button'
 import {Icon} from '@/components/icon'
 import {useChatModal} from '@/providers'
 
-import {ChatHome} from '.'
+import {ChatHome} from './chat-home'
 import {ChatRoom} from './chat-room'
 
 export function ChatModalContainer() {
