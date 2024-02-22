@@ -1,5 +1,6 @@
 export {default as arrowBack} from './arrow_back.svg'
 export {default as arrowForward} from './arrow_forward.svg'
+export {default as avatar} from './avatar.svg'
 export {default as building} from './building.svg'
 export {default as call} from './call.svg'
 export {default as car} from './car.svg'

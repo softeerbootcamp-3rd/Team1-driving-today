@@ -10,7 +10,12 @@ export interface Session {
 
 export interface SessionProvider {
   session?: Session
-  login: (role: UserRole, email: string, password: string) => Promise<Session>
+  login: (arg: {role: UserRole; email: string; password: string}) => Promise<Session>
+  signup: (arg: {
+    role: UserRole
+    registerRequest: Record<string, unknown>
+    profileImg: File | null
+  }) => Promise<void>
   logout: () => void
   getAccessToken: () => string
 }
@@ -33,14 +38,13 @@ function resetSession() {
 
 export const sessionProvider: SessionProvider = {
   session: getSessionFromStorage(),
-  async login(role: UserRole, email: string, password: string) {
+  async login({role, email, password}) {
     const body = JSON.stringify({
       email,
       password,
     })
 
-    // api request
-    const res = await fetch(`${API_BASE_URL}${getLoginUrl(role)}`, {
+    const res = await fetch(`${API_BASE_URL}${loginUrlMap[role]}`, {
       method: 'POST',
       body,
       headers: {'Content-Type': 'application/json'},
@@ -62,7 +66,28 @@ export const sessionProvider: SessionProvider = {
 
     return session
   },
-  logout: () => {},
+  signup: async ({role, registerRequest, profileImg}) => {
+    const formData = new FormData()
+    formData.append(
+      'registerRequest',
+      new Blob([JSON.stringify(registerRequest)], {type: 'application/json'}),
+    )
+    if (profileImg && profileImg.type.startsWith('image')) {
+      formData.append('profileImg', profileImg)
+    }
+
+    const res = await fetch(`${API_BASE_URL}${signupUrlMap[role]}`, {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (res.status !== 201) {
+      throw new Error('회원가입에 실패했습니다')
+    }
+  },
+  logout: () => {
+    resetSession()
+  },
   getAccessToken() {
     const token = this.session?.accessToken
     if (!token) throw Error('no session')
@@ -70,13 +95,14 @@ export const sessionProvider: SessionProvider = {
   },
 }
 
-function getLoginUrl(role: UserRole) {
-  switch (role) {
-    case 'STUDENT':
-      return '/student/login'
-    case 'INSTRUCTOR':
-      return '/instructor/login'
-  }
+const loginUrlMap: Record<UserRole, string> = {
+  STUDENT: '/student/login',
+  INSTRUCTOR: '/instructor/login',
+}
+
+const signupUrlMap: Record<UserRole, string> = {
+  STUDENT: '/student/register',
+  INSTRUCTOR: '/instructor/register',
 }
 
 interface LoginResponse {

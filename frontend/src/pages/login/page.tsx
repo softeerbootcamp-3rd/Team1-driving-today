@@ -69,11 +69,11 @@ export async function loginAction({request}: ActionFunctionArgs) {
   const email = formData['email'] as string
   const password = formData['password'] as string
 
-  if (!userRole) throw new Error('role not defined')
-  if (!email) throw new Error('no email')
-  if (!password) throw new Error('no password')
+  if (!userRole) throw new Error('학생 회원인지 강사 회원인지 선택해주세요')
+  if (!email) throw new Error('이메일을 입력해주세요')
+  if (!password) throw new Error('비밀번호를 입력해주세요')
 
-  const newSession = await sessionProvider.login(userRole, email, password)
+  const newSession = await sessionProvider.login({role: userRole, email, password})
   sessionProvider.session = newSession
 
   return redirect('/dashboard')
