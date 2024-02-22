@@ -25,6 +25,7 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   const chat = useChatSocket(instructorId)
   const chatModal = useChatModal()
   const inputRef = useRef<HTMLInputElement>(null)
+  const {data} = useSuspendedApiCall<InstructorInfoResponse>(`/instructors/${instructorId}`)
   // const messages = dummyData.chatMessageList
 
   const handleSendMessage = () => {
@@ -39,16 +40,29 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
     inputRef.current.focus()
   }
 
+  if (!data) return null
+  const {academyInfo, instructorInfo, averageRating} = data
   return (
     <ChatRoomLayout>
       <ChatRoomLayout.Header>
         <Flex justifyContent="space-between" style={{padding: '2rem'}}>
+          <Icon
+            name="arrowBack"
+            color="gray900"
+            width="1.5rem"
+            height="1.5rem"
+            style={{cursor: 'pointer'}}
+            onClick={() => {
+              console.log('quit')
+              chatModal.handleOpen({content: 'HOME'})
+            }}
+          />
           <Typography size="2rem" weight="bold" color="gray900">
-            채팅 목록
+            {instructorInfo.name}
           </Typography>
           <Icon
             name="close"
-            color="black"
+            color="gray900"
             width="1.5rem"
             height="1.5rem"
             style={{cursor: 'pointer'}}
@@ -62,10 +76,19 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
 
       <ChatRoomLayout.ChatList>
         <Suspense fallback={<Loading />}>
-          <InstructorDetail instructorId={instructorId} />
+          <InstructorDetail
+            academyName={academyInfo.name}
+            image={instructorInfo.instructorImage}
+            name={instructorInfo.name}
+            averageRating={averageRating}
+          />
         </Suspense>
         <Suspense>
-          <InstructorChatList instructorId={instructorId} messages={chat.messages} />
+          <InstructorChatList
+            instructorId={instructorId}
+            instructorName={instructorInfo.name}
+            messages={chat.messages}
+          />
         </Suspense>
       </ChatRoomLayout.ChatList>
 
@@ -79,25 +102,30 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   )
 }
 
-function InstructorDetail({instructorId}: {instructorId: number}) {
-  const {data} = useSuspendedApiCall<InstructorInfoResponse>(`/instructors/${instructorId}`)
+interface IntroctorDetail {
+  image: string
+  name: string
+  academyName: string
+  averageRating: number
+}
 
+function InstructorDetail({image, name, academyName, averageRating}: IntroctorDetail) {
   return (
     <Flex flexDirection="column" gap="0.5rem" alignItems="center">
-      <Avartar src={data?.instructorInfo.instructorImage} width="8rem" height="8rem" />
+      <Avartar src={image} width="8rem" height="8rem" />
       <Typography size="1.4rem" weight="normal" color="gray900">
-        {data?.instructorInfo.name}
+        {name}
       </Typography>
       <Flex gap="0.5rem" alignItems="center">
         <Icon name="building" width="1.6rem" height="1.6rem" color="gray500" />
         <Typography size="1.4rem" weight="normal" color="gray900">
-          {data?.academyInfo.name}
+          {academyName}
         </Typography>
       </Flex>
       <Flex gap="0.5rem" alignItems="center">
         <Icon name="star" width="1.6rem" height="1.6rem" color="gray500" />
         <Typography size="1.4rem" weight="normal" color="gray900">
-          {data?.averageRating.toPrecision(2)}
+          {averageRating.toPrecision(2)}
         </Typography>
       </Flex>
     </Flex>
@@ -106,12 +134,13 @@ function InstructorDetail({instructorId}: {instructorId: number}) {
 
 function InstructorChatList({
   instructorId,
+  instructorName,
   messages,
 }: {
   instructorId: number
+  instructorName: string
   messages: ChatMessageHistory[]
 }) {
-  const {data} = useSuspendedApiCall<InstructorInfoResponse>(`/instructors/${instructorId}`)
   const dummyMessages = dummyData.chatMessageList
   console.log('InstructorChatList: ', messages)
 
@@ -138,7 +167,7 @@ function InstructorChatList({
             {isOther && (
               <Avartar
                 style={{marginRight: '1rem'}}
-                alt={`${data?.instructorInfo.name}의 프로필 사진`}
+                alt={`${instructorName}의 프로필 사진`}
                 // src={data?.instructorInfo.instructorImage}
                 src="https://picsum.photos/200"
                 width="3.6rem"
@@ -148,7 +177,7 @@ function InstructorChatList({
             <Flex flexDirection="column">
               {isOther && (
                 <Typography weight="normal" size="1.2rem" color="gray500">
-                  {data?.instructorInfo.name}
+                  {instructorName}
                 </Typography>
               )}
               <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
