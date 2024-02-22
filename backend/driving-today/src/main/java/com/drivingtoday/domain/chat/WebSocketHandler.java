@@ -67,6 +67,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 long millis = currentDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
                 chatMessage.setTimestamp(millis);
                 chatMessage.setId(UUID.randomUUID().toString());
+
                 chatMessageService.createChatMessage(chatMessage);
                 sendToEachSocket(sessions, message);
             }

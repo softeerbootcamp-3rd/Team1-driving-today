@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"instructor_id", "student_id"})})
 public class ChatRoom {
 
     @Id
