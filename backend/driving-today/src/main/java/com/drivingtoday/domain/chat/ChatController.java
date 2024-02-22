@@ -36,7 +36,7 @@ public class ChatController {
         }
         List<ChatRoomInfo> roomInfoList = chatService.findByInstructorId(authentication.getId().toString());
         List<ChatRoomInfoConcise> chatRoomInfoConciseList = roomInfoList.stream().map(chatRoomInfo ->{
-            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId().toString());
+            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId());
             return ChatRoomInfoConcise.from(chatRoomInfo, chatMessageList);
         }).toList();
         return ResponseEntity.ok().body(chatRoomInfoConciseList);
@@ -51,7 +51,7 @@ public class ChatController {
         }
         List<ChatRoomInfo> roomInfoList = chatService.findByStudentId(authentication.getId().toString());
         List<ChatRoomInfoConcise> chatRoomInfoConciseList = roomInfoList.stream().map(chatRoomInfo ->{
-            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId().toString());
+            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(chatRoomInfo.getRoomId());
             return ChatRoomInfoConcise.from(chatRoomInfo, chatMessageList);
         }).toList();
         return ResponseEntity.ok().body(chatRoomInfoConciseList);
@@ -79,7 +79,7 @@ public class ChatController {
             log.info("room created with ID : " + chatRoomInfo.getRoomId());
         }else{
 
-            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(room.getId().toString());
+            List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(room.getId());
             chatRoomInfo = ChatRoomInfo.from(room);
             chatRoomInfoDetail = ChatRoomInfoDetail.from(chatRoomInfo, chatMessageList);
             log.info("room is already created with id : " + room.getId());
@@ -100,7 +100,7 @@ public class ChatController {
         log.info("instructor enters student ID : " + studentId);
         ChatRoom room = chatService.findByStudentIdAndInstructorId(studentId.toString(), authentication.getId().toString());
 
-        List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(room.getId().toString());
+        List<ChatMessage> chatMessageList = chatMessageService.findAllChatMessageByRoomId(room.getId());
         ChatRoomInfo chatRoomInfo = ChatRoomInfo.from(room);
         ChatRoomInfoDetail chatRoomInfoDetail = ChatRoomInfoDetail.from(chatRoomInfo, chatMessageList);
 
