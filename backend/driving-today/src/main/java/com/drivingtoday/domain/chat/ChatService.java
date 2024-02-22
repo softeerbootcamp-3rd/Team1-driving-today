@@ -27,18 +27,18 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatRoom findByStudentIdAndInstructorId(String studentId, String instructorId){
+    public ChatRoom findByStudentIdAndInstructorId(Long studentId, Long instructorId){
         return chatRoomRepository.findByStudentIdAndInstructorId(studentId, instructorId);
     }
 
     @Transactional
-    public List<ChatRoomInfo> findByStudentId(String studentId){
+    public List<ChatRoomInfo> findByStudentId(Long studentId){
         List<ChatRoom> chatRoomList = chatRoomRepository.findByStudentId(studentId);
         return chatRoomList.stream().map(ChatRoomInfo::from).toList();
     }
 
     @Transactional
-    public List<ChatRoomInfo> findByInstructorId(String instructorId){
+    public List<ChatRoomInfo> findByInstructorId(Long instructorId){
         List<ChatRoom> chatRoomList = chatRoomRepository.findByInstructorId(instructorId);
         return chatRoomList.stream().map(ChatRoomInfo::from).toList();
     }
