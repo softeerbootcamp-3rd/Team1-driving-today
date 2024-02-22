@@ -10,7 +10,7 @@ import {useEnterKeypress} from '@/hooks/use-enter-keypress'
 import {useChatModal} from '@/providers'
 import {StudentInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
-import {isDifferenceOneDay, timestampToHHMM} from '@/utils/time'
+import {isDifferentDate, timestampToHHMM} from '@/utils/time'
 
 import {ChatRoomLayout} from './chat-room-layout'
 import {Avartar, ChatInput, ChatList, ChatMessage, ChatTime, SendButton, TimeStemp} from './styles'
@@ -153,8 +153,7 @@ function StudentChatList({
           {messages.map((chat, index, currentMessages) => {
             const isOther = chat.userId === studentId
             const isDay =
-              index === 0 ||
-              isDifferenceOneDay(chat.timestamp, currentMessages[index - 1].timestamp)
+              index === 0 || isDifferentDate(chat.timestamp, currentMessages[index - 1].timestamp)
             return (
               <>
                 {isDay && (

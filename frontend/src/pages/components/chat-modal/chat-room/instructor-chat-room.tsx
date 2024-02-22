@@ -10,7 +10,7 @@ import {useEnterKeypress} from '@/hooks/use-enter-keypress'
 import {useChatModal} from '@/providers'
 import {InstructorInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
-import {isDifferenceOneDay, timestampToHHMM} from '@/utils/time'
+import {isDifferentDate, timestampToHHMM} from '@/utils/time'
 
 import {ChatRoomLayout} from './chat-room-layout'
 import {Avartar, ChatInput, ChatList, ChatMessage, ChatTime, SendButton, TimeStemp} from './styles'
@@ -172,8 +172,7 @@ function InstructorChatList({
           {messages.map((chat, index, currentMessages) => {
             const isOther = chat.userId === instructorId
             const isDay =
-              index === 0 ||
-              isDifferenceOneDay(chat.timestamp, currentMessages[index - 1].timestamp)
+              index === 0 || isDifferentDate(chat.timestamp, currentMessages[index - 1].timestamp)
             return (
               <Fragment key={chat.id}>
                 {isDay && (
