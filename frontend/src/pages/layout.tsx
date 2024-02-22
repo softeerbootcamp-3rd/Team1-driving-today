@@ -5,6 +5,7 @@ import {Sidebar} from '@/components/sidebar'
 import {useChatModal} from '@/providers'
 
 import {UserRole} from '../utils/session'
+import {ChatModalContainer} from './components'
 
 export function Layout() {
   const role = useLoaderData() as UserRole
@@ -12,6 +13,7 @@ export function Layout() {
   return (
     <LayoutContainer>
       {role === 'STUDENT' ? <StudentSidebar /> : <InstructorSidebar />}
+      <ChatModalContainer />
       <Outlet />
     </LayoutContainer>
   )
