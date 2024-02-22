@@ -23,6 +23,8 @@ const initialScrollCallbacks: ScrollCallbacks = {
   },
 }
 
+const TOUCH_MULTIPLIER = 5
+
 export function ScrollAnimationProvider({
   children,
   loop,
@@ -43,6 +45,27 @@ export function ScrollAnimationProvider({
     }
     divToWatch.addEventListener('wheel', onScroll)
 
+    // enable wheel event on touch devices
+    if ('ontouchstart' in window) {
+      let y = 0
+      divToWatch.ontouchstart = (e) => {
+        e.preventDefault()
+        y = e.touches[0].clientY
+      }
+      divToWatch.ontouchmove = (e) => {
+        e.preventDefault()
+
+        scrollRef.current += Math.min(
+          200,
+          Math.max(-200, (y - e.touches[0].clientY) * TOUCH_MULTIPLIER),
+        )
+        if (scrollRef.current < 0) scrollRef.current = loop ? max + scrollRef.current : 0
+        else if (scrollRef.current > max) scrollRef.current = loop ? scrollRef.current - max : max
+        y = e.touches[0].clientY
+      }
+      divToWatch.ontouchend = (e) => e.preventDefault()
+    }
+
     let running = true
     const tick = () => {
       callbacksRef.current.run(scrollRef.current)
@@ -53,7 +76,7 @@ export function ScrollAnimationProvider({
       divToWatch.removeEventListener('wheel', onScroll)
       running = false
     }
-  }, [])
+  }, [loop, max])
 
   return (
     <ScrollAnimationContext.Provider value={callbacksRef}>
