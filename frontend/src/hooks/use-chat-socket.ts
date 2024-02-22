@@ -104,7 +104,7 @@ export function useChatSocket(id: number): UseChatSocketReturn {
 
   useEffect(() => {
     if (socketRef.current || !chatRoomInfo) return
-    socketRef.current = new WebSocket(SOCKET_URL, sessionProvider.session?.accessToken)
+    socketRef.current = new WebSocket(`${SOCKET_URL}/ws/chat`, sessionProvider.session?.accessToken)
     socketRef.current.onopen = () => {
       const msg: ChatMessage = {
         type: 'ENTER',
@@ -114,10 +114,12 @@ export function useChatSocket(id: number): UseChatSocketReturn {
       socketRef.current?.send(JSON.stringify(msg))
       setIsReady(true)
     }
-    socketRef.current.onmessage = (e: MessageEvent<ChatMessageHistory>) => {
+    socketRef.current.onmessage = (e: MessageEvent) => {
+      const message = JSON.parse(e.data)
+      if (message.type !== 'TALK') return
       setMessages((prev) => {
-        if (prev === null) return [e.data]
-        return [...prev, e.data]
+        if (prev === null) return [message]
+        return [...prev, message]
       })
     }
     socketRef.current.onerror = console.error
