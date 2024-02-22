@@ -92,14 +92,22 @@ interface InstructorDetailResponse {
   averageRating: number
 }
 
-type ReviewResponse = {
+type ReviewResponseItem = {
   reviewId: number
   contents: string
   rating: number
   createdAt: string
   reviewerName: string
   reviewerImage: string
-}[]
+}
+
+interface ReviewResponse {
+  content: ReviewResponseItem[]
+  currentPage: number
+  first: boolean
+  last: boolean
+  size: number
+}
 
 const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
@@ -112,10 +120,13 @@ function InstructorDetail({id}: {id: number}) {
     loading,
     fetchNextPage,
   } = useInfiniteFetch({
-    queryFn: ({pageParam}): Promise<ReviewResponse> => {
-      return apiCall(
+    queryFn: async ({pageParam}): Promise<ReviewResponseItem[]> => {
+      const res = await apiCall(
         `/reviews?instructorId=${id}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
-      ).then((res) => res.json())
+      )
+      if (!res.ok) throw new Error('server error')
+      const reviewResponse = (await res.json()) as ReviewResponse
+      return reviewResponse.content
     },
     initialPageParam: 1,
     getNextPageParam: ({pageParam, lastPage}) => {
