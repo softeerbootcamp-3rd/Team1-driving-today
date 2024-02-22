@@ -195,14 +195,6 @@ const SearchFieldTitle = styled.h2(({theme}) => ({
   fontWeight: '500',
 }))
 
-// const DateInput = styled.input(({theme}) => ({
-//   border: `1px solid ${theme.color.gray900}`,
-//   borderRadius: '0.8rem',
-//   padding: '0.5rem',
-//   width: '20rem',
-//   fontSize: '1.4rem',
-// }))
-
 const ErrorMessage = styled.p(({theme}) => ({
   fontSize: '1.4rem',
   color: theme.color.warning,
