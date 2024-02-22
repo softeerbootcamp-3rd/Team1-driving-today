@@ -7,7 +7,7 @@ import {Icon} from '@/components/icon'
 import {Loading} from '@/components/loading'
 import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
-import {type ChatMessageHistory, useChatSocket} from '@/hooks/use-chat-socket'
+import {ChatRoomEnterResponse, useChatSocket} from '@/hooks/use-chat-socket'
 import {useChatModal} from '@/providers'
 import {InstructorInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
@@ -19,14 +19,10 @@ interface InstructorChatRoomProps {
   instructorId: number
 }
 export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
-  // 1. 강사 정보
-  // 2. 입장 요청
-  // 소켓 연결
   const chat = useChatSocket(instructorId)
   const chatModal = useChatModal()
   const inputRef = useRef<HTMLInputElement>(null)
   const {data} = useSuspendedApiCall<InstructorInfoResponse>(`/instructors/${instructorId}`)
-  // const messages = dummyData.chatMessageList
 
   const handleSendMessage = () => {
     if (!inputRef.current) return
@@ -45,7 +41,7 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   return (
     <ChatRoomLayout>
       <ChatRoomLayout.Header>
-        <Flex justifyContent="space-between" style={{padding: '2rem'}}>
+        <Flex justifyContent="space-between" alignItems="center" style={{padding: '2rem'}}>
           <Icon
             name="arrowBack"
             color="gray900"
@@ -53,7 +49,6 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
             height="1.5rem"
             style={{cursor: 'pointer'}}
             onClick={() => {
-              console.log('quit')
               chatModal.handleOpen({content: 'HOME'})
             }}
           />
@@ -67,8 +62,7 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
             height="1.5rem"
             style={{cursor: 'pointer'}}
             onClick={() => {
-              console.log('quit')
-              chatModal.handleOpen({content: 'HOME'})
+              chatModal.handleClose()
             }}
           />
         </Flex>
@@ -87,7 +81,8 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
           <InstructorChatList
             instructorId={instructorId}
             instructorName={instructorInfo.name}
-            messages={chat.messages}
+            instuctorImage={instructorInfo.instructorImage}
+            messages={chat.chatMessageList}
           />
         </Suspense>
       </ChatRoomLayout.ChatList>
@@ -125,7 +120,7 @@ function InstructorDetail({image, name, academyName, averageRating}: IntroctorDe
       <Flex gap="0.5rem" alignItems="center">
         <Icon name="star" width="1.6rem" height="1.6rem" color="gray500" />
         <Typography size="1.4rem" weight="normal" color="gray900">
-          {averageRating.toPrecision(2)}
+          {averageRating?.toPrecision(2)}
         </Typography>
       </Flex>
     </Flex>
@@ -135,74 +130,79 @@ function InstructorDetail({image, name, academyName, averageRating}: IntroctorDe
 function InstructorChatList({
   instructorId,
   instructorName,
+  instuctorImage,
   messages,
 }: {
   instructorId: number
   instructorName: string
-  messages: ChatMessageHistory[]
+  instuctorImage: string
+  messages: ChatRoomEnterResponse['chatMessageList']
 }) {
-  const dummyMessages = dummyData.chatMessageList
   console.log('InstructorChatList: ', messages)
 
   return (
     <ChatList>
-      {(dummyMessages === null || dummyMessages.length === 0) && (
-        <Typography size="2.4rem" weight="bold" color="gray900">
-          대화를 시작해보세요!
-        </Typography>
-      )}
-      {dummyMessages.map((chat) => {
-        const {userId} = chat
-        const isOther = userId === instructorId
-        return (
-          <Flex
-            as="li"
-            key={chat.id}
-            justifyContent={isOther ? 'flex-start' : 'flex-end'}
-            style={{
-              paddingLeft: isOther ? '1rem' : 0,
-              paddingRight: isOther ? 0 : '1rem',
-            }}
-          >
-            {isOther && (
-              <Avartar
-                style={{marginRight: '1rem'}}
-                alt={`${instructorName}의 프로필 사진`}
-                // src={data?.instructorInfo.instructorImage}
-                src="https://picsum.photos/200"
-                width="3.6rem"
-                height="3.6rem"
-              />
-            )}
-            <Flex flexDirection="column">
-              {isOther && (
-                <Typography weight="normal" size="1.2rem" color="gray500">
-                  {instructorName}
-                </Typography>
-              )}
-              <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
-                <ChatMessage
-                  bgColor={isOther ? 'gray200' : 'primary'}
-                  color={isOther ? 'gray900' : 'white'}
-                >
-                  {chat.message}
-                </ChatMessage>
-                <ChatTime>{timestampToHHMM(chat.timestamp)}</ChatTime>
+      {messages === null || messages.length === 0 ? (
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          style={{margin: '7rem', textAlign: 'center'}}
+        >
+          <Typography size="2rem" weight="bold" color="gray500">
+            {instructorName}님과
+            <br />
+            대화를 시작해보세요!
+          </Typography>
+        </Flex>
+      ) : (
+        <>
+          {messages.map((chat) => {
+            if (chat.type !== 'TALK') return
+            const {userId} = chat
+            const isOther = userId === instructorId
+            return (
+              <Flex
+                as="li"
+                key={chat.id}
+                justifyContent={isOther ? 'flex-start' : 'flex-end'}
+                style={{
+                  paddingLeft: isOther ? '1rem' : 0,
+                  paddingRight: isOther ? 0 : '1rem',
+                }}
+              >
+                {isOther && (
+                  <Avartar
+                    style={{marginRight: '1rem'}}
+                    alt={`${instructorName}의 프로필 사진`}
+                    src={instuctorImage}
+                    width="3.6rem"
+                    height="3.6rem"
+                  />
+                )}
+                <Flex flexDirection="column">
+                  {isOther && (
+                    <Typography weight="normal" size="1.2rem" color="gray500">
+                      {instructorName}
+                    </Typography>
+                  )}
+                  <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
+                    <ChatMessage
+                      bgColor={isOther ? 'gray200' : 'primary'}
+                      color={isOther ? 'gray900' : 'white'}
+                    >
+                      {chat.message}
+                    </ChatMessage>
+                    <ChatTime>{timestampToHHMM(chat.timestamp)}</ChatTime>
+                  </Flex>
+                </Flex>
               </Flex>
-            </Flex>
-          </Flex>
-        )
-      })}
+            )
+          })}
+        </>
+      )}
     </ChatList>
   )
 }
-
-const Title = styled.h1(({theme}) => ({
-  color: theme.color.gray800,
-  fontSize: '2rem',
-  fontWeight: 700,
-  padding: '1.3rem',
-}))
 
 const ChatList = styled.ul(() => ({
   display: 'flex',
@@ -248,92 +248,3 @@ const SendButton = styled.button(({theme}) => ({
   backgroundColor: theme.color.primary,
   padding: '1rem',
 }))
-const dummyData = {
-  chatRoomInfo: {
-    roodId: 1,
-    studentId: 2,
-    instructorId: 3,
-  },
-  chatMessageList: [
-    {
-      id: new Date().getTime() - 900000,
-      timestamp: new Date().getTime() - 900000,
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hello world',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime() - 600000,
-      timestamp: new Date().getTime() - 600000,
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hello world',
-      userId: 3,
-      userType: 'INSTRUCTOR',
-    },
-    {
-      id: new Date().getTime() - 600000,
-      timestamp: new Date().getTime() - 600000,
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hello world',
-      userId: 3,
-      userType: 'INSTRUCTOR',
-    },
-    {
-      id: new Date().getTime() - 600000,
-      timestamp: new Date().getTime() - 600000,
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hello world',
-      userId: 3,
-      userType: 'INSTRUCTOR',
-    },
-    {
-      id: new Date().getTime() - 600000,
-      timestamp: new Date().getTime() - 600000,
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hello world',
-      userId: 3,
-      userType: 'INSTRUCTOR',
-    },
-    {
-      id: new Date().getTime() - 600000,
-      timestamp: new Date().getTime() - 600000,
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hello world',
-      userId: 3,
-      userType: 'INSTRUCTOR',
-    },
-    {
-      id: new Date().getTime() - 300000,
-      timestamp: new Date().getTime() - 300000,
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'ojj1123',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-    {
-      id: new Date().getTime(),
-      timestamp: new Date().getTime(),
-      type: 'TALK',
-      roomId: 1,
-      sender: sessionProvider.getAccessToken(),
-      message: 'hihi3',
-      userId: 2,
-      userType: 'STUDENT',
-    },
-  ],
-}

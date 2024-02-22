@@ -3,8 +3,8 @@ import {useCallback, useEffect, useRef, useState} from 'react'
 import {apiCall} from '@/utils/api'
 import {sessionProvider} from '@/utils/session'
 
-interface ChatRoomEnterResponse {
-  chatRoomInfo: ChatRoomInfo
+export interface ChatRoomEnterResponse {
+  chatRoomInfo: ChatRoomInfo | undefined | null
   chatMessageList: ChatMessageHistory[] | null
 }
 
@@ -14,7 +14,7 @@ export interface ChatRoomInfo {
   instructorId: number
 }
 
-export type ChatMessage = (
+type ChatMessage = (
   | {type: 'ENTER'}
   | {type: 'TALK'; userId: number; userType: 'INSTRUCTOR' | 'STUDENT'}
   | {type: 'QUIT'}
@@ -25,9 +25,7 @@ export type ChatMessageHistory = ChatMessage & {
   id: string
 }
 
-export type UseChatSocketReturn = {
-  chatRoomInfo: ChatRoomInfo
-  messages: ChatMessageHistory[]
+export type UseChatSocketReturn = ChatRoomEnterResponse & {
   isReady: boolean
   handleSendMessage: ({
     userId,
@@ -42,9 +40,12 @@ export type UseChatSocketReturn = {
 }
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
-
+const chatEnterApiMap = {
+  STUDENT: '/chat/student/enter',
+  INSTRUCTOR: '/chat/instructor/enter',
+}
 export function useChatSocket(id: number): UseChatSocketReturn {
-  const [chatRoomInfo, setChatRoomInfo] = useState<ChatRoomInfo>()
+  const [chatRoomInfo, setChatRoomInfo] = useState<ChatRoomEnterResponse['chatRoomInfo']>()
   const [messages, setMessages] = useState<ChatMessageHistory[] | null>(null)
   const socketRef = useRef<WebSocket>()
   const [isReady, setIsReady] = useState(false)
@@ -87,7 +88,7 @@ export function useChatSocket(id: number): UseChatSocketReturn {
   )
 
   useEffect(() => {
-    const path = role === 'INSTRUCTOR' ? '/instructor/enter' : '/student/enter'
+    const path = chatEnterApiMap[role]
     const body = role === 'INSTRUCTOR' ? {studentId: id} : {instructorId: id}
     apiCall(path, {
       method: 'POST',
@@ -129,5 +130,5 @@ export function useChatSocket(id: number): UseChatSocketReturn {
     }
   }, [chatRoomInfo, handleQuitRoom])
 
-  return {chatRoomInfo, messages, isReady, handleQuitRoom, handleSendMessage}
+  return {chatRoomInfo, chatMessageList: messages, isReady, handleQuitRoom, handleSendMessage}
 }
