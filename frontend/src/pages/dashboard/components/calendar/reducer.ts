@@ -3,10 +3,11 @@ export interface DateState {
   month: number
 }
 
-type DateAction =
+export type DateAction =
   | {type: 'NEXT_MONTH'}
   | {type: 'PREV_MONTH'}
   | {type: 'SET_DATE'; payload: DateState}
+  | {type: 'SET_DATE_STR'; payload: string}
 
 export function dateReducer(state: DateState, action: DateAction) {
   if (action.type === 'NEXT_MONTH') {
@@ -23,6 +24,9 @@ export function dateReducer(state: DateState, action: DateAction) {
     }
   } else if (action.type === 'SET_DATE') {
     return action.payload
+  } else if (action.type === 'SET_DATE_STR') {
+    const date = new Date(action.payload)
+    return {year: date.getFullYear(), month: date.getMonth() + 1}
   }
   return state
 }

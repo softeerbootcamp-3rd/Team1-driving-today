@@ -1,34 +1,81 @@
 import styled from '@emotion/styled'
+import {Suspense} from 'react'
+import {useNavigate} from 'react-router-dom'
 
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
-import {useApiCall} from '@/hooks/use-api-call'
+import {Loading} from '@/components/loading'
+import {useSuspendedApiCall} from '@/hooks/use-api-call'
+import {UserRole} from '@/utils/session'
 
-interface MyInfoResponse {
-  name: string
-  image: string
-  nickname: string
+interface MyProfileCardProps {
+  role: UserRole
 }
-export function MyProfileCard() {
-  const {data} = useApiCall<MyInfoResponse>('/my')
 
+export function MyProfileCard({role}: MyProfileCardProps) {
   return (
     <Container>
-      {data && (
-        <>
-          <Image src={data.image} />
-          <NameContainer>
-            <Name>{`안녕하세요 ${data.name}님!`}</Name>
-            <Nickname>{`@${data.nickname}`}</Nickname>
-          </NameContainer>
-          <Divider flexItem />
-          <TrailingIconLink href="/history">
-            <ButtonLabel>지난 예약 내역</ButtonLabel>
-            <Icon name="arrowForward" color="gray600" width="1.6rem" height="1.6rem" />
-          </TrailingIconLink>
-        </>
-      )}
+      <Suspense fallback={<Loading />}>
+        {role === 'INSTRUCTOR' && <InstructorMyProfileCardContent />}
+        {role === 'STUDENT' && <StudentMyProfileCardContent />}
+      </Suspense>
     </Container>
+  )
+}
+
+interface InstructorMyInfoResponse {
+  id: number
+  instructorImage: string
+  introduction: string
+  name: string
+  phoneNumber: string
+  pricePerHour: number
+}
+
+function InstructorMyProfileCardContent() {
+  // todo: connect api on implementation
+  const {data} = useSuspendedApiCall<InstructorMyInfoResponse>('/instructor/my')
+  const navigate = useNavigate()
+  return (
+    <>
+      <Image src={data?.instructorImage} />
+      <NameContainer>
+        <Name>{`안녕하세요 ${data?.name}님!`}</Name>
+        <Nickname>{data?.introduction}</Nickname>
+      </NameContainer>
+      <Divider flexItem />
+      <TrailingIconLink onClick={() => navigate('/history')}>
+        <ButtonLabel>지난 예약 내역</ButtonLabel>
+        <Icon name="arrowForward" color="gray600" width="1.6rem" height="1.6rem" />
+      </TrailingIconLink>
+    </>
+  )
+}
+
+interface StudentMyInfoResponse {
+  name: string
+  phoneNumber: string
+  studentImage: string
+  nickname: string
+}
+
+function StudentMyProfileCardContent() {
+  // todo: connect api on implementation
+  const {data} = useSuspendedApiCall<StudentMyInfoResponse>('/student/my')
+  const navigate = useNavigate()
+  return (
+    <>
+      <Image src={data?.studentImage} />
+      <NameContainer>
+        <Name>{`안녕하세요 ${data?.name}님!`}</Name>
+        <Nickname>{`@${data?.nickname}`}</Nickname>
+      </NameContainer>
+      <Divider flexItem />
+      <TrailingIconLink onClick={() => navigate('/history')}>
+        <ButtonLabel>지난 예약 내역</ButtonLabel>
+        <Icon name="arrowForward" color="gray600" width="1.6rem" height="1.6rem" />
+      </TrailingIconLink>
+    </>
   )
 }
 
