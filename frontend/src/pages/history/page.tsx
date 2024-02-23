@@ -3,13 +3,9 @@ import {useState} from 'react'
 
 import {Header} from '@/components/header'
 import {Logo} from '@/components/logo'
+import {InstructorReservation, StudentReservation} from '@/types/reservation'
 
-import {
-  InstructorCardlist,
-  InstructorReservation,
-  StudentCardlist,
-  StudentReservation,
-} from '../history/components/cardlist'
+import {InstructorCardlist, StudentCardlist} from '../history/components/cardlist'
 import {ReviewModal, StudentModal} from './components/modal'
 
 const RootLayout = styled.div({display: 'flex', flexDirection: 'column', flexGrow: 1})
@@ -31,7 +27,8 @@ const ModalContainer = styled.div({
 })
 
 export function StudentHistory() {
-  const [selected, setSelected] = useState<StudentReservation>()
+  const [selected, setSelected] = useState<InstructorReservation>()
+
   return (
     <RootLayout>
       <Header px="20rem">
@@ -44,6 +41,7 @@ export function StudentHistory() {
         <ModalContainer>
           {selected && (
             <ReviewModal
+              key={selected?.reservationId}
               onClose={() => setSelected(undefined)}
               reservationId={selected?.reservationId}
               instructorId={selected?.instructorId}
@@ -56,7 +54,7 @@ export function StudentHistory() {
 }
 
 export function InstructorHistory() {
-  const [selected, setSelected] = useState<InstructorReservation>()
+  const [selected, setSelected] = useState<StudentReservation>()
   return (
     <RootLayout>
       <Header px="20rem">
