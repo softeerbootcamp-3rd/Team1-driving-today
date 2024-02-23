@@ -115,7 +115,7 @@ export function useChatSocket(id: number): UseChatSocketReturn {
 
   useEffect(() => {
     if (socketRef.current || !chatRoomInfo) return
-    socketRef.current = new WebSocket(`${SOCKET_URL}/ws/chat`, sessionProvider.session?.accessToken)
+    socketRef.current = new WebSocket(`${SOCKET_URL}/ws/chat`, sessionProvider.getAccessToken())
     socketRef.current.onopen = () => {
       const msg: ChatMessage = {
         type: 'ENTER',

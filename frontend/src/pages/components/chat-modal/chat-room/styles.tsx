@@ -1,7 +1,7 @@
 import {type Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 
-export const TimeStemp = styled.li(({theme}) => ({
+export const TimeStamp = styled.li(({theme}) => ({
   display: 'flex',
   alignItems: 'center',
   '& > div': {

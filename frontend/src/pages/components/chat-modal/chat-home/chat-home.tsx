@@ -39,7 +39,7 @@ export function ChatHome({onCloseClick}: {onCloseClick: () => void}) {
 
 interface ExtendedChatRoomInfo {
   chatRoomInfo: ChatRoomInfo
-  lastMessage: ChatMessageHistory | null
+  lastMessage: ChatMessageHistory | undefined
 }
 
 type ChatRoomsResponse = ExtendedChatRoomInfo[]

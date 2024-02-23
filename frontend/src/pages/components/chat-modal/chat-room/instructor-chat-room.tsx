@@ -10,10 +10,11 @@ import {useEnterKeypress} from '@/hooks/use-enter-keypress'
 import {useChatModal} from '@/providers'
 import {InstructorInfoResponse} from '@/types/user-info'
 import {sessionProvider} from '@/utils/session'
-import {isDifferentDate, timestampToHHMM} from '@/utils/time'
+import {isDifferentDate} from '@/utils/time'
 
+import {ChatItem} from './chat-item'
 import {ChatRoomLayout} from './chat-room-layout'
-import {Avartar, ChatInput, ChatList, ChatMessage, ChatTime, SendButton, TimeStemp} from './styles'
+import {Avartar, ChatInput, ChatList, SendButton, TimeStamp} from './styles'
 
 interface InstructorChatRoomProps {
   instructorId: number
@@ -112,14 +113,14 @@ export function InstructorChatRoom({instructorId}: InstructorChatRoomProps) {
   )
 }
 
-interface IntroctorDetailProps {
+interface IntructorDetailProps {
   image: string
   name: string
   academyName: string
   averageRating: number
 }
 
-function InstructorDetail({image, name, academyName, averageRating}: IntroctorDetailProps) {
+function InstructorDetail({image, name, academyName, averageRating}: IntructorDetailProps) {
   return (
     <Flex flexDirection="column" gap="0.5rem" alignItems="center">
       <Avartar src={image} width="8rem" height="8rem" />
@@ -170,50 +171,42 @@ function InstructorChatList({
       ) : (
         <>
           {messages.map((chat, index, currentMessages) => {
-            const isOther = chat.userId === instructorId
+            const isLeft = chat.userId === instructorId
             const isDay =
               index === 0 || isDifferentDate(chat.timestamp, currentMessages[index - 1].timestamp)
             return (
               <Fragment key={chat.id}>
                 {isDay && (
-                  <TimeStemp>
+                  <TimeStamp>
                     <div>{new Date(chat.timestamp).toLocaleDateString()}</div>
-                  </TimeStemp>
+                  </TimeStamp>
                 )}
-                <Flex
-                  as="li"
-                  justifyContent={isOther ? 'flex-start' : 'flex-end'}
-                  style={{
-                    paddingLeft: isOther ? '1rem' : 0,
-                    paddingRight: isOther ? 0 : '1rem',
-                  }}
-                >
-                  {isOther && (
-                    <Avartar
-                      style={{marginRight: '1rem'}}
-                      alt={`${instructorName}의 프로필 사진`}
-                      src={instuctorImage}
-                      width="3.6rem"
-                      height="3.6rem"
-                    />
-                  )}
-                  <Flex flexDirection="column">
-                    {isOther && (
-                      <Typography weight="normal" size="1.2rem" color="gray500">
-                        {instructorName}
-                      </Typography>
-                    )}
-                    <Flex gap="0.5rem" flexDirection={isOther ? 'row' : 'row-reverse'}>
-                      <ChatMessage
-                        bgColor={isOther ? 'gray200' : 'primary'}
-                        color={isOther ? 'gray900' : 'white'}
-                      >
-                        {chat.message}
-                      </ChatMessage>
-                      <ChatTime>{timestampToHHMM(chat.timestamp)}</ChatTime>
-                    </Flex>
-                  </Flex>
-                </Flex>
+                <ChatItem
+                  chat={chat}
+                  position={isLeft ? 'left' : 'right'}
+                  avartar={
+                    <>
+                      {isLeft && (
+                        <Avartar
+                          style={{marginRight: '1rem'}}
+                          alt={`${instructorName}의 프로필 사진`}
+                          src={instuctorImage}
+                          width="3.6rem"
+                          height="3.6rem"
+                        />
+                      )}
+                    </>
+                  }
+                  sender={
+                    <>
+                      {isLeft && (
+                        <Typography weight="normal" size="1.2rem" color="gray500">
+                          {instructorName}
+                        </Typography>
+                      )}
+                    </>
+                  }
+                />
               </Fragment>
             )
           })}
