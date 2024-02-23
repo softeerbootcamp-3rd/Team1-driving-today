@@ -1,8 +1,6 @@
 import styled from '@emotion/styled'
 import {createContext, PropsWithChildren, useContext, useEffect, useRef} from 'react'
 
-const DEFAULT_MAX = 99999999999
-
 interface ScrollAnimationProviderProps {
   loop?: boolean
   max?: number
@@ -28,7 +26,7 @@ const TOUCH_MULTIPLIER = 5
 export function ScrollAnimationProvider({
   children,
   loop,
-  max = DEFAULT_MAX,
+  max = Number.MAX_SAFE_INTEGER,
 }: PropsWithChildren<ScrollAnimationProviderProps>) {
   const scrollRef = useRef(0)
   const callbacksRef = useRef<ScrollCallbacks>(initialScrollCallbacks)
@@ -119,6 +117,6 @@ const Container = styled.div(({theme}) => ({
   height: '100vh',
   width: '100vw',
   '& *': {
-    // transition: 'all 0.1s ease',
+    transition: 'all 0.1s ease',
   },
 }))

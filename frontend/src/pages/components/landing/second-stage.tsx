@@ -2,11 +2,12 @@ import {keyframes} from '@emotion/react'
 import styled from '@emotion/styled'
 import {forwardRef, useRef} from 'react'
 
-import carImage from '@/assets/car.png'
 import {useScrollAnimationFrame} from '@/providers/scroll-animation-provider'
 import {animateElement, ScrollAnimation} from '@/utils/animation'
 
 import {AnimationProps, GeneralContainer} from '.'
+
+const carImage = '/car.png'
 
 export function SecondStage({offset}: AnimationProps) {
   const carRef = useRef<HTMLDivElement>(null)
