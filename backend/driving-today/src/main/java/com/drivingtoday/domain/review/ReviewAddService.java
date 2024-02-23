@@ -27,8 +27,9 @@ public class ReviewAddService {
             throw ReviewException.from(ReviewErrorCode.INVALID_REVIEWER);
         }
 
-        Review review = reviewRequest.toReview(reservation.getStudent(), reservation.getInstructor());
+        Review review = reviewRequest.toReview(reservation.getStudent(), reservation.getInstructor(), reservation);
         reviewRepository.save(review);
+        reservation.registerReview(review);
         return review.getId();
     }
 }
