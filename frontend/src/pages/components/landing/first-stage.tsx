@@ -62,6 +62,7 @@ function Dashboard({offset}: AnimationProps) {
   const backgroundAnimations: ScrollAnimation[] = [
     {type: 'translateY', start: 0, end: -100, startFrame: 2000, endFrame: 4000},
   ]
+
   const skyAnimations: ScrollAnimation[] = [
     {type: 'translateY', start: 0, end: -90, startFrame: 4000, endFrame: 6000},
   ]
@@ -263,10 +264,10 @@ const BackgroundDiv = styled.div({
 
 export const WheelImg = styled.div(({theme}) => ({
   position: 'absolute',
-  left: 'calc(50vw - 12rem)',
-  top: 'calc(50vh - 5rem)',
-  width: '10rem',
-  height: '10rem',
+  left: 'calc(50vw - 18rem)',
+  top: 'calc(50vh - 8rem)',
+  width: '15rem',
+  height: '15rem',
   mask: `url(${logoHead})`,
   maskRepeat: 'no-repeat',
   maskSize: 'contain',
@@ -277,8 +278,8 @@ export const LogoImg = styled.div(({theme}) => ({
   position: 'absolute',
   left: 'calc(50vw - 3rem)',
   top: 'calc(50vh - 1rem)',
-  width: '18rem',
-  height: '5rem',
+  width: '25rem',
+  height: '10rem',
   mask: `url(${logoRest})`,
   maskRepeat: 'no-repeat',
   maskSize: 'contain',

@@ -70,7 +70,7 @@ export function SecondStage({offset}: AnimationProps) {
 
 const Message = styled.div(({theme}) => ({
   textAlign: 'center',
-  fontSize: '7vh',
+  fontSize: '7rem',
   width: '100%',
   fontWeight: '600',
   height: 'auto',

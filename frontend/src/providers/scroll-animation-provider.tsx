@@ -67,8 +67,13 @@ export function ScrollAnimationProvider({
     }
 
     let running = true
+    let prevFrame = -1
     const tick = () => {
-      callbacksRef.current.run(scrollRef.current)
+      if (prevFrame !== scrollRef.current) {
+        callbacksRef.current.run(scrollRef.current)
+        prevFrame = scrollRef.current
+      }
+
       if (running) requestAnimationFrame(tick)
     }
     requestAnimationFrame(tick)

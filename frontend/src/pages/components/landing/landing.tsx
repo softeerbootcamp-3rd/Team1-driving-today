@@ -30,7 +30,7 @@ function Stages() {
       {stage === 0 && <FirstStage offset={0} />}
       {(stage === 1 || stage === 2 || stage === 3) && <SecondStage offset={10700} />}
       {(stage === 0 || stage === 1) && <CloudTransition offset={9000} />}
-      {(stage === 3 || stage === 4) && <ThirdStage offset={17500} />}
+      {(stage === 3 || stage === 4 || stage === 0) && <ThirdStage offset={17500} />}
     </>
   )
 }
