@@ -18,10 +18,11 @@ import {LandingPage} from './pages/page'
 import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
 import {PurchaseSuccessPage} from './pages/purchase/success/page'
-import {StudentSchedule} from './pages/schedule/page'
-import {searchPageLoader} from './pages/search/loader'
-import {SearchPage} from './pages/search/page'
+import {StudentSchedule} from './pages/reservation/schedule/page'
+import {searchPageLoader} from './pages/reservation/search/loader'
+import {SearchPage} from './pages/reservation/search/page'
 import {sessionProvider, UserRole} from './utils/session'
+import {StudentReservation} from './pages/reservation/page'
 
 export function App() {
   return (
@@ -73,14 +74,20 @@ const router = createBrowserRouter(
           }
         />
         <Route
-          path="/schedule"
-          element={<RequireRole>{(isStudent) => isStudent && <StudentSchedule />}</RequireRole>}
-        />
-        <Route
-          path="/search"
-          loader={searchPageLoader}
-          element={<RequireRole>{(isStudent) => isStudent && <SearchPage />}</RequireRole>}
-        />
+          path="/reservation"
+          element={<RequireRole>{(isStudent) => isStudent && <StudentReservation />}</RequireRole>}
+        >
+          <Route
+            path="/reservation/"
+            index
+            element={<RequireRole>{(isStudent) => isStudent && <StudentSchedule />}</RequireRole>}
+          />
+          <Route
+            path="/reservation/search"
+            loader={searchPageLoader}
+            element={<RequireRole>{(isStudent) => isStudent && <SearchPage />}</RequireRole>}
+          />
+        </Route>
         <Route
           path="/purchase"
           loader={purchaseLoader}

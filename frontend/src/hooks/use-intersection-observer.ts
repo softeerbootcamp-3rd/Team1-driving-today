@@ -27,3 +27,28 @@ export function useIntersectionObserver(
 
   return ref
 }
+
+export function useResettableIntersectionObserver(
+  callback: UseIntersectionObserverCallback,
+  options?: IntersectionObserverInit,
+) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (!ref.current) return
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          callback(entry)
+        }
+      })
+    }, options)
+
+    observer.observe(ref.current)
+
+    return () => observer.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [callback, JSON.stringify(options)])
+
+  return ref
+}
