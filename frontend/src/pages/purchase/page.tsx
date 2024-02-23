@@ -126,7 +126,7 @@ function PurchaseResult() {
       instructorId: state.instructorId,
     }
     try {
-      const response = await apiCall('/reservations', {
+      const response = await apiCall('/reservation', {
         method: 'POST',
         headers: {'content-type': 'application/json'},
         body: JSON.stringify(body),
