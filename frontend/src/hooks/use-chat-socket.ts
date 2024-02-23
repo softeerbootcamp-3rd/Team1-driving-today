@@ -94,18 +94,23 @@ export function useChatSocket(id: number): UseChatSocketReturn {
   )
 
   useEffect(() => {
+    const abortController = new AbortController()
     const path = chatEnterApiMap[role]
     const body = role === 'INSTRUCTOR' ? {studentId: id} : {instructorId: id}
     apiCall(path, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {'Content-Type': 'application/json'},
+      signal: abortController.signal,
     })
       .then((res: Response) => res.json())
       .then((res: ChatRoomEnterResponse) => {
         setChatRoomInfo(res.chatRoomInfo)
         setMessages(res.chatMessageList)
       })
+    return () => {
+      abortController.abort()
+    }
   }, [id, role])
 
   useEffect(() => {
