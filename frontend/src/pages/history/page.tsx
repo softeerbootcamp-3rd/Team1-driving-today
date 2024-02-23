@@ -1,11 +1,15 @@
 import styled from '@emotion/styled'
-import {useState} from 'react'
+import {useRef, useState} from 'react'
 
 import {Header} from '@/components/header'
 import {Logo} from '@/components/logo'
 import {InstructorReservation, StudentReservation} from '@/types/reservation'
 
-import {InstructorCardlist, StudentCardlist} from '../history/components/cardlist'
+import {
+  InstructorCardlist,
+  StudentCardlist,
+  StudentCardListControl,
+} from '../history/components/cardlist'
 import {ReviewModal, StudentModal} from './components/modal'
 
 const RootLayout = styled.div({display: 'flex', flexDirection: 'column', flexGrow: 1})
@@ -28,6 +32,7 @@ const ModalContainer = styled.div({
 
 export function StudentHistory() {
   const [selected, setSelected] = useState<InstructorReservation>()
+  const cardListRef = useRef<StudentCardListControl>(null)
 
   return (
     <RootLayout>
@@ -36,13 +41,16 @@ export function StudentHistory() {
       </Header>
       <ContentLayout>
         <ListContainer>
-          <StudentCardlist onReviewClick={setSelected} selected={selected} />
+          <StudentCardlist ref={cardListRef} onReviewClick={setSelected} selected={selected} />
         </ListContainer>
         <ModalContainer>
           {selected && (
             <ReviewModal
               key={selected?.reservationId}
-              onClose={() => setSelected(undefined)}
+              onClose={(submitted: boolean) => {
+                if (submitted && selected) cardListRef.current?.addReviewed(selected.reservationId)
+                setSelected(undefined)
+              }}
               reservationId={selected?.reservationId}
               instructorId={selected?.instructorId}
             />

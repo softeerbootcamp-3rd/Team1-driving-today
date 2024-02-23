@@ -10,7 +10,7 @@ import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {apiCall} from '@/utils/api'
 
 interface ReviewModalProps {
-  onClose: () => void
+  onClose: (submitted: boolean) => void
   reservationId: number
   instructorId: number
 }
@@ -51,7 +51,7 @@ export function ReviewModal({onClose, ...props}: ReviewModalProps) {
       }),
       headers: {'Content-Type': 'application/json'},
     }).then((res) => {
-      if (res.status === 201) onClose()
+      if (res.status === 201) onClose(true)
       else setSubmitting(false)
       // todo: error handling
     })
@@ -61,7 +61,13 @@ export function ReviewModal({onClose, ...props}: ReviewModalProps) {
     <Container blockInput={submitting}>
       <HeaderContainer>
         <Card.Name>리뷰 작성</Card.Name>
-        <Icon name="close" color="black" width="1.4rem" height="1.4rem" onClick={onClose} />
+        <Icon
+          name="close"
+          color="black"
+          width="1.4rem"
+          height="1.4rem"
+          onClick={() => onClose(false)}
+        />
       </HeaderContainer>
       <Content>
         <Suspense>
