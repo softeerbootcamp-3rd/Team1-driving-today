@@ -18,7 +18,7 @@ import {Typography} from '@/components/typography'
 import {useEscapeKeydown} from '@/hooks/use-escape-keydown'
 import {sessionProvider, UserRole} from '@/utils/session'
 
-import {ImageField, TextAreaField, TextField} from './components'
+import {AcademyField, ImageField, TextAreaField, TextField} from './components'
 import {CloseButton, Dimmed, ErrorMessage, Modal, ModalContainer, PrevButton} from './styles'
 
 type Step = 'intro' | 'student' | 'instructor'
@@ -247,6 +247,13 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
           name="name"
           type="text"
         />
+        <AcademyField
+          ref={(elem) => {
+            if (elem) inputRefs.current.academyId = elem
+          }}
+          name="academyId"
+          required
+        />
         <TextField
           ref={(elem) => {
             if (elem) inputRefs.current.email = elem
@@ -407,9 +414,7 @@ async function registerInstructorAction({request}: ActionFunctionArgs) {
   const passwordConfirm = formData.get('passwordConfirm')
   const phoneNumber = formData.get('phoneNumber')
   const pricePerHour = formData.get('pricePerHour')
-  // const academyId = formData.get('academyId')
-  // TODO: 학원 검색 API 연동 후 제거
-  const academyId = 1
+  const academyId = formData.get('academyId')
   const instruction = formData.get('instruction')
   const profileImg = formData.get('profileImg') as File
 
@@ -418,6 +423,10 @@ async function registerInstructorAction({request}: ActionFunctionArgs) {
   // input 자체에서 지원하는 validation으로 부족할 경우 여기에 로직 및 메시지 추가
   if (password !== passwordConfirm) {
     errors.passwordConfirm = '비밀번호가 일치하지 않습니다'
+  }
+
+  if (academyId === null) {
+    errors.academyId = '소속 학원을 입력해 주세요'
   }
 
   if (Object.keys(errors).length) {
