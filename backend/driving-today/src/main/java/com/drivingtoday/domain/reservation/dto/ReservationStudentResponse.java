@@ -19,9 +19,10 @@ public class ReservationStudentResponse {
     private Integer reservationTime;
     private Integer trainingTime;
     private Long instructorId;
+    private Boolean isReviewed;
 
     public static ReservationStudentResponse from(Reservation reservation) {
-        return ReservationStudentResponse.builder()
+        ReservationStudentResponse response = ReservationStudentResponse.builder()
                 .reservationId(reservation.getId())
                 .instructorImage(reservation.getInstructor().getInstructorImage())
                 .instructorName(reservation.getInstructor().getName())
@@ -31,5 +32,11 @@ public class ReservationStudentResponse {
                 .trainingTime(reservation.getTrainingTime())
                 .instructorId(reservation.getInstructor().getId())
                 .build();
+        response.setIsReviewed(reservation.getReview() != null);
+        return response;
+    }
+
+    private void setIsReviewed(Boolean isReviewed) {
+        this.isReviewed = isReviewed;
     }
 }

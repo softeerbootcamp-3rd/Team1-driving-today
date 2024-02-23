@@ -1,8 +1,10 @@
 package com.drivingtoday.domain.reservation;
 
 import com.drivingtoday.domain.instructor.Instructor;
+import com.drivingtoday.domain.review.Review;
 import com.drivingtoday.domain.student.Student;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -54,8 +56,13 @@ public class Reservation {
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    @JsonIgnore
+    private Review review;
+
     @Builder
-    public Reservation(Integer reservationTime, Integer trainingTime, Student student, Instructor instructor, LocalDate reservationDate){
+    public Reservation(Integer reservationTime, Integer trainingTime, Student student, Instructor instructor, LocalDate reservationDate) {
         this.isAccepted = true;
         this.reservationTime = reservationTime;
         this.trainingTime = trainingTime;
@@ -68,5 +75,9 @@ public class Reservation {
 
     public void reject() {
         this.isAccepted = false;
+    }
+
+    public void registerReview(Review review) {
+        this.review = review;
     }
 }
