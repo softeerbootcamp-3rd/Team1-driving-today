@@ -24,15 +24,19 @@ function Cell({day, schedules, onScheduleClick, ...props}: CellProps) {
           onClick={() => onScheduleClick?.(v)}
         />
       ))}
-      {day && <CellLabel>{day}</CellLabel>}
+      {day && <CellLabel size={props.size}>{day}</CellLabel>}
     </CellContainer>
   )
 }
 
-const CellLabel = styled.p(({theme}) => ({
+interface CellLabelProps {
+  size?: 'small' | 'large'
+}
+
+const CellLabel = styled.p<CellLabelProps>(({theme, size = 'large'}) => ({
   pointerEvents: 'none',
   userSelect: 'none',
-  fontSize: '3rem',
+  fontSize: size === 'large' ? '3rem' : '1.5rem',
   color: theme.color.gray700,
   opacity: 0.8,
   position: 'absolute',

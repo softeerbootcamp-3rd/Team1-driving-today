@@ -14,10 +14,15 @@ public class ChatMessage {
     public enum MessageType {
         ENTER, TALK, QUIT
     }
+
+    public enum UserType {
+        STUDENT, INSTRUCTOR
+    }
     private String Id; // Id
     private MessageType type; // 메시지 타입
-    private String roomId; // 방번호
-    private String sender; // 메시지 보낸사람
+    private Long roomId; // 방번호
     private String message; // 메시지
+    private UserType userType;
+    private Long userId;
     private Long timestamp; // 메시지 보낸 시간
 }

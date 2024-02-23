@@ -10,11 +10,11 @@ import java.util.List;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     @Query(value = "SELECT * FROM chat_room WHERE student_id = :studentId AND instructor_id = :instructorId", nativeQuery = true)
-    ChatRoom findByStudentIdAndInstructorId(@Param("studentId") String studentId, @Param("instructorId") String instructorId);
+    ChatRoom findByStudentIdAndInstructorId(@Param("studentId") Long studentId, @Param("instructorId") Long instructorId);
 
     @Query(value = "SELECT * FROM chat_room WHERE student_id = :studentId", nativeQuery = true)
-    List<ChatRoom> findByStudentId(@Param("studentId") String studentId);
+    List<ChatRoom> findByStudentId(@Param("studentId") Long studentId);
 
     @Query(value = "SELECT * FROM chat_room WHERE instructor_id = :instructorId", nativeQuery = true)
-    List<ChatRoom> findByInstructorId(@Param("instructorId") String instructorId);
+    List<ChatRoom> findByInstructorId(@Param("instructorId") Long instructorId);
 }

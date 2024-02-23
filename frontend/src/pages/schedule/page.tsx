@@ -7,6 +7,7 @@ import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
 import {Header} from '@/components/header'
 
+import {DatePicker} from '../dashboard/components/calendar'
 import {type Coord, useCurrentPosition} from './hooks'
 import type {ScheduleForm, ScheduleFormError} from './types'
 import {validateFormData} from './utils'
@@ -70,11 +71,11 @@ export function StudentSchedule() {
         <SearchContainer>
           <SearchField className={formErrors?.reservationDate?.type === 'required' ? 'error' : ''}>
             <SearchFieldTitle>원하는 일자를 선택해 주세요</SearchFieldTitle>
-            <DateInput
-              type="date"
+            <DatePicker
+              defaultValue={new Date().toISOString()}
               value={formData.reservationDate}
-              onChange={(e) => {
-                setFormData((prev) => ({...prev, reservationDate: e.target.value}))
+              onChange={(value) => {
+                setFormData((prev) => ({...prev, reservationDate: value}))
                 setFormErrors((prev) => (prev ? {...prev, reservationDate: undefined} : prev))
               }}
             />
@@ -192,14 +193,6 @@ const SearchFieldTitle = styled.h2(({theme}) => ({
   color: theme.color.gray600,
   fontSize: '1.4rem',
   fontWeight: '500',
-}))
-
-const DateInput = styled.input(({theme}) => ({
-  border: `1px solid ${theme.color.gray900}`,
-  borderRadius: '0.8rem',
-  padding: '0.5rem',
-  width: '20rem',
-  fontSize: '1.4rem',
 }))
 
 const ErrorMessage = styled.p(({theme}) => ({
