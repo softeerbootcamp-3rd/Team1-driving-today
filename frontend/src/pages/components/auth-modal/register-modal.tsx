@@ -1,5 +1,5 @@
 import confetti from 'canvas-confetti'
-import {Dispatch, SetStateAction, useCallback, useEffect, useState} from 'react'
+import {Dispatch, SetStateAction, useCallback, useEffect, useRef, useState} from 'react'
 import {
   ActionFunctionArgs,
   Form,
@@ -27,6 +27,7 @@ function RegisterModalRoot() {
   const [userRole, setUserRole] = useState<UserRole>()
   const [step, setStep] = useState<Step>('intro')
   const error = useRouteError() as Error
+
   const navigate = useNavigate()
 
   const onDismiss = useCallback(() => {
@@ -122,6 +123,15 @@ interface RegisterFormProps {
 function StudentRegisterForm({setStep}: RegisterFormProps) {
   const errors = useActionData()
 
+  const inputRefs = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement>>({})
+
+  if (errors) {
+    Object.entries(errors).forEach(([k, v]) => {
+      inputRefs.current[k]?.setCustomValidity(v ?? '')
+      inputRefs.current[k]?.reportValidity()
+    })
+  }
+
   return (
     <>
       <Flex gap="1rem" flexDirection="column">
@@ -132,6 +142,9 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
         </Typography>
         <ImageField id="profileImg" name="profileImg" label="프로필 이미지 설정" />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.name = elem
+          }}
           label="이름"
           autoFocus
           required
@@ -140,6 +153,9 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
           type="text"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.nickname = elem
+          }}
           label="닉네임"
           required
           placeholder="사용할 닉네임을 입력해주세요"
@@ -147,6 +163,9 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
           type="text"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.email = elem
+          }}
           label="이메일"
           required
           placeholder="이메일을 입력해주세요"
@@ -154,6 +173,9 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
           type="email"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.password = elem
+          }}
           label="비밀번호"
           required
           placeholder="문자, 숫자, 기호 조합 8자 이상"
@@ -161,6 +183,9 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
           type="password"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.passwordConfirm = elem
+          }}
           label="비밀번호 확인"
           required
           placeholder="문자, 숫자, 기호 조합 8자 이상"
@@ -168,7 +193,11 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
           type="password"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.phoneNumber = elem
+          }}
           label="전화번호"
+          pattern="\d{11,11}"
           required
           placeholder="- 없이 입력해주세요"
           name="phoneNumber"
@@ -187,7 +216,15 @@ function StudentRegisterForm({setStep}: RegisterFormProps) {
 }
 
 function InstructorRegisterForm({setStep}: RegisterFormProps) {
-  const errors = useActionData()
+  const errors = useActionData() as Record<string, string>
+  const inputRefs = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement>>({})
+
+  if (errors) {
+    Object.entries(errors).forEach(([k, v]) => {
+      inputRefs.current[k]?.setCustomValidity(v ?? '')
+      inputRefs.current[k]?.reportValidity()
+    })
+  }
 
   // TODO: 학원 검색 API 연동
   return (
@@ -200,6 +237,9 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
         </Typography>
         <ImageField id="profileImg" name="profileImg" label="프로필 이미지 설정" />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.name = elem
+          }}
           label="이름"
           autoFocus
           required
@@ -208,6 +248,9 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
           type="text"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.email = elem
+          }}
           label="이메일"
           required
           placeholder="이메일을 입력해주세요"
@@ -215,6 +258,9 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
           type="email"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.password = elem
+          }}
           label="비밀번호"
           required
           placeholder="문자, 숫자, 기호 조합 8자 이상"
@@ -222,6 +268,9 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
           type="password"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.passwordConfirm = elem
+          }}
           label="비밀번호 확인"
           required
           placeholder="문자, 숫자, 기호 조합 8자 이상"
@@ -229,13 +278,20 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
           type="password"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.phoneNumber = elem
+          }}
           label="전화번호"
           required
           placeholder="- 없이 입력해주세요"
+          pattern="\d{11,11}"
           name="phoneNumber"
           type="text"
         />
         <TextField
+          ref={(elem) => {
+            if (elem) inputRefs.current.pricePerHour = elem
+          }}
           label="시급"
           required
           min="0"
@@ -244,10 +300,13 @@ function InstructorRegisterForm({setStep}: RegisterFormProps) {
           type="number"
         />
         <TextAreaField
+          ref={(elem) => {
+            if (elem) inputRefs.current.detail = elem
+          }}
           label="소개 작성"
           required
           placeholder="소개를 작성해주세요"
-          name="pricePerHour"
+          name="detail"
         />
         <Button type="submit" style={{marginTop: '2rem', height: '4rem'}}>
           완료
@@ -326,6 +385,7 @@ export const RegisterModal = Object.assign(RegisterModalRoot, {
   Success: RegisterModalSuccess,
 })
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function registerAction(actionArg: ActionFunctionArgs) {
   const url = new URL(actionArg.request.url)
   const userRole = new URLSearchParams(url.search).get('userRole') as UserRole
@@ -338,6 +398,7 @@ export async function registerAction(actionArg: ActionFunctionArgs) {
     default:
   }
 }
+
 async function registerInstructorAction({request}: ActionFunctionArgs) {
   const formData = await request.formData()
   const name = formData.get('name')
@@ -352,18 +413,17 @@ async function registerInstructorAction({request}: ActionFunctionArgs) {
   const instruction = formData.get('instruction')
   const profileImg = formData.get('profileImg') as File
 
-  const errors = {} as Record<string, string>
+  const errors: Record<string, string> = {}
 
-  // TODO: validate error
-  if (!email) errors.email = ''
-  if (!password) errors.password = ''
-  if (!passwordConfirm) errors.passwordConfirm = ''
-  if (!phoneNumber) errors.phoneNumber = ''
-  if (password !== passwordConfirm) errors.password = ''
+  // input 자체에서 지원하는 validation으로 부족할 경우 여기에 로직 및 메시지 추가
+  if (password !== passwordConfirm) {
+    errors.passwordConfirm = '비밀번호가 일치하지 않습니다'
+  }
 
   if (Object.keys(errors).length) {
     return errors
   }
+
   await sessionProvider.signup({
     role: 'INSTRUCTOR',
     registerRequest: {
@@ -390,14 +450,12 @@ async function registerStudentAction({request}: ActionFunctionArgs) {
   const phoneNumber = formData.get('phoneNumber')
   const profileImg = formData.get('profileImg') as File
 
-  const errors = {} as Record<string, string>
+  const errors: Record<string, string> = {}
 
-  // TODO: validate error
-  if (!email) errors.email = ''
-  if (!password) errors.password = ''
-  if (!passwordConfirm) errors.passwordConfirm = ''
-  if (!phoneNumber) errors.phoneNumber = ''
-  if (password !== passwordConfirm) errors.password = ''
+  // input 자체에서 지원하는 validation으로 부족할 경우 여기에 로직 및 메시지 추가
+  if (password !== passwordConfirm) {
+    errors.passwordConfirm = '비밀번호가 일치하지 않습니다'
+  }
 
   if (Object.keys(errors).length) {
     return errors

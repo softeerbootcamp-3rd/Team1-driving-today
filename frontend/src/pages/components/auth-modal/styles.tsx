@@ -32,6 +32,13 @@ export const Input = styled.input(({theme}) => ({
   fontSize: '1.6rem',
   padding: '1rem 1.6rem',
   width: '100%',
+
+  ':invalid': {
+    border: `1px solid ${theme.color.warning}`,
+  },
+  ':placeholder-shown': {
+    border: `1px solid ${theme.color.gray300}`,
+  },
 }))
 
 export const ErrorMessage = styled.p(({theme}) => ({
@@ -64,4 +71,10 @@ export const TextArea = styled.textarea(({theme}) => ({
   padding: '1rem',
   width: '100%',
   fontSize: '1.4rem',
+  ':invalid': {
+    border: `1px solid ${theme.color.warning}`,
+  },
+  ':placeholder-shown': {
+    border: `1px solid ${theme.color.gray300}`,
+  },
 }))
