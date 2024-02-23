@@ -8,7 +8,7 @@ import {
   useRouteLoaderData,
 } from 'react-router-dom'
 
-import {ChatModalContainer, LoginModal, registerAction, RegisterModal} from './pages/components'
+import {LoginModal, registerAction, RegisterModal} from './pages/components'
 import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
@@ -26,7 +26,6 @@ export function App() {
   return (
     <>
       <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
-      <ChatModalContainer />
     </>
   )
 }
