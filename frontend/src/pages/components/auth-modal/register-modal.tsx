@@ -76,13 +76,10 @@ function RegisterModalRoot() {
             >
               다음
             </Button>
-            <Typography
-              size="1.4rem"
-              weight="normar"
-              color="gray900"
-              style={{display: 'flex', gap: '1rem', justifyContent: 'center'}}
-            >
-              이미 계정이 있으신가요?
+            <Flex gap="1rem" justifyContent="center">
+              <Typography size="1.4rem" weight="normar" color="gray900">
+                이미 계정이 있으신가요?
+              </Typography>
               <Typography
                 size="1.4rem"
                 weight="normar"
@@ -93,7 +90,7 @@ function RegisterModalRoot() {
                   로그인하기
                 </Link>
               </Typography>
-            </Typography>
+            </Flex>
           </>
         )}
 

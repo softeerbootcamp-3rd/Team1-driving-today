@@ -78,13 +78,10 @@ export function LoginModal() {
             로그인
           </Button>
         </Form>
-        <Typography
-          size="1.4rem"
-          weight="normar"
-          color="gray900"
-          style={{display: 'flex', gap: '1rem', justifyContent: 'center'}}
-        >
-          아직 계정이 없나요?
+        <Flex gap="1rem" justifyContent="center">
+          <Typography size="1.4rem" weight="normar" color="gray900">
+            아직 계정이 없나요?
+          </Typography>
           <Typography
             size="1.4rem"
             weight="normar"
@@ -95,7 +92,7 @@ export function LoginModal() {
               회원가입
             </Link>
           </Typography>
-        </Typography>
+        </Flex>
       </Modal>
     </ModalContainer>
   )

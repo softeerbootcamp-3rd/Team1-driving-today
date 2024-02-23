@@ -9,6 +9,7 @@ import {Header} from '@/components/header'
 import {Loading} from '@/components/loading'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {useChatModal} from '@/providers'
 import {apiCall} from '@/utils/api'
 import {objectToQS} from '@/utils/object-to-qs'
 
@@ -56,6 +57,7 @@ export function SearchPage() {
     },
   })
   const intersectedRef = useIntersectionObserver(() => fetchNextPage())
+  const chatModal = useChatModal()
 
   return (
     <>
@@ -100,6 +102,9 @@ export function SearchPage() {
               }}
               onMouseOut={() => {
                 setHoverInstructorId(null)
+              }}
+              onContact={() => {
+                chatModal.handleOpen({content: 'ROOM', id: instructor.instructorId})
               }}
               selected={instructor.instructorId === selectedId}
               onClick={() => {

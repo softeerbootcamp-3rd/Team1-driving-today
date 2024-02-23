@@ -11,6 +11,7 @@ import {Rating} from '@/components/rating'
 import {useApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {useChatModal} from '@/providers'
 import {apiCall} from '@/utils/api'
 import {objectToQS} from '@/utils/object-to-qs'
 
@@ -113,7 +114,7 @@ const PAGE_SIZE = 5
 function InstructorDetail({id}: {id: number}) {
   // TODO: error handling
   const instructorDetail = useApiCall<InstructorDetailResponse>(`/instructors/${id}`)
-
+  const chatModal = useChatModal()
   // TODO: error handling
   const {
     data: reviews,
@@ -169,8 +170,16 @@ function InstructorDetail({id}: {id: number}) {
           </Typograpy>
         </Flex>
         <Actions>
-          <Button>문의</Button>
           <Button
+            type="button"
+            onClick={() => {
+              chatModal.handleOpen({content: 'ROOM', id: id})
+            }}
+          >
+            문의
+          </Button>
+          <Button
+            type="button"
             onClick={() => {
               const searchParams = objectToQS({
                 instructorId: id,
