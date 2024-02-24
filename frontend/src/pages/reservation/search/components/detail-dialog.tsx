@@ -164,7 +164,7 @@ function InstructorDetail({id}: {id: number}) {
         <Flex alignItems="center">
           <Icon name="building" width="2rem" height="2rem" color="gray600" />
           <Typograpy as="span" color="gray600" weight="500" size="1.4rem">
-            {instructorDetail.data?.academyInfo.name}
+            {instructorDetail.data?.academyInfo.name}운전전문학원
           </Typograpy>
         </Flex>
         <Actions>

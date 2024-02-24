@@ -131,7 +131,7 @@ function ReservationResultCard({
       <ContentContainer>
         <Name>{instructorName}</Name>
         <IconLabel icon="building" color="gray500">
-          {academyName}
+          {academyName}운전전문학원
         </IconLabel>
         <MultipleDescriptionContainer>
           <IconLabel icon="payments" color="gray500">
@@ -188,7 +188,7 @@ const StudentHistoryCard = forwardRef<HTMLDivElement, StudentHistoryProps>(
         <ContentContainer>
           <Name>{instructorName}</Name>
           <IconLabel icon="building" color="gray500">
-            {academyName}
+            {academyName}운전전문학원
           </IconLabel>
           <MultipleDescriptionContainer>
             <Label color="gray600">{dateStr}</Label>
