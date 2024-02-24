@@ -12,7 +12,7 @@ import {FirstStage, SecondStage, ThirdStage} from '.'
 export function Landing() {
   return (
     <>
-      <ScrollAnimationProvider max={19000} loop>
+      <ScrollAnimationProvider max={18600} start={50} loop>
         <Stages />
       </ScrollAnimationProvider>
     </>
@@ -89,6 +89,7 @@ const CloudsTransitionBackground = styled.div`
   width: 100vw;
   height: 120vh;
   background-color: white;
+  background: linear-gradient(180deg, rgba(119, 205, 255, 1) 0%, rgba(175, 175, 175, 1) 100%);
   mask: radial-gradient(5.71vh at 50% 7.75vh, #000 99%, #0000 101%) calc(50% - 10vh) 0/20vh 51%
       repeat-x,
     radial-gradient(5.71vh at 50% -2.75vh, #0000 99%, #000 101%) 50% 5vh/20vh calc(51% - 5vh)

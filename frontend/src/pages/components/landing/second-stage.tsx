@@ -18,7 +18,7 @@ export function SecondStage({offset}: AnimationProps) {
   const carAnimations: ScrollAnimation[] = [
     {type: 'translateY', start: 0, end: 50, startFrame: 0, endFrame: 1000},
     {type: 'translateX', start: 0, end: -18, startFrame: 0, endFrame: 1000},
-    {type: 'translateX', start: -15, end: 20, startFrame: 2000, endFrame: 3000},
+    {type: 'translateX', start: -18, end: 20, startFrame: 2000, endFrame: 3000},
     {type: 'translateX', start: 20, end: -18, startFrame: 4000, endFrame: 5000},
     {type: 'translateX', start: -18, end: 0, startFrame: 6000, endFrame: 8000},
     {type: 'translateY', start: 50, end: 150, startFrame: 6000, endFrame: 8000},
@@ -90,7 +90,7 @@ const Car = forwardRef<HTMLDivElement>(function Car(_, ref) {
 const Background = styled.div({
   width: '100%',
   height: '100%',
-  backgroundColor: 'gray',
+  background: 'linear-gradient(48deg, rgba(61,63,71,1) 0%, rgba(92,108,126,1) 100%)',
 })
 
 const wiggle = keyframes`
