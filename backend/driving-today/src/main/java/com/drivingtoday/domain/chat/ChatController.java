@@ -67,8 +67,6 @@ public class ChatController {
         Instructor instructor = instructorFindService.findById(instructorId);
 
         Student student = studentFindService.findById(authentication.getId());
-
-        log.info("want to know whether to create : instructorId : " + instructorId + " studentId : " + authentication.getId());
         ChatRoom room = chatService.findByStudentIdAndInstructorId(authentication.getId(), instructorId);
         ChatRoomInfo chatRoomInfo;
         ChatRoomInfoDetail chatRoomInfoDetail;

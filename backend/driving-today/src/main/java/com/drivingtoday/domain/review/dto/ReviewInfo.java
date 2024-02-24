@@ -4,7 +4,6 @@ import com.drivingtoday.domain.review.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
 @Getter

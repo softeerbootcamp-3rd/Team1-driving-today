@@ -3,7 +3,6 @@ package com.drivingtoday.domain.review.dto;
 import com.drivingtoday.domain.review.Review;
 import lombok.Builder;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
 @Getter
