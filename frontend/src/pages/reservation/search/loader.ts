@@ -25,5 +25,5 @@ export function searchPageLoader({request}: LoaderFunctionArgs) {
   ) {
     return {trainingTime, reservationTime, reservationDate, longitude, latitude}
   }
-  return redirect('/schedule')
+  return redirect('/reservation/')
 }

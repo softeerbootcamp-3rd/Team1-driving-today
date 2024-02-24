@@ -11,7 +11,7 @@ export function SearchPreview() {
   const reservationDate = searchParams.get('reservationDate') as string
 
   return (
-    <StyledLink to="/schedule">
+    <StyledLink to="/reservation">
       <div>
         <Icon name="date" color="primary" width="1.5rem" height="1.5rem" />
         <span>{new Date(reservationDate).toLocaleDateString('ko-KR')}</span>

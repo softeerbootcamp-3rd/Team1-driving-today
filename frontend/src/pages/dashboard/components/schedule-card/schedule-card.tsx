@@ -98,7 +98,7 @@ function StudentScheduleCardContent() {
           <Icon name="car" color="black" width="2.8rem" height="2.8rem" />
           <BoldLabel>예정된 연수가 없어요</BoldLabel>
           <Label>지금 바로 운전 연수를 예약해보세요</Label>
-          <Button onClick={() => navigate('/search')}>운전 연수 예약하기</Button>
+          <Button onClick={() => navigate('/reservation')}>운전 연수 예약하기</Button>
         </>
       )}
       <Divider />
