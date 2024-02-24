@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react'
 
-import {apiCall, getApiCache, invalidateApiCache} from '@/utils/api'
+import {apiCall, getApiCache, queueApiCacheInvalidation} from '@/utils/api'
 
 export interface UseApiResult<T> {
   data?: T
@@ -91,7 +91,7 @@ export function use<T>(promise: ExtendedPromise<T>) {
 }
 
 interface UseSuspendedApiCallResult<T> {
-  data: T | undefined
+  data: T | unknown
 }
 
 export function useSuspendedApiCall<T>(
@@ -101,8 +101,8 @@ export function useSuspendedApiCall<T>(
   // TODO: implement proper cache management
   useEffect(() => {
     // invalidate cache every request
-    return () => invalidateApiCache(path)
+    return () => queueApiCacheInvalidation(path)
   }, [path])
   const promise = getApiCache(path, init)
-  return {data: use(promise)}
+  return {data: use<unknown>(promise)}
 }
