@@ -22,7 +22,7 @@ public class ReviewFindService {
         Slice<Review> reviews = reviewRepository.findAllByInstructorId(instructorId,
                 PageRequest.of(pageNumber - 1, pageSize,
                         Sort.by("createdAt").descending()));
-        log.info("slice : {}", reviews.getContent());
+
         return new SliceResponse<>(reviews);
     }
 }

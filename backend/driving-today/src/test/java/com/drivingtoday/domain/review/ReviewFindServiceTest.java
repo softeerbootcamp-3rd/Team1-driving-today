@@ -1,7 +1,5 @@
 package com.drivingtoday.domain.review;
 
-import com.drivingtoday.domain.review.dto.ReviewFindRequest;
-import com.drivingtoday.domain.review.dto.ReviewInfo;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
