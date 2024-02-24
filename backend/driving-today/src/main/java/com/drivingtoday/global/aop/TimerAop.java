@@ -3,11 +3,15 @@ package com.drivingtoday.global.aop;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 @Slf4j
+@Aspect
+@Component
 public class TimerAop {
     @Pointcut("@annotation(com.drivingtoday.global.aop.Timer)")//Timer 어노테이션이 붙은 메서드에만 적용
     private void timer(){}
