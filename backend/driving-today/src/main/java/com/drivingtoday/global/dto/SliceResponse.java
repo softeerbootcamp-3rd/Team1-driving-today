@@ -2,11 +2,13 @@ package com.drivingtoday.global.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class SliceResponse<T> {
 
