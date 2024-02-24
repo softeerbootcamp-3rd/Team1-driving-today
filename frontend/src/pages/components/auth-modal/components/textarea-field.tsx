@@ -11,7 +11,7 @@ export interface TextAreaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaE
 }
 
 export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
-  function TextAreaField({label, ...textAreaProps}: TextAreaFieldProps, ref) {
+  function TextAreaField({label, ...textAreaProps}, ref) {
     return (
       <Flex as="label" gap="0.5rem" flexDirection="column">
         <Label

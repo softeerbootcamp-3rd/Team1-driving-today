@@ -35,7 +35,6 @@ export const AcademyField = forwardRef<HTMLInputElement, InputHTMLAttributes<HTM
 
     useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
 
-    // debounce
     useEffect(() => {
       if (!inputRef.current || !focus) return
       const inputElem = inputRef.current
