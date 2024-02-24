@@ -3,7 +3,6 @@ import {HTMLAttributes, Suspense} from 'react'
 
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
-import {Loading} from '@/components/loading'
 import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {ChatMessageHistory, ChatRoomInfo} from '@/hooks/use-chat-socket'
@@ -30,7 +29,7 @@ export function ChatHome({onCloseClick}: {onCloseClick: () => void}) {
           onClick={onCloseClick}
         />
       </Flex>
-      <Suspense fallback={<Loading />}>
+      <Suspense>
         {role === 'STUDENT' ? <StudentChatHomeContent /> : <InstructorChatHomeContent />}
       </Suspense>
     </Container>
@@ -67,7 +66,7 @@ interface ChatRoomInfoCardProps extends HTMLAttributes<HTMLDivElement> {
 function ChatRoomInstructorInfoCard({info, ...props}: ChatRoomInfoCardProps) {
   return (
     <CardContainer {...props}>
-      <Suspense fallback={<Loading />}>
+      <Suspense>
         <ChatRoomInstructorInfoCardContent info={info} />
       </Suspense>
     </CardContainer>
@@ -124,7 +123,7 @@ function InstructorChatHomeContent() {
 function ChatRoomStudentInfoCard({info, ...props}: ChatRoomInfoCardProps) {
   return (
     <CardContainer {...props}>
-      <Suspense fallback={<Loading />}>
+      <Suspense>
         <ChatRoomStudentInfoCardContent info={info} />
       </Suspense>
     </CardContainer>
