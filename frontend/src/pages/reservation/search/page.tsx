@@ -79,7 +79,7 @@ export function SearchPage() {
       <SearchResultContainer>
         <Header px="2rem">
           <div style={{padding: '2rem 0'}}>
-            <Header.BackButton onClick={() => navigate('/reservation/schedule')} />
+            <Header.BackButton onClick={() => navigate('/reservation/')} />
           </div>
         </Header>
 

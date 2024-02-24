@@ -18,11 +18,11 @@ import {LandingPage} from './pages/page'
 import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
 import {PurchaseSuccessPage} from './pages/purchase/success/page'
+import {StudentReservation} from './pages/reservation/page'
 import {StudentSchedule} from './pages/reservation/schedule/page'
 import {searchPageLoader} from './pages/reservation/search/loader'
 import {SearchPage} from './pages/reservation/search/page'
 import {sessionProvider, UserRole} from './utils/session'
-import {StudentReservation} from './pages/reservation/page'
 
 export function App() {
   return (
