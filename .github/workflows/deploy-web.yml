@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - dev
 
 defaults:
   run:
@@ -18,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: "main"
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
