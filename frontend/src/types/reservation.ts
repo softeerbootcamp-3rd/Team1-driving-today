@@ -4,6 +4,7 @@ export interface InstructorReservation {
   instructorImage: string
   instructorName: string
   academyName: string
+  isReviewed: boolean
   reservationDate: string
   reservationTime: number
   trainingTime: number
