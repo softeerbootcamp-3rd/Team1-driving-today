@@ -25,7 +25,7 @@ export function useCurrentPosition({defaultPosition}: {defaultPosition: Coord}) 
   return coord
 }
 
-function getCurrentPosition(options?: PositionOptions): Promise<GeolocationPosition> {
+export function getCurrentPosition(options?: PositionOptions): Promise<GeolocationPosition> {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject, options)
   })

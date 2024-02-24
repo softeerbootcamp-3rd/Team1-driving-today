@@ -39,5 +39,5 @@ export function purchaseLoader({request}: LoaderFunctionArgs) {
       pricePerHour: Number(pricePerHour),
     }
   }
-  return redirect('/schedule')
+  return redirect('/reservation')
 }

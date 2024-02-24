@@ -102,7 +102,7 @@ function ReviewModalContent({
         <Card.Label color="gray600">{`시간당 ${data?.instructorInfo.pricePerHour} 원`}</Card.Label>
       </Card.MultipleDescriptionContainer>
       <Card.IconLabel icon="building" color="gray600">
-        {data?.academyInfo.name}
+        {data?.academyInfo.name}운전전문학원
       </Card.IconLabel>
       <Divider flexItem={true} />
       <Rating defaultValue={5} onValueChange={setRating} readOnly={submitting} />

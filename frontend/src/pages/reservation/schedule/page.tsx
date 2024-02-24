@@ -1,22 +1,17 @@
 import styled from '@emotion/styled'
 import {useState} from 'react'
-import {Map} from 'react-kakao-maps-sdk'
 import {useNavigate} from 'react-router-dom'
 
 import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
 import {Header} from '@/components/header'
+import {useMapCoord} from '@/providers/map-context'
 
-import {DatePicker} from '../dashboard/components/calendar'
-import {type Coord, useCurrentPosition} from './hooks'
+import {DatePicker} from '../../dashboard/components/calendar'
+import {type Coord} from './hooks'
 import type {ScheduleForm, ScheduleFormError} from './types'
 import {validateFormData} from './utils'
 
-// NOTE: 기본위치 - 서울시청 좌표
-const defaultPosition = {
-  latitude: 37.566,
-  longitude: 126.977,
-}
 const initialFormData: ScheduleForm = {
   trainingTime: null,
   reservationTime: null,
@@ -35,7 +30,7 @@ function searchPathFactory({coord, formData}: {coord: Coord; formData: ScheduleF
     .map(([key, value]) => `${key}=${value}`)
     .join('&')
 
-  return `/search?${searchParam}`
+  return `/reservation/search?${searchParam}`
 }
 
 function getInitialFormDataFrom() {
@@ -45,9 +40,9 @@ function getInitialFormDataFrom() {
 
 export function StudentSchedule() {
   const navigate = useNavigate()
+  const coord = useMapCoord()
   const [formData, setFormData] = useState<ScheduleForm>(getInitialFormDataFrom)
   const [formErrors, setFormErrors] = useState<ScheduleFormError>()
-  const coord = useCurrentPosition({defaultPosition})
 
   const handleSubmit = () => {
     const errors = validateFormData(formData)
@@ -60,7 +55,7 @@ export function StudentSchedule() {
 
   return (
     <>
-      <Box>
+      <Box style={{height: '100%', overflowY: 'auto', paddingBottom: '1rem'}}>
         <Header px="2rem">
           <div>
             <Header.BackButton />
@@ -137,19 +132,6 @@ export function StudentSchedule() {
           <Button onClick={handleSubmit}>다음</Button>
         </SearchContainer>
       </Box>
-
-      <Map
-        id="map"
-        center={{
-          lat: coord.latitude,
-          lng: coord.longitude,
-        }}
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-        level={3}
-      />
     </>
   )
 }
