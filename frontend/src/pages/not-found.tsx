@@ -10,20 +10,17 @@ export function NotFound() {
   const handleMouseMove = (event: MouseEvent) => {
     const textElement = ref.current
     if (!textElement) return
-    // Calculate relative cursor position within the text element's bounding box
+
     const boundingRect = textElement.getBoundingClientRect()
     const relativeX = event.clientX - boundingRect.left
     const relativeY = event.clientY - boundingRect.top
 
-    // Calculate normalized cursor position (0-1)
     const normalizedX = relativeX / boundingRect.width
     const normalizedY = relativeY / boundingRect.height
 
-    // Adjust shadow offset based on normalized position
-    const shadowOffsetX = (normalizedX - 0.5) * 25 // Range: -25 to 25
-    const shadowOffsetY = (normalizedY - 0.5) * 25 // Range: -25 to 25
+    const shadowOffsetX = (normalizedX - 0.5) * 25
+    const shadowOffsetY = (normalizedY - 0.5) * 25
 
-    // Update text shadow style with calculated offsets
     textElement.style.textShadow = `
     1px 1px 1px #052447,
     2px 2px 1px #052447,
