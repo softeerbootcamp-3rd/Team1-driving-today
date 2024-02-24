@@ -7,7 +7,6 @@ import {sessionProvider} from '@/utils/session'
 import {Landing} from './components/landing'
 
 export function LandingPage() {
-  console.log(sessionProvider)
   return (
     <>
       <Landing />
