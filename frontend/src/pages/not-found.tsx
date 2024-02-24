@@ -44,8 +44,10 @@ export function NotFound() {
   return (
     <NotFoundContainer>
       <ErrorMessage ref={ref}>404</ErrorMessage>
-      <Typography size="2rem" color="gray900" weight="normal">
-        잘못된 경로입니다!
+      <Typography size="2rem" color="gray900" weight="normal" style={{textAlign: 'center'}}>
+        요청하신 페이지를 찾을 수 없습니다.
+        <br />
+        입력하신 주소가 정확한지 다시 한번 확인해주세요.
       </Typography>
       <BackHomeButton to="/" replace>
         홈으로 돌아가기
