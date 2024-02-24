@@ -18,8 +18,8 @@ export function NotFound() {
     const normalizedX = relativeX / boundingRect.width
     const normalizedY = relativeY / boundingRect.height
 
-    const shadowOffsetX = (normalizedX - 0.5) * 25
-    const shadowOffsetY = (normalizedY - 0.5) * 25
+    const shadowOffsetX = (normalizedX - 0.5) * 5
+    const shadowOffsetY = (normalizedY - 0.5) * 5
 
     textElement.style.textShadow = `
     1px 1px 1px #052447,
@@ -56,8 +56,9 @@ export function NotFound() {
   )
 }
 
-const NotFoundContainer = styled.div(() => ({
+const NotFoundContainer = styled.div(({theme}) => ({
   height: '100%',
+  backgroundColor: theme.color.gray200,
   display: 'flex',
   flexDirection: 'column',
   gap: '1rem',
@@ -66,7 +67,7 @@ const NotFoundContainer = styled.div(() => ({
 }))
 
 const ErrorMessage = styled.h1(({theme}) => ({
-  fontSize: '15rem',
+  fontSize: '9rem',
   color: theme.color.primary,
   textAlign: 'center',
   textShadow: `1px 1px 1px #052447,    
@@ -83,7 +84,7 @@ const ErrorMessage = styled.h1(({theme}) => ({
 const BackHomeButton = styled(Link)(({theme}) => ({
   display: 'inline-block',
   border: `2px solid ${theme.color.gray900}`,
-  color: '#fff',
+  color: theme.color.gray200,
   textTransform: 'uppercase',
   fontWeight: 600,
   padding: '0.75rem 1rem 0.6rem',

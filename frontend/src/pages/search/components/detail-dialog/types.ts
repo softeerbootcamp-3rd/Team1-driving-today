@@ -17,7 +17,7 @@ export interface InstructorDetailResponse {
 }
 
 export type ReviewResponseItem = {
-  id: number
+  reviewId: number
   contents: string
   rating: number
   createdAt: string

@@ -140,7 +140,7 @@ function InstructorReviews({instructorId}: {instructorId: number}) {
       </Typography>
       <Flex as="ul" gap="2.5rem" flexDirection="column" style={{paddingBottom: '4rem'}}>
         {reviews?.map((review) => (
-          <Flex as="li" flexDirection="column" gap="1.5rem" key={review.id}>
+          <Flex as="li" flexDirection="column" gap="1.5rem" key={review.reviewId}>
             <Flex gap="1rem" alignItems="center">
               <Avartar src={review.reviewerImage} width={30} height={30} />
               <Typography color="gray900" size="1.4rem" weight="bold">
