@@ -3,7 +3,6 @@ import {forwardRef, Suspense, useImperativeHandle, useState} from 'react'
 
 import {Card} from '@/components/card'
 import {Loading} from '@/components/loading'
-import {Skeleton} from '@/components/skeleton'
 import {Tab} from '@/components/tab'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
