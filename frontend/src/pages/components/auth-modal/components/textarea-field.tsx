@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import {forwardRef, TextareaHTMLAttributes, useState} from 'react'
+import {forwardRef, TextareaHTMLAttributes} from 'react'
 
 import {Flex} from '@/components/flex'
 import {Typography} from '@/components/typography'

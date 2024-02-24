@@ -9,7 +9,6 @@ import {Header} from '@/components/header'
 import {Loading} from '@/components/loading'
 import {useResetableInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useResettableIntersectionObserver} from '@/hooks/use-intersection-observer'
-import {DetailDialog} from '@/pages/search/components/detail-dialog'
 import {useChatModal} from '@/providers'
 import {
   InstructorsResponseItem,
@@ -24,7 +23,7 @@ import {apiCall} from '@/utils/api'
 import {objectToQS} from '@/utils/object-to-qs'
 
 import {Coord} from '../schedule/hooks'
-import {SearchPreview} from './components'
+import {DetailDialog, SearchPreview} from './components'
 import type {LoaderData} from './types'
 
 const PAGE_SIZE = 10

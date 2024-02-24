@@ -1,4 +1,4 @@
-import {RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 
 export interface UseInfiniteFetchArg<TDataArray, TPageParam> {
   queryFn: ({pageParam}: {pageParam: TPageParam}) => Promise<TDataArray>

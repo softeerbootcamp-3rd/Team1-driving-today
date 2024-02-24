@@ -12,11 +12,11 @@ import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {LoaderData} from '@/pages/reservation/search/types'
 import {useChatModal} from '@/providers'
 import {apiCall} from '@/utils/api'
 import {objectToQS} from '@/utils/object-to-qs'
 
-import type {LoaderData} from '../../types'
 import type {InstructorDetailResponse, ReviewResponse, ReviewResponseItem} from './types'
 
 const PAGE_SIZE = 10

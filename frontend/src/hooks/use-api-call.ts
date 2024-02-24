@@ -91,7 +91,7 @@ export function use<T>(promise: ExtendedPromise<T>) {
 }
 
 interface UseSuspendedApiCallResult<T> {
-  data: T | unknown
+  data: T
 }
 
 export function useSuspendedApiCall<T>(
@@ -104,5 +104,8 @@ export function useSuspendedApiCall<T>(
     return () => queueApiCacheInvalidation(path)
   }, [path])
   const promise = getApiCache(path, init)
-  return {data: use<unknown>(promise)}
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return {data: use(promise)}
 }
