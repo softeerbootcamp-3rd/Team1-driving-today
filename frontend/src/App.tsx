@@ -104,7 +104,7 @@ const router = createBrowserRouter(
 
 async function checkAuthLoader() {
   if (!sessionProvider.session) {
-    return redirect('/login')
+    return redirect('/')
   }
   return sessionProvider.session.role
 }

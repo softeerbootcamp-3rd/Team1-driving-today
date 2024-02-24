@@ -11,6 +11,7 @@ import {AnimationProps, GeneralContainer, PositionProps} from '.'
 export function FirstStage({offset}: AnimationProps) {
   return (
     <>
+      <LogoBackground />
       <Dashboard offset={offset} />
       <Logo offset={offset} />
     </>
@@ -20,28 +21,35 @@ export function FirstStage({offset}: AnimationProps) {
 function Logo({offset}: AnimationProps) {
   const wheelRef = useRef<HTMLDivElement>(null)
   const logoRef = useRef<HTMLDivElement>(null)
+  const introRef = useRef<HTMLParagraphElement>(null)
 
   const wheelAnimations: ScrollAnimation[] = [
-    {type: 'translateX', startFrame: 0, endFrame: 3000, start: 0, end: -15},
-    {type: 'translateY', startFrame: 0, endFrame: 3000, start: 0, end: 40},
-    {type: 'scale', startFrame: 0, endFrame: 3000, start: 1, end: 3},
+    {type: 'translateX', startFrame: 100, endFrame: 3000, start: 0, end: -15},
+    {type: 'translateY', startFrame: 100, endFrame: 3000, start: 0, end: 40},
+    {type: 'scale', startFrame: 100, endFrame: 3000, start: 1, end: 3},
   ]
 
   const logoAnimations: ScrollAnimation[] = [
-    {type: 'translateX', startFrame: 0, endFrame: 2000, start: 0, end: 100},
-    {type: 'scale', startFrame: 0, endFrame: 1000, start: 1, end: 0.8},
+    {type: 'translateX', startFrame: 100, endFrame: 2000, start: 0, end: 100},
+    {type: 'scale', startFrame: 100, endFrame: 1000, start: 1, end: 0.8},
+  ]
+
+  const introductionAnimations: ScrollAnimation[] = [
+    {type: 'translateY', startFrame: 0, endFrame: 1000, start: 0, end: 100},
   ]
 
   useScrollAnimationFrame('stage 1 logo', (realFrame) => {
     const frame = realFrame - (offset ?? 0)
     animateElement(frame, wheelAnimations, [wheelRef.current])
     animateElement(frame, logoAnimations, [logoRef.current])
+    animateElement(frame, introductionAnimations, [introRef.current])
   })
 
   return (
     <>
       <WheelImg ref={wheelRef} />
       <LogoImg ref={logoRef} />
+      <Introduction ref={introRef}>아래로 스크롤 해보세요!</Introduction>
     </>
   )
 }
@@ -79,8 +87,8 @@ function Dashboard({offset}: AnimationProps) {
   ]
 
   const firstMessageAnimations: ScrollAnimation[] = [
-    {type: 'translateY', start: 0, end: -100, startFrame: 7000, endFrame: 9000},
-    {type: 'scale', start: 1, end: 1.5, startFrame: 8000, endFrame: 10000},
+    {type: 'translateY', start: 0, end: -100, startFrame: 6500, endFrame: 8500},
+    {type: 'scale', start: 1, end: 2, startFrame: 8000, endFrame: 10000},
   ]
 
   useScrollAnimationFrame('stage 1 dashboard', (realFrame) => {
@@ -147,14 +155,14 @@ function Dashboard({offset}: AnimationProps) {
   )
 }
 
-const Message = styled.div(({theme}) => ({
+const Message = styled.div({
   fontSize: '7vw',
   width: '100%',
   textAlign: 'center',
   fontWeight: '700',
   height: 'auto',
-  color: theme.color.gray600,
-}))
+  color: '#ffa600',
+})
 
 const wiggle = keyframes`
   0%{
@@ -255,14 +263,14 @@ const DashBoardDiv = styled.div({
 })
 
 const BackgroundDiv = styled.div({
-  backgroundColor: '#052447',
+  background: 'linear-gradient(180deg, rgba(65,126,187,1) 0%, rgba(5,36,71,1) 100%)',
   width: '100vw',
   height: '100vh',
   position: 'absolute',
   top: '100vh',
 })
 
-export const WheelImg = styled.div(({theme}) => ({
+const WheelImg = styled.div(({theme}) => ({
   position: 'absolute',
   left: 'calc(50vw - 18rem)',
   top: 'calc(50vh - 8rem)',
@@ -272,9 +280,10 @@ export const WheelImg = styled.div(({theme}) => ({
   maskRepeat: 'no-repeat',
   maskSize: 'contain',
   backgroundColor: theme.color.primary,
+  animation: `${fadein} 1s ease`,
 }))
 
-export const LogoImg = styled.div(({theme}) => ({
+const LogoImg = styled.div(({theme}) => ({
   position: 'absolute',
   left: 'calc(50vw - 3rem)',
   top: 'calc(50vh - 1rem)',
@@ -284,4 +293,45 @@ export const LogoImg = styled.div(({theme}) => ({
   maskRepeat: 'no-repeat',
   maskSize: 'contain',
   backgroundColor: theme.color.primary,
+  animation: `${fadein} 1s ease`,
+}))
+
+const fadein = keyframes`
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+`
+
+const blink = keyframes`
+  0%{
+    opacity: 0.5;
+  }
+  50%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0.5;
+  }
+`
+
+const LogoBackground = styled.div({
+  background:
+    'linear-gradient(48deg, rgba(255,255,255,1) 10%, rgba(117,181,255,1) 71%, rgba(25,117,223,1) 100%);',
+  width: '100%',
+  height: '100%',
+
+  animation: `${fadein} 5s ease`,
+})
+
+const Introduction = styled.p(({theme}) => ({
+  fontSize: '2rem',
+  color: theme.color.primary,
+  opacity: 0.5,
+  position: 'absolute',
+  left: 'calc(50vw - 5rem)',
+  top: 'calc(50vh + 10rem)',
+  animation: `${blink} 2s ease infinite`,
 }))
