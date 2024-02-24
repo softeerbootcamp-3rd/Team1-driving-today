@@ -1,6 +1,7 @@
 package com.drivingtoday.domain.review.dto;
 
 import com.drivingtoday.domain.instructor.Instructor;
+import com.drivingtoday.domain.reservation.Reservation;
 import com.drivingtoday.domain.review.Review;
 import com.drivingtoday.domain.student.Student;
 import jakarta.validation.constraints.NotNull;
@@ -21,12 +22,13 @@ public class ReviewRequest {
     @NotNull
     private Long reservationId;
 
-    public Review toReview(Student student, Instructor instructor) {
+    public Review toReview(Student student, Instructor instructor, Reservation reservation) {
         return Review.builder()
                 .rating(this.rating)
                 .contents(this.contents)
                 .student(student)
                 .instructor(instructor)
+                .reservation(reservation)
                 .build();
     }
 }

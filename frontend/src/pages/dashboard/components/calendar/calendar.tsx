@@ -1,8 +1,8 @@
-import {useMemo, useReducer} from 'react'
+import {forwardRef, useImperativeHandle, useMemo, useReducer} from 'react'
 
 import {Button} from '@/components/button'
 
-import {CalendarComponents as Comp, dateReducer, formatDate, getWeeks} from '.'
+import {CalendarComponents as Comp, DateAction, dateReducer, formatDate, getWeeks} from '.'
 
 interface CalendarProps {
   year: number
@@ -13,18 +13,36 @@ interface CalendarProps {
   onScheduleClick?: (schedule: ReservationSchedule) => void
 }
 
-export function Calendar({
-  year: currentYear,
-  month: currentMonth,
-  day: currentDay,
-  schedules,
-  onDateClick,
-  onScheduleClick,
-}: CalendarProps) {
+export interface CalendarRef {
+  dispatch: React.Dispatch<DateAction>
+}
+
+export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar(
+  {
+    year: currentYear,
+    month: currentMonth,
+    day: currentDay,
+    schedules,
+    onDateClick,
+    onScheduleClick,
+  }: CalendarProps,
+  ref,
+) {
   const [{year, month}, dateDispatch] = useReducer(dateReducer, {
     year: currentYear,
     month: currentMonth,
   })
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        dispatch: dateDispatch,
+      }
+    },
+    [dateDispatch],
+  )
+
   const {weeks} = useMemo(() => getWeeks(year, month), [month, year])
 
   return (
@@ -86,7 +104,7 @@ export function Calendar({
       </Comp.CalendarDiv>
     </Comp.Container>
   )
-}
+})
 
 export interface ReservationSchedule {
   reservationId: number

@@ -1,23 +1,14 @@
 import styled from '@emotion/styled'
-import {useState} from 'react'
+import {Suspense, useState} from 'react'
 
 import {Card} from '@/components/card'
+import {Loading} from '@/components/loading'
 import {Tab} from '@/components/tab'
-import {useApiCall} from '@/hooks/use-api-call'
-import {API_BASE_URL} from '@/utils/constants'
-
-export interface StudentReservation {
-  instructorId: number
-  reservationId: number
-  instructorImage: string
-  instructorName: string
-  academyName: string
-  reservationDate: string
-  reservationTime: number
-  trainingTime: number
-}
-
-export type StudentHistoryResponse = StudentReservation[]
+import {useSuspendedApiCall} from '@/hooks/use-api-call'
+import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
+import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
+import {InstructorReservation, StudentReservation} from '@/types/reservation'
+import {apiCall} from '@/utils/api'
 
 const Container = styled.div({
   display: 'flex',
@@ -40,17 +31,11 @@ const Label = styled.p(({theme}) => ({
 }))
 
 interface StudentCardlistProps {
-  onReviewClick: (item: StudentReservation) => void
-  selected?: StudentReservation
+  onReviewClick: (item: InstructorReservation) => void
+  selected?: InstructorReservation
 }
 
-function useStudentList() {
-  // todo: infinite scroll
-  return useApiCall<StudentReservation[]>('/my/reservations?pageNumber=1&pageSize=10')
-}
-
-export function StudentCardlist({onReviewClick, selected}: StudentCardlistProps) {
-  const {data: studentList} = useStudentList()
+export function StudentCardlist(props: StudentCardlistProps) {
   const [filter, setFilter] = useState('all')
   return (
     <Container>
@@ -61,88 +46,126 @@ export function StudentCardlist({onReviewClick, selected}: StudentCardlistProps)
           <Tab.Item label="예정" value="scheduled" />
           <Tab.Item label="완료" value="completed" />
         </Tab.ItemList>
-        {studentList && (
-          <List>
-            {studentList.map((v) => {
-              const canReview = isCompleted(v.reservationDate, v.reservationTime, v.trainingTime)
-              const reviewClick = canReview ? () => onReviewClick(v) : undefined
-              if ((filter === 'scheduled' && canReview) || (filter === 'completed' && !canReview))
-                return
-              return (
-                <Card.StudentHistory
-                  key={v.reservationId}
-                  instructorName={v.instructorName}
-                  academyName={v.academyName}
-                  dateStr={v.reservationDate}
-                  timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-                  image={v.instructorImage}
-                  onReviewClick={reviewClick}
-                  selected={selected?.reservationId === v.reservationId}
-                />
-              )
-            })}
-          </List>
-        )}
+        <List>
+          <Suspense fallback={<Loading />}>
+            <StudentCardListContent {...props} filter={filter} />
+          </Suspense>
+        </List>
       </Tab.Provider>
     </Container>
   )
 }
 
-export interface InstructorReservation {
-  reservationId: number
-  studentImage: string
-  studentName: string
-  phoneNumber: string
-  reservationDate: string
-  reservationTime: number
-  trainingTime: number
-  studentId: number
+interface StudentCardListContentProps extends StudentCardlistProps {
+  filter: string
 }
 
-export type InstructorHistoryResponse = InstructorReservation[]
+function StudentCardListContent({onReviewClick, selected, filter}: StudentCardListContentProps) {
+  // todo: probably have to sort this
+  const {data: pastList} = useSuspendedApiCall<InstructorReservation[]>(
+    '/reservations/student?status=past',
+  )
+  const {data: futureList} = useSuspendedApiCall<InstructorReservation[]>(
+    '/reservations/student?status=scheduled',
+  )
+  const [removed, setRemoved] = useState<Set<number>>(new Set())
+  const onCancelReservation = async (id: number) => {
+    // 중복 요청 들어가도 상관 없음
+    const res = await apiCall(`/reservations/${id}?role=student`, {method: 'DELETE'})
+    if (!res.ok) return
+    setRemoved((prev) => new Set(prev).add(id))
+  }
 
-function useInstructorList() {
-  // todo: infinite scroll
-  return useApiCall<InstructorReservation[]>(
-    `${API_BASE_URL}/reservations?pageNumber=1&pageSize=10`,
+  return (
+    <>
+      {(filter === 'scheduled' || filter === 'all') &&
+        futureList?.map(
+          (v) =>
+            !removed.has(v.reservationId) && (
+              // todo: add cancel button after #188
+              <Card.StudentHistory
+                key={v.reservationId}
+                instructorName={v.instructorName}
+                academyName={v.academyName}
+                dateStr={v.reservationDate}
+                timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+                image={v.instructorImage}
+                selected={selected?.reservationId === v.reservationId}
+                onCancelClick={() => onCancelReservation(v.reservationId)}
+              />
+            ),
+        )}
+      {(filter === 'completed' || filter === 'all') &&
+        pastList?.map(
+          (v) =>
+            !removed.has(v.reservationId) && (
+              <Card.StudentHistory
+                key={v.reservationId}
+                instructorName={v.instructorName}
+                academyName={v.academyName}
+                dateStr={v.reservationDate}
+                timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+                image={v.instructorImage}
+                onReviewClick={() => onReviewClick(v)}
+                selected={selected?.reservationId === v.reservationId}
+              />
+            ),
+        )}
+    </>
   )
 }
 
 interface InstructorCardlistProps {
-  onSelect: (item: InstructorReservation) => void
-  selected?: InstructorReservation
+  onSelect: (item: StudentReservation) => void
+  selected?: StudentReservation
 }
 
+const PAGE_SIZE = 5
+
 export function InstructorCardlist({onSelect, selected}: InstructorCardlistProps) {
-  const {data} = useInstructorList()
+  const {
+    data: reservations,
+    loading,
+    fetchNextPage,
+  } = useInfiniteFetch({
+    queryFn: async ({pageParam}) => {
+      const res = await apiCall(
+        `/reservations/instructor?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&status=past`,
+      )
+      if (!res.ok) throw new Error('server error')
+      return (await res.json()) as StudentReservation[]
+    },
+    initialPageParam: 1,
+    getNextPageParam: ({pageParam, lastPage}) => {
+      const isLastPage = lastPage.length < PAGE_SIZE
+      const nextPageParam = pageParam + 1
+      return isLastPage ? undefined : nextPageParam
+    },
+  })
+
+  const intersectedRef = useIntersectionObserver(() => fetchNextPage())
   return (
-    data && (
-      <Container>
-        <List>
-          {data.map((v) => (
-            <Card.InstructorHistory
-              key={v.reservationId}
-              studentName={v.studentName}
-              phoneStr={v.phoneNumber}
-              dateStr={v.reservationDate}
-              timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-              image={v.studentImage}
-              onClick={() => onSelect(v)}
-              selected={selected?.reservationId === v.reservationId}
-            />
-          ))}
-        </List>
-      </Container>
-    )
+    <Container>
+      <List>
+        {reservations?.map((v) => (
+          <Card.InstructorHistory
+            key={v.reservationId}
+            studentName={v.studentName}
+            phoneStr={v.phoneNumber}
+            dateStr={v.reservationDate}
+            timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+            image={v.studentImage}
+            onClick={() => onSelect(v)}
+            selected={selected?.reservationId === v.reservationId}
+          />
+        ))}
+        <div ref={intersectedRef} style={{height: '3rem'}} />
+        {loading && <Loading />}
+      </List>
+    </Container>
   )
 }
 
 function timeToStr(reservationTime: number, trainingTime: number) {
   return `${reservationTime}시~${reservationTime + trainingTime}시 (${trainingTime}시간)`
-}
-
-function isCompleted(reservationDate: string, reservationTime: number, trainingTime: number) {
-  const now = new Date()
-  const date = new Date(`${reservationDate} ${reservationTime + trainingTime}:00:00`)
-  return now > date
 }

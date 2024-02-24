@@ -23,6 +23,13 @@ export function PurchaseSuccessPage() {
         origin: {x, y},
       })
     }
+
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: {y: 0.6},
+    })
+
     window.addEventListener('click', handleClickConfetti)
     return () => window.removeEventListener('click', handleClickConfetti)
   }, [])

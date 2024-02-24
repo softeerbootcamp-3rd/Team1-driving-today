@@ -19,12 +19,13 @@ import java.time.LocalDateTime;
 @Getter
 public class Review {
     @Builder
-    private Review(String contents, Double rating, Student student, Instructor instructor) {
+    private Review(String contents, Double rating, Student student, Instructor instructor, Reservation reservation) {
         this.contents = contents;
         this.rating = rating;
         this.student = student;
         this.instructor = instructor;
         this.createdAt = LocalDateTime.now();
+        this.reservation = reservation;
     }
 
     @Id

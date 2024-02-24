@@ -30,7 +30,6 @@ public class ReservationListService {
         } else {
             reservations = reservationRepository.findPastReservationsByStudent(studentId, currentDate, currentTime);
         }
-
         return reservations.stream().map(ReservationStudentResponse::from).toList();
     }
 
