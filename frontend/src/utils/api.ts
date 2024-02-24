@@ -12,18 +12,43 @@ export async function apiCall(path: string, init?: RequestInit) {
   })
 }
 
-const apiCallCache = new Map<string, ExtendedPromise<unknown>>()
+const apiCallCache = new Map<string, {promise: ExtendedPromise<unknown>; gcId?: number}>()
+const CACHE_PRESERVE_TIME = 3000
 
 export function getApiCache(path: string, init?: RequestInit) {
   const res = apiCallCache.get(path)
-  if (res) return res
-  const newRes = createApiCallPromise(path, init)
+  if (res) {
+    if (res.gcId !== undefined) {
+      // clear gc timeout
+      clearTimeout(res.gcId)
+      apiCallCache.set(path, {promise: res.promise})
+    }
+    return res.promise
+  }
+  const newRes = {promise: createApiCallPromise(path, init)}
   apiCallCache.set(path, newRes)
-  return newRes
+  return newRes.promise
 }
 
 export function invalidateApiCache(path: string) {
+  const res = apiCallCache.get(path)
+  if (res === undefined) return
+  if (res.gcId !== undefined) clearTimeout(res.gcId)
   apiCallCache.delete(path)
+}
+
+// should be invoked on unmount
+export function queueApiCacheInvalidation(path: string) {
+  const res = apiCallCache.get(path)
+  if (res === undefined) return
+
+  if (res.gcId !== undefined) clearTimeout(res.gcId)
+
+  const newId = setTimeout(() => {
+    invalidateApiCache(path)
+  }, CACHE_PRESERVE_TIME)
+
+  apiCallCache.set(path, {promise: res.promise, gcId: newId})
 }
 
 async function createApiCallPromise(path: string, init?: RequestInit) {
