@@ -4,7 +4,6 @@ import com.drivingtoday.domain.chat.dto.ChatRoomInfo;
 import com.drivingtoday.domain.chat.model.ChatRoom;
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.student.Student;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +15,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 public class ChatService {
-
-    private final ObjectMapper objectMapper;
 
     private final ChatRoomRepository chatRoomRepository;
 

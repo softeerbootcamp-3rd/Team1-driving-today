@@ -1,6 +1,5 @@
 package com.drivingtoday.domain.review;
 
-
 import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.reservation.Reservation;
 import com.drivingtoday.domain.student.Student;
@@ -11,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity

@@ -1,7 +1,5 @@
 package com.drivingtoday.domain.instructor.exception;
 
-import com.drivingtoday.domain.review.exception.ReviewErrorCode;
-import com.drivingtoday.domain.review.exception.ReviewException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

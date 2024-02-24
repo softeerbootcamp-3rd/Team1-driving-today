@@ -4,9 +4,7 @@ import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
-
 import java.util.Optional;
 
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
@@ -36,5 +34,4 @@ public interface InstructorRepository extends JpaRepository<Instructor, Long> {
     );
 
     Optional<Instructor> findById(Long instructorId);
-
 }

@@ -6,6 +6,7 @@ import com.drivingtoday.domain.instructor.Instructor;
 import com.drivingtoday.domain.instructor.InstructorFindService;
 import com.drivingtoday.domain.student.Student;
 import com.drivingtoday.domain.student.StudentFindService;
+import com.drivingtoday.global.aop.Timer;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +44,7 @@ public class ChatController {
     }
 
     @Operation(summary = "학생이 보낸 메시지 톡방들 리스트화")
-    @GetMapping("/student/rooms")  // /chat/roomList
+    @GetMapping("/student/rooms")
     public ResponseEntity<List<ChatRoomInfoConcise>> chatListStudent(){
         Authentication authentication = JwtFilter.getAuthentication();
         if(authentication.getRole().equals("INSTRUCTOR")){
@@ -67,8 +68,6 @@ public class ChatController {
         Instructor instructor = instructorFindService.findById(instructorId);
 
         Student student = studentFindService.findById(authentication.getId());
-
-        log.info("want to know whether to create : instructorId : " + instructorId + " studentId : " + authentication.getId());
         ChatRoom room = chatService.findByStudentIdAndInstructorId(authentication.getId(), instructorId);
         ChatRoomInfo chatRoomInfo;
         ChatRoomInfoDetail chatRoomInfoDetail;
