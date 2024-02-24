@@ -90,7 +90,7 @@ const Car = forwardRef<HTMLDivElement>(function Car(_, ref) {
 const Background = styled.div({
   width: '100%',
   height: '100%',
-  backgroundColor: 'gray',
+  background: 'linear-gradient(48deg, rgba(61,63,71,1) 0%, rgba(92,108,126,1) 100%)',
 })
 
 const wiggle = keyframes`

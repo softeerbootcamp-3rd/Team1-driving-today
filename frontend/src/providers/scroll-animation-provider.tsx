@@ -4,6 +4,7 @@ import {createContext, PropsWithChildren, useContext, useEffect, useRef} from 'r
 interface ScrollAnimationProviderProps {
   loop?: boolean
   max?: number
+  start?: number
 }
 
 const initialScrollCallbacks: ScrollCallbacks = {
@@ -22,13 +23,16 @@ const initialScrollCallbacks: ScrollCallbacks = {
 }
 
 const TOUCH_MULTIPLIER = 5
+const LERP = 0.005
+const PRECISION = 0.01
 
 export function ScrollAnimationProvider({
   children,
   loop,
+  start = 0,
   max = Number.MAX_SAFE_INTEGER,
 }: PropsWithChildren<ScrollAnimationProviderProps>) {
-  const scrollRef = useRef(0)
+  const scrollRef = useRef(start)
   const callbacksRef = useRef<ScrollCallbacks>(initialScrollCallbacks)
   const divRef = useRef<HTMLDivElement>(null)
 
@@ -57,7 +61,7 @@ export function ScrollAnimationProvider({
           200,
           Math.max(-200, (y - e.touches[0].clientY) * TOUCH_MULTIPLIER),
         )
-        if (scrollRef.current < 0) scrollRef.current = loop ? max + scrollRef.current : 0
+        if (scrollRef.current < 0) scrollRef.current = 0
         else if (scrollRef.current > max) scrollRef.current = loop ? scrollRef.current - max : max
         y = e.touches[0].clientY
       }
@@ -66,12 +70,21 @@ export function ScrollAnimationProvider({
 
     let running = true
     let prevFrame = -1
-    const tick = () => {
-      if (prevFrame !== scrollRef.current) {
-        callbacksRef.current.run(scrollRef.current)
-        prevFrame = scrollRef.current
+    let prevTime = 0
+
+    const tick = (time: DOMHighResTimeStamp) => {
+      if (Math.abs(prevFrame - scrollRef.current) > PRECISION) {
+        const timeDelta = time - prevTime
+        // 최댄거리 찾기
+        const frameDelta = getFrameDelta(scrollRef.current, prevFrame, max, 0)
+        prevFrame += frameDelta * LERP * timeDelta
+        if (prevFrame < 0) prevFrame = loop ? max + prevFrame : 0
+        else if (prevFrame > max) prevFrame = loop ? prevFrame - max : max
+        callbacksRef.current.run(prevFrame)
+        prevTime = time
       }
 
+      prevTime = time
       if (running) requestAnimationFrame(tick)
     }
     requestAnimationFrame(tick)
@@ -86,6 +99,23 @@ export function ScrollAnimationProvider({
       <Container ref={divRef}>{children}</Container>
     </ScrollAnimationContext.Provider>
   )
+}
+
+function getFrameDelta(target: number, current: number, max: number, min: number) {
+  const delta = target - current
+  if (delta > 0) {
+    //정방향 혹은 역방향 루프 통과
+    const a = target - current
+    const b = current - min + max - target
+    if (a > b) return -b
+    return a
+  } else {
+    //역방향 혹은 정방향 루프 통과
+    const a = current - target
+    const b = max - current + target - min
+    if (a > b) return b
+    return -a
+  }
 }
 
 export function useScrollAnimationFrame(id: string, callback: (frame: number) => void) {
@@ -117,6 +147,6 @@ const Container = styled.div(({theme}) => ({
   height: '100vh',
   width: '100vw',
   '& *': {
-    transition: 'all 0.1s ease',
+    // transition: 'all 0.1s ease',
   },
 }))

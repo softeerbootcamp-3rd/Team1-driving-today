@@ -4,7 +4,6 @@ import {useScrollAnimationFrame} from '@/providers/scroll-animation-provider'
 import {animateElement, ScrollAnimation} from '@/utils/animation'
 
 import {AnimationProps, GeneralContainer} from '.'
-import {LogoImg, WheelImg} from './first-stage'
 
 export function ThirdStage({offset}: AnimationProps) {
   const backgroundRef = useRef<HTMLDivElement>(null)
@@ -25,9 +24,6 @@ export function ThirdStage({offset}: AnimationProps) {
       width="100vw"
       height="100vh"
       top="-100vh"
-    >
-      <LogoImg />
-      <WheelImg />
-    </GeneralContainer>
+    ></GeneralContainer>
   )
 }
