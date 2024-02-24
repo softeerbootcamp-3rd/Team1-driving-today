@@ -133,7 +133,7 @@ function ChatRoomStudentInfoCard({info, ...props}: ChatRoomInfoCardProps) {
 
 function ChatRoomStudentInfoCardContent({info}: ChatRoomInfoCardProps) {
   const {data} = useSuspendedApiCall<StudentInfoResponse>(
-    `/students/${info.chatRoomInfo.instructorId}`,
+    `/students/${info.chatRoomInfo.studentId}`,
   )
   return (
     <>
