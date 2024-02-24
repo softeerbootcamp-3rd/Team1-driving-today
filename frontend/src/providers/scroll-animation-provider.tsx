@@ -42,7 +42,7 @@ export function ScrollAnimationProvider({
     const onScroll = (e: WheelEvent) => {
       e.preventDefault()
       scrollRef.current += Math.min(200, Math.max(-200, e.deltaY))
-      if (scrollRef.current < 0) scrollRef.current = loop ? max + scrollRef.current : 0
+      if (scrollRef.current < 0) scrollRef.current = 0
       else if (scrollRef.current > max) scrollRef.current = loop ? scrollRef.current - max : max
     }
     divToWatch.addEventListener('wheel', onScroll)
