@@ -1,6 +1,5 @@
 import {Suspense} from 'react'
 
-import {Loading} from '@/components/loading'
 import {sessionProvider} from '@/utils/session'
 
 import {InstructorChatRoom} from './instructor-chat-room'
@@ -11,7 +10,7 @@ export function ChatRoom({userId}: {userId: number}) {
   const role = sessionProvider.session.role
   return (
     <>
-      <Suspense fallback={<Loading />}>
+      <Suspense>
         {role === 'STUDENT' ? (
           <InstructorChatRoom instructorId={userId} />
         ) : (

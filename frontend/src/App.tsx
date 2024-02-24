@@ -13,6 +13,7 @@ import {InstructorDashboard, StudentDashboard} from './pages/dashboard/page'
 import {InstructorHistory, StudentHistory} from './pages/history/page'
 import {Layout} from './pages/layout'
 import {loginAction} from './pages/login/page'
+import {NotFound} from './pages/not-found'
 import {LandingPage} from './pages/page'
 import {purchaseLoader} from './pages/purchase/loader'
 import {StudentPurchase} from './pages/purchase/page'
@@ -33,6 +34,7 @@ export function App() {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+      <Route path="*" element={<NotFound />} />
       <Route path="/" element={<LandingPage />} errorElement={<LandingPage />}>
         <Route
           path="/login"
@@ -48,7 +50,12 @@ const router = createBrowserRouter(
         />
         <Route path="/register/success" element={<RegisterModal.Success />} />
       </Route>
-      <Route id="root" loader={checkAuthLoader} element={<Layout />}>
+      <Route
+        id="root"
+        loader={checkAuthLoader}
+        element={<Layout />}
+        errorElement={<Layout.ErrorBoundary />}
+      >
         <Route
           path="/dashboard"
           element={

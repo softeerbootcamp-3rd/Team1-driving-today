@@ -5,6 +5,7 @@ import {forwardRef, HTMLAttributes, PropsWithChildren} from 'react'
 
 import {Button} from '../button'
 import {Icon, IconName} from '../icon'
+import {Skeleton} from '../skeleton'
 
 interface BaseContainerProps {
   selected?: boolean
@@ -258,6 +259,19 @@ const InstructorHistoryCard = forwardRef<HTMLDivElement, InstructorHistoryProps>
   },
 )
 
+function CardSkeleton() {
+  return (
+    <BaseContainer style={{width: '100%'}}>
+      <Skeleton variant="circular" width="10rem" height="10rem" />
+      <ContentContainer>
+        <Skeleton style={{fontSize: '2rem'}} width="6rem" />
+        <Skeleton style={{fontSize: '2rem'}} width="10rem" />
+        <Skeleton style={{fontSize: '2rem'}} width="20rem" />
+      </ContentContainer>
+    </BaseContainer>
+  )
+}
+
 export const Card = {
   InstructorHistory: InstructorHistoryCard,
   StudentHistory: StudentHistoryCard,
@@ -267,4 +281,5 @@ export const Card = {
   ProfilePic,
   Name,
   Label,
+  Skeleton: CardSkeleton,
 }

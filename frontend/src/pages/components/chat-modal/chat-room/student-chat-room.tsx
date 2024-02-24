@@ -2,7 +2,6 @@ import {Fragment, Suspense, useCallback, useEffect, useRef} from 'react'
 
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
-import {Loading} from '@/components/loading'
 import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {ChatRoomEnterResponse, useChatSocket} from '@/hooks/use-chat-socket'
@@ -85,7 +84,7 @@ export function StudentChatRoom({studentId}: StudentChatRoomProps) {
       </ChatRoomLayout.Header>
 
       <ChatRoomLayout.ChatList>
-        <Suspense fallback={<Loading />}>
+        <Suspense>
           <StudentDetail image={studentImage} name={studentName} />
         </Suspense>
         <Suspense>

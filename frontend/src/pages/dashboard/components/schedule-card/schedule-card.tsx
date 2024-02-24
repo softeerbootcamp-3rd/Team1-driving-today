@@ -7,6 +7,7 @@ import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
 import {Loading} from '@/components/loading'
+import {Skeleton} from '@/components/skeleton'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
 import {useIntersectionObserver} from '@/hooks/use-intersection-observer'
@@ -20,10 +21,20 @@ const PAGE_SIZE = 5
 export function StudentScheduleCard() {
   return (
     <Container>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<CardListSkeleton />}>
         <StudentScheduleCardContent />
       </Suspense>
     </Container>
+  )
+}
+function CardListSkeleton() {
+  return (
+    <>
+      {Array.from(Array(3)).map((_, index) => {
+        return <Card.Skeleton key={index} />
+      })}
+      <Skeleton variant="circular" width="10rem" height="10rem" />
+    </>
   )
 }
 
