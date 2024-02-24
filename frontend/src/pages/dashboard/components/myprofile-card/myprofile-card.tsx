@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom'
 
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
-import {Loading} from '@/components/loading'
+import {Skeleton} from '@/components/skeleton'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {UserRole} from '@/utils/session'
 
@@ -15,7 +15,7 @@ interface MyProfileCardProps {
 export function MyProfileCard({role}: MyProfileCardProps) {
   return (
     <Container>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<MyProfileCardSkeleton />}>
         {role === 'INSTRUCTOR' && <InstructorMyProfileCardContent />}
         {role === 'STUDENT' && <StudentMyProfileCardContent />}
       </Suspense>
@@ -75,6 +75,20 @@ function StudentMyProfileCardContent() {
         <ButtonLabel>지난 예약 내역</ButtonLabel>
         <Icon name="arrowForward" color="gray600" width="1.6rem" height="1.6rem" />
       </TrailingIconLink>
+    </>
+  )
+}
+
+function MyProfileCardSkeleton() {
+  return (
+    <>
+      <Skeleton variant="circular" width="10rem" height="10rem" />
+      <div style={{alignSelf: 'flex-start'}}>
+        <Skeleton style={{fontSize: '2.4rem'}} width="20rem" />
+        <Skeleton style={{fontSize: '1.4rem'}} width="10rem" />
+      </div>
+      <Divider flexItem />
+      <Skeleton style={{fontSize: '1.6rem', alignSelf: 'flex-start'}} width="10rem" />
     </>
   )
 }

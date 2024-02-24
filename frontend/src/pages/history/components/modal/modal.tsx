@@ -5,7 +5,6 @@ import {Button} from '@/components/button'
 import {Card} from '@/components/card'
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
-import {Loading} from '@/components/loading'
 import {Rating} from '@/components/rating'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {apiCall} from '@/utils/api'
@@ -65,7 +64,7 @@ export function ReviewModal({onClose, ...props}: ReviewModalProps) {
         <Icon name="close" color="black" width="1.4rem" height="1.4rem" onClick={onClose} />
       </HeaderContainer>
       <Content>
-        <Suspense fallback={<Loading />}>
+        <Suspense>
           <ReviewModalContent {...props} onSubmitReview={submitReview} submitting={submitting} />
         </Suspense>
       </Content>
@@ -139,7 +138,7 @@ export function StudentModal({onClose, studentId}: StudentModalProps) {
         <Card.Name>학생 정보</Card.Name>
         <Icon name="close" color="black" width="1.4rem" height="1.4rem" onClick={onClose} />
       </HeaderContainer>
-      <Suspense fallback={<Loading />}>
+      <Suspense>
         <StudentModalContent studentId={studentId} />
       </Suspense>
     </Container>

@@ -3,6 +3,7 @@ import {Suspense, useState} from 'react'
 
 import {Card} from '@/components/card'
 import {Loading} from '@/components/loading'
+import {Skeleton} from '@/components/skeleton'
 import {Tab} from '@/components/tab'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {useInfiniteFetch} from '@/hooks/use-infinite-fetch'
@@ -47,12 +48,22 @@ export function StudentCardlist(props: StudentCardlistProps) {
           <Tab.Item label="완료" value="completed" />
         </Tab.ItemList>
         <List>
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<CardListSkeleton />}>
             <StudentCardListContent {...props} filter={filter} />
           </Suspense>
         </List>
       </Tab.Provider>
     </Container>
+  )
+}
+
+function CardListSkeleton() {
+  return (
+    <>
+      {Array.from(Array(3)).map((_, index) => {
+        return <Card.Skeleton key={index} />
+      })}
+    </>
   )
 }
 
