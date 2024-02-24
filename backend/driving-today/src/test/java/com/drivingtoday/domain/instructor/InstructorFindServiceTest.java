@@ -40,21 +40,15 @@ public class InstructorFindServiceTest {
     @Test
     @DisplayName("기본 조회 테스트")
     public void 기본_조회() {
-        AvailableInstructorsRequest request = new AvailableInstructorsRequest(
-                37.02, -122.13, 2, 9,
-                LocalDate.of(2024, 2, 8), 1, 10);
-
-        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
+        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(37.02, -122.13, LocalDate.of(2024, 2, 8), 1,9,
+                 1, 10);
         assertThat(availableInstructors.size()).isEqualTo(10);
     }
 
     @Test
     @DisplayName("2페이지에서 5개의 강사 리스트를 가져오기")
     public void 페이징_테스트() {
-        AvailableInstructorsRequest request = new AvailableInstructorsRequest(
-                37.02, -122.13, 2, 9,
-                LocalDate.of(2024, 2, 8), 2, 5);
-        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
+        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(37.02, 127.02, LocalDate.of(2024, 2, 8), 13, 1, 2, 5);
         assertThat(availableInstructors.size()).isEqualTo(5);
     }
 
@@ -70,19 +64,15 @@ public class InstructorFindServiceTest {
         // 9시에 2시간 예약
         Reservation reservation1 = new Reservation(1L, true,
                 LocalDateTime.now(), LocalDate.of(2024, 2, 8),
-                9, 2, student1, instructor1);
+                9, 2, student1, instructor1, null);
         // 10시에 1시간 예약
         Reservation reservation2 = new Reservation(2L, true,
                 LocalDateTime.now(), LocalDate.of(2024, 2, 8),
-                10, 1, student2, instructor2);
+                10, 1, student2, instructor2, null);
         reservationRepository.save(reservation1);
         reservationRepository.save(reservation2);
-        AvailableInstructorsRequest request = new AvailableInstructorsRequest(
-                37.02, -122.13, 2, 9,
-                LocalDate.of(2024, 2, 8), 1, 10);
 
-
-        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(request);
+        List<AvailableInstructorInfo> availableInstructors = instructorFindService.findAvailableInstructors(37.02, -122.13, LocalDate.of(2024, 2, 8), 9, 2, 1, 10);
         assertThat(availableInstructors.size()).isEqualTo(8);
 
     }
