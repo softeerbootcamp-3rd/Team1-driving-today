@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import {Suspense, useState} from 'react'
+import {forwardRef, Suspense, useImperativeHandle, useState} from 'react'
 
 import {Card} from '@/components/card'
 import {Loading} from '@/components/loading'
@@ -36,25 +36,31 @@ interface StudentCardlistProps {
   selected?: InstructorReservation
 }
 
-export function StudentCardlist(props: StudentCardlistProps) {
-  const [filter, setFilter] = useState('all')
-  return (
-    <Container>
-      <Tab.Provider defaultValue="all">
-        <Label>예약 내역</Label>
-        <Tab.ItemList onChange={setFilter}>
-          <Tab.Item label="전체" value="all" />
-          <Tab.Item label="예정" value="scheduled" />
-          <Tab.Item label="완료" value="completed" />
-        </Tab.ItemList>
-        <List>
-          <Suspense fallback={<CardListSkeleton />}>
-            <StudentCardListContent {...props} filter={filter} />
-          </Suspense>
-        </List>
-      </Tab.Provider>
-    </Container>
-  )
+export const StudentCardlist = forwardRef<StudentCardListControl, StudentCardlistProps>(
+  function StudentCardlist(props, ref) {
+    const [filter, setFilter] = useState('all')
+    return (
+      <Container>
+        <Tab.Provider defaultValue="all">
+          <Label>예약 내역</Label>
+          <Tab.ItemList onChange={setFilter}>
+            <Tab.Item label="전체" value="all" />
+            <Tab.Item label="예정" value="scheduled" />
+            <Tab.Item label="완료" value="completed" />
+          </Tab.ItemList>
+          <List>
+            <Suspense fallback={<CardListSkeleton />}>
+              <StudentCardListContent ref={ref} {...props} filter={filter} />
+            </Suspense>
+          </List>
+        </Tab.Provider>
+      </Container>
+    )
+  },
+)
+
+export interface StudentCardListControl {
+  addReviewed: (id: number) => void
 }
 
 function CardListSkeleton() {
@@ -71,60 +77,72 @@ interface StudentCardListContentProps extends StudentCardlistProps {
   filter: string
 }
 
-function StudentCardListContent({onReviewClick, selected, filter}: StudentCardListContentProps) {
-  // todo: probably have to sort this
-  const {data: pastList} = useSuspendedApiCall<InstructorReservation[]>(
-    '/reservations/student?status=past',
-  )
-  const {data: futureList} = useSuspendedApiCall<InstructorReservation[]>(
-    '/reservations/student?status=scheduled',
-  )
-  const [removed, setRemoved] = useState<Set<number>>(new Set())
-  const onCancelReservation = async (id: number) => {
-    // 중복 요청 들어가도 상관 없음
-    const res = await apiCall(`/reservations/${id}?role=student`, {method: 'DELETE'})
-    if (!res.ok) return
-    setRemoved((prev) => new Set(prev).add(id))
-  }
+const StudentCardListContent = forwardRef<StudentCardListControl, StudentCardListContentProps>(
+  function StudentCardListContent({onReviewClick, selected, filter}, ref) {
+    // todo: probably have to sort this
+    const {data: pastList} = useSuspendedApiCall<InstructorReservation[]>(
+      '/reservations/student?status=past',
+    )
+    const {data: futureList} = useSuspendedApiCall<InstructorReservation[]>(
+      '/reservations/student?status=scheduled',
+    )
+    const [removed, setRemoved] = useState<Set<number>>(new Set())
+    const [reviewed, setReviewed] = useState<Set<number>>(new Set())
 
-  return (
-    <>
-      {(filter === 'scheduled' || filter === 'all') &&
-        futureList?.map(
-          (v) =>
-            !removed.has(v.reservationId) && (
-              // todo: add cancel button after #188
-              <Card.StudentHistory
-                key={v.reservationId}
-                instructorName={v.instructorName}
-                academyName={v.academyName}
-                dateStr={v.reservationDate}
-                timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-                image={v.instructorImage}
-                selected={selected?.reservationId === v.reservationId}
-                onCancelClick={() => onCancelReservation(v.reservationId)}
-              />
-            ),
-        )}
-      {(filter === 'completed' || filter === 'all') &&
-        pastList?.map(
-          (v) =>
-            !removed.has(v.reservationId) && (
-              <Card.StudentHistory
-                key={v.reservationId}
-                instructorName={v.instructorName}
-                academyName={v.academyName}
-                dateStr={v.reservationDate}
-                timeStr={timeToStr(v.reservationTime, v.trainingTime)}
-                image={v.instructorImage}
-                onReviewClick={() => onReviewClick(v)}
-                selected={selected?.reservationId === v.reservationId}
-              />
-            ),
-        )}
-    </>
-  )
-}
+    useImperativeHandle(ref, () => ({
+      addReviewed: (id: number) => setReviewed((prev) => new Set(prev).add(id)),
+    }))
+
+    const onCancelReservation = async (id: number) => {
+      // 중복 요청 들어가도 상관 없음
+      const res = await apiCall(`/reservations/${id}?role=student`, {method: 'DELETE'})
+      if (!res.ok) return
+      setRemoved((prev) => new Set(prev).add(id))
+    }
+
+    return (
+      <>
+        {(filter === 'scheduled' || filter === 'all') &&
+          futureList?.map(
+            (v) =>
+              !removed.has(v.reservationId) && (
+                // todo: add cancel button after #188
+                <Card.StudentHistory
+                  key={v.reservationId}
+                  instructorName={v.instructorName}
+                  academyName={v.academyName}
+                  dateStr={v.reservationDate}
+                  timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+                  image={v.instructorImage}
+                  selected={selected?.reservationId === v.reservationId}
+                  onCancelClick={() => onCancelReservation(v.reservationId)}
+                />
+              ),
+          )}
+        {(filter === 'completed' || filter === 'all') &&
+          pastList?.map(
+            (v) =>
+              !removed.has(v.reservationId) && (
+                <Card.StudentHistory
+                  key={v.reservationId}
+                  instructorName={v.instructorName}
+                  academyName={v.academyName}
+                  dateStr={v.reservationDate}
+                  timeStr={timeToStr(v.reservationTime, v.trainingTime)}
+                  image={v.instructorImage}
+                  onReviewClick={
+                    v.isReviewed || reviewed.has(v.reservationId)
+                      ? undefined
+                      : () => onReviewClick(v)
+                  }
+                  selected={selected?.reservationId === v.reservationId}
+                />
+              ),
+          )}
+      </>
+    )
+  },
+)
 
 interface InstructorCardlistProps {
   onSelect: (item: StudentReservation) => void
