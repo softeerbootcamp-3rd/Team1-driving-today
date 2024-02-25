@@ -83,9 +83,29 @@
 
 ## 개발 환경 세팅
 
-> 각 직군별 폴더에서 환경변수 세팅을 확인할 수 있습니다.
+> 환경변수 파일 예시는 각 직군 폴더에서 확인할 수 있습니다.
+>
+> 백엔드 환경변수는 `/backend/driving-today` 폴더 내 `example.application.yml` 에서 확인할 수 있습니다.
+>
+> 프론트엔드 환경변수는 `/frontend` 폴너 내 `.env.example` 에서 확인할 수 있습니다.
 
-작성중...
+### 백엔드
+
+```shell
+cd backend/driving-today
+sudo chmod +x gradlew
+./gradlew clean build
+cd build/libs
+java -jar *-SNAPSHOT.jar
+```
+
+### 프론트엔드
+
+```shell
+cd frontend
+pnpm install
+pnpm dev
+```
 
 ## 기술스택
 
