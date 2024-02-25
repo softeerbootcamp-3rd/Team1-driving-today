@@ -28,7 +28,7 @@ public class UserRegisterService {
     public Long addStudent(StudentRegisterRequest registerRequest, MultipartFile profileImg) {
 
         //이미 존재하는 이메일일 경우 예외 발생
-        if(studentRepository.findByEmail(registerRequest.getEmail()).isPresent()){
+        if (studentRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw UserException.from(UserErrorCode.DUPLICATED_USER_EMAIL);
         }
 
@@ -39,8 +39,13 @@ public class UserRegisterService {
 
         //프로필 이미지 업로드
         String imgUrl = "";
+
+        //이미지가 있는 경우 S3에 업로드 후 url 저장
         try {
-            if (profileImg != null) {
+            //이미지가 없는 경우 기본이미지로 세팅
+            if (profileImg == null) {
+                imgUrl = "https://drivingtodaybucket.s3.ap-northeast-2.amazonaws.com/profile/default.jpg";
+            } else {
                 imgUrl = s3UploadService.uploadFile(profileImg, "profile/");
             }
         } catch (IOException e) {
@@ -56,13 +61,15 @@ public class UserRegisterService {
     public Long addInstructor(InstructorRegisterRequest registerRequest, MultipartFile profileImg) {
 
         //이미 존재하는 이메일일 경우 예외 발생
-        if(instructorRepository.findByEmail(registerRequest.getEmail()).isPresent()){
+        if (instructorRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw UserException.from(UserErrorCode.DUPLICATED_USER_EMAIL);
         }
         //프로필 이미지 업로드
         String imgUrl = "";
         try {
-            if (profileImg != null) {
+            if (profileImg == null) {
+                imgUrl = "https://drivingtodaybucket.s3.ap-northeast-2.amazonaws.com/profile/default.jpg";
+            } else {
                 imgUrl = s3UploadService.uploadFile(profileImg, "profile/");
             }
         } catch (IOException e) {
