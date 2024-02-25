@@ -33,7 +33,6 @@ export function ScrollAnimationProvider({
   max = Number.MAX_SAFE_INTEGER,
 }: PropsWithChildren<ScrollAnimationProviderProps>) {
   const scrollRef = useRef(start)
-  console.log(scrollRef.current)
   const callbacksRef = useRef<ScrollCallbacks>(initialScrollCallbacks)
   const divRef = useRef<HTMLDivElement>(null)
 
@@ -147,7 +146,4 @@ const Container = styled.div(({theme}) => ({
   overflow: 'hidden',
   height: '100vh',
   width: '100vw',
-  '& *': {
-    // transition: 'all 0.1s ease',
-  },
 }))
