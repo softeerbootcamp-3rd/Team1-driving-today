@@ -5,7 +5,7 @@ import {forwardRef, useRef} from 'react'
 import {useScrollAnimationFrame} from '@/providers/scroll-animation-provider'
 import {animateElement, ScrollAnimation} from '@/utils/animation'
 
-import {AnimationProps, GeneralContainer} from '.'
+import {AnimationProps} from '.'
 
 const carImage = '/car.png'
 
@@ -25,18 +25,21 @@ export function SecondStage({offset}: AnimationProps) {
   ]
 
   const firstMsgAnimations: ScrollAnimation[] = [
-    {type: 'translateX', start: 0, end: -70, startFrame: 0, endFrame: 1000},
-    {type: 'translateX', start: -70, end: 0, startFrame: 2000, endFrame: 3000},
+    {type: 'translateX', start: 50, end: -10, startFrame: 0, endFrame: 1000},
+    {type: 'translateX', start: -10, end: 50, startFrame: 2000, endFrame: 3000},
+    {type: 'scale', start: 1, end: 1.5, startFrame: 0, endFrame: 3000},
   ]
 
   const secondMsgAnimations: ScrollAnimation[] = [
-    {type: 'translateX', start: 0, end: 70, startFrame: 2000, endFrame: 3000},
-    {type: 'translateX', start: 70, end: 0, startFrame: 4000, endFrame: 5000},
+    {type: 'translateX', start: -50, end: 10, startFrame: 2000, endFrame: 3000},
+    {type: 'translateX', start: 10, end: -50, startFrame: 4000, endFrame: 5000},
+    {type: 'scale', start: 1, end: 1.5, startFrame: 2000, endFrame: 5000},
   ]
 
   const thirdMsgAnimations: ScrollAnimation[] = [
-    {type: 'translateX', start: 0, end: -70, startFrame: 4000, endFrame: 5000},
-    {type: 'translateX', start: -70, end: 0, startFrame: 6000, endFrame: 7000},
+    {type: 'translateX', start: 50, end: -10, startFrame: 4000, endFrame: 5000},
+    {type: 'translateX', start: -10, end: 50, startFrame: 6000, endFrame: 7000},
+    {type: 'scale', start: 1, end: 1.5, startFrame: 4000, endFrame: 7000},
   ]
 
   useScrollAnimationFrame('second stage', (realFrame) => {
@@ -53,25 +56,47 @@ export function SecondStage({offset}: AnimationProps) {
       <Background />
       <RainBackground />
       <Car ref={carRef} />
-      <GeneralContainer ref={firstMsgRef} left="120vw" top="30vh" width="30vw">
-        <Message>진짜진짜 유용한</Message>
-        <Message>서비스</Message>
-      </GeneralContainer>
-      <GeneralContainer ref={secondMsgRef} left="-50vw" top="30vh" width="30vw">
-        <Message>진짜진짜 유용한</Message>
-        <Message>서비스</Message>
-      </GeneralContainer>
-      <GeneralContainer ref={thirdMsgRef} left="120vw" top="30vh" width="30vw">
-        <Message>진짜진짜 유용한</Message>
-        <Message>서비스</Message>
-      </GeneralContainer>
+      <MessageContainerRight ref={firstMsgRef}>
+        <Message>우리동네</Message>
+        <Message>인기 운전 연수 강사는?</Message>
+      </MessageContainerRight>
+      <MessageContainerLeft ref={secondMsgRef}>
+        <Message>10만 연수생들의</Message>
+        <Message>생생한 연수 후기</Message>
+        <Image src="/review.png" />
+      </MessageContainerLeft>
+      <MessageContainerRight ref={thirdMsgRef}>
+        <Message>채팅으로 궁금한 건</Message>
+        <Message>직접 물어보자!</Message>
+        <Image src="/chat.png" />
+      </MessageContainerRight>
     </>
   )
 }
 
+const MessageContainer = styled.div({
+  position: 'absolute',
+  width: '40vw',
+  height: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  top: 0,
+  gap: '2rem',
+  overflow: 'hidden',
+})
+
+const MessageContainerLeft = styled(MessageContainer)({
+  left: 0,
+})
+
+const MessageContainerRight = styled(MessageContainer)({
+  right: 0,
+})
+
 const Message = styled.div(({theme}) => ({
   textAlign: 'center',
-  fontSize: '7rem',
+  fontSize: '3vw',
   width: '100%',
   fontWeight: '600',
   height: 'auto',
@@ -103,6 +128,13 @@ const CarImgContainer = styled.div({
   position: 'absolute',
   left: '33vw',
   top: '-20vh',
+})
+
+const Image = styled.img({
+  height: '30vh',
+  width: '50vw',
+  objectFit: 'contain',
+  animation: `${wiggle} 3s ease-in-out infinite`,
 })
 
 function RainBackground() {

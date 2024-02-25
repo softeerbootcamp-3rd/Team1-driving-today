@@ -33,6 +33,7 @@ export function ScrollAnimationProvider({
   max = Number.MAX_SAFE_INTEGER,
 }: PropsWithChildren<ScrollAnimationProviderProps>) {
   const scrollRef = useRef(start)
+  console.log(scrollRef.current)
   const callbacksRef = useRef<ScrollCallbacks>(initialScrollCallbacks)
   const divRef = useRef<HTMLDivElement>(null)
 
@@ -92,7 +93,7 @@ export function ScrollAnimationProvider({
       divToWatch.removeEventListener('wheel', onScroll)
       running = false
     }
-  }, [loop, max])
+  }, [loop, max, start])
 
   return (
     <ScrollAnimationContext.Provider value={callbacksRef}>
