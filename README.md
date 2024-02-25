@@ -83,20 +83,23 @@
 
 ## 개발 환경 세팅
 
+> 각 직군별 폴더에서 환경변수 세팅을 확인할 수 있습니다.
+
 작성중...
 
 ## 기술스택
 
 ### 백엔드
 
-- 언어: Java
-- 프레임워크: Spring boot
-- DB: MySQL, MongoDB, radis
-- 인프라: AWS EC2, ELB, Route53, S3
+- 언어 : Java
+- 프레임워크 : Spring boot
+- DB : MySQL, MongoDB, radis
+- ORM : Spring Data JPA
+- 인프라 : AWS EC2, ELB, Route53, S3
 
 ### 프론트엔드
 
-- 언어: typescript
+- 언어: Typescript
 - 라이브러리: React18, react-router-dom, emotion
 - 번들러: Vite
 - 코드 검사 도구: ESLint, Prettier
