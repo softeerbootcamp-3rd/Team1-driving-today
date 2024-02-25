@@ -64,9 +64,9 @@
 
 ### 운전 강사와 학생 간 문의 채팅
 
-|       학생 측 채팅        | 강사측 채팅 |
-| :-----------------------: | :---------: |
-| ![](./docs/채팅기능2.png) |             |
+|       학생 측 채팅        |        강사측 채팅        |
+| :-----------------------: | :-----------------------: |
+| ![](./docs/학생-채팅.png) | ![](./docs/강사-채팅.png) |
 
 - 문의 클릭 시 강사와 1:1 대화를 진행합니다.
 - 연수 학생이 문의 클릭 시 채팅방이 생성됩니다.
@@ -83,21 +83,28 @@
 
 ## 개발 환경 세팅
 
+작성중...
+
 ## 기술스택
 
 ### 백엔드
 
-- Java, Spring boot
+- 언어: Java
+- 프레임워크: Spring boot
+- DB: MySQL, MongoDB, radis
+- 인프라: AWS EC2, ELB, Route53, S3
 
 ### 프론트엔드
 
-- React, typescript, react-router-dom, emotion, Vite, ESLint, Prettier
+- 언어: typescript
+- 라이브러리: React18, react-router-dom, emotion
+- 번들러: Vite
+- 코드 검사 도구: ESLint, Prettier
+- 인프라: AWS S3, CloudFront, Route53
 
-## 아키텍처
+## 인프라 및 아키텍처
 
-### 백엔드
-
-### 프론트엔드
+![](./docs/인프라-및-아키텍처.png)
 
 ## 프로젝트 문서 모음
 
