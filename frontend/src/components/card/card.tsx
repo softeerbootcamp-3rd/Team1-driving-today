@@ -5,6 +5,7 @@ import {forwardRef, HTMLAttributes, PropsWithChildren} from 'react'
 
 import {Button} from '../button'
 import {Icon, IconName} from '../icon'
+import {LazyImage} from '../lazy-image'
 import {Skeleton} from '../skeleton'
 
 interface BaseContainerProps {
@@ -90,7 +91,7 @@ function IconLabel({icon, color, children}: PropsWithChildren<IconLabelProps>) {
   )
 }
 
-const ProfilePic = styled.img(({theme}) => ({
+const ProfilePic = styled(LazyImage)(({theme}) => ({
   flex: '0 0 10rem',
   width: '10rem',
   height: '10rem',

@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from 'react'
 import {CustomOverlayMap, Map, MarkerClusterer} from 'react-kakao-maps-sdk'
 import {Outlet} from 'react-router-dom'
 
+import {LazyImage} from '@/components/lazy-image'
 import {InstructorsResponseItem, MapContextProvider, MapCoord} from '@/providers/map-context'
 
 import {getCurrentPosition} from './schedule/hooks'
@@ -95,7 +96,7 @@ export function StudentReservation() {
                     setSelectedId(id)
                   }}
                 >
-                  <img
+                  <LazyImage
                     src="/marker.svg"
                     onMouseEnter={() => {
                       setHoverId(id)

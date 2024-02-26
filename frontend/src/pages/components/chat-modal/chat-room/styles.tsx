@@ -1,6 +1,8 @@
 import {type Theme} from '@emotion/react'
 import styled from '@emotion/styled'
 
+import {LazyImage} from '@/components/lazy-image'
+
 export const TimeStamp = styled.li(({theme}) => ({
   display: 'flex',
   alignItems: 'center',
@@ -32,7 +34,7 @@ export const ChatList = styled.ul(() => ({
   gap: '1rem',
 }))
 
-export const Avartar = styled.img(({width, height}) => ({
+export const Avartar = styled(LazyImage)(({width, height}) => ({
   borderRadius: '50%',
   width,
   height,

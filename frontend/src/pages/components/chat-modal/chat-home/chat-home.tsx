@@ -3,6 +3,7 @@ import {HTMLAttributes, Suspense} from 'react'
 
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
+import {LazyImage} from '@/components/lazy-image'
 import {Typography} from '@/components/typography'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {ChatMessageHistory, ChatRoomInfo} from '@/hooks/use-chat-socket'
@@ -203,7 +204,7 @@ const CardContainer = styled.div(({theme}) => ({
   cursor: 'pointer',
 }))
 
-const Picture = styled.img(({theme}) => ({
+const Picture = styled(LazyImage)(({theme}) => ({
   flex: '0 0 5rem',
   backgroundColor: theme.color.gray100,
   width: '5rem',
