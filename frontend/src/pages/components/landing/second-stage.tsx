@@ -2,6 +2,7 @@ import {keyframes} from '@emotion/react'
 import styled from '@emotion/styled'
 import {forwardRef, useRef} from 'react'
 
+import {LazyImage} from '@/components/lazy-image'
 import {useScrollAnimationFrame} from '@/providers/scroll-animation-provider'
 import {animateElement, ScrollAnimation} from '@/utils/animation'
 
@@ -128,7 +129,7 @@ const CarImgContainer = styled.div({
   top: '-20vh',
 })
 
-const Image = styled.img({
+const Image = styled(LazyImage)({
   height: '30vh',
   width: '50vw',
   objectFit: 'contain',
@@ -192,7 +193,7 @@ const Rain = styled.div<TimeProps>`
   animation: ${(props) => props.time}s infinite linear ${rainDrop};
 `
 
-const CarImg = styled.img`
+const CarImg = styled(LazyImage)`
   object-fit: contain;
   rotate: 270deg;
   width: 50rem;

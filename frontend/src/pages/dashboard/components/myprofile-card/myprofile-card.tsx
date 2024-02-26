@@ -4,6 +4,7 @@ import {useNavigate} from 'react-router-dom'
 
 import {Divider} from '@/components/divider'
 import {Icon} from '@/components/icon'
+import {LazyImage} from '@/components/lazy-image'
 import {Skeleton} from '@/components/skeleton'
 import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {UserRole} from '@/utils/session'
@@ -104,7 +105,7 @@ const Container = styled.div(({theme}) => ({
   alignItems: 'center',
 }))
 
-const Image = styled.img(({theme}) => ({
+const Image = styled(LazyImage)(({theme}) => ({
   backgroundColor: theme.color.gray300,
   width: '10rem',
   height: '10rem',

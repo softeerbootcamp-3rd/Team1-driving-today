@@ -14,6 +14,7 @@ import {Button} from '@/components/button'
 import {Chip} from '@/components/chip'
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
+import {LazyImage} from '@/components/lazy-image'
 import {Typography} from '@/components/typography'
 import {useEscapeKeydown} from '@/hooks/use-escape-keydown'
 import {sessionProvider, UserRole} from '@/utils/session'
@@ -363,7 +364,7 @@ function RegisterModalSuccess() {
             </CloseButton>
           </Flex>
           <Flex flexDirection="column" gap="2rem" alignItems="center">
-            <img
+            <LazyImage
               src="/clapping-hands.svg"
               className="floating"
               width="100"
