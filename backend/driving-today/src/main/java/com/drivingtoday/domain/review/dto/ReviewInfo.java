@@ -2,14 +2,16 @@ package com.drivingtoday.domain.review.dto;
 
 import com.drivingtoday.domain.review.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 @Builder
-public class ReviewResponse {
+public class ReviewInfo {
     private Long reviewId;
     private String contents;
     private Double rating;
@@ -18,8 +20,8 @@ public class ReviewResponse {
     private String reviewerName;
     private String reviewerImage;
 
-    public static ReviewResponse from(Review review) {
-        return ReviewResponse.builder()
+    public static ReviewInfo from(Review review) {
+        return ReviewInfo.builder()
                 .reviewId(review.getId())
                 .contents(review.getContents())
                 .rating(review.getRating())
