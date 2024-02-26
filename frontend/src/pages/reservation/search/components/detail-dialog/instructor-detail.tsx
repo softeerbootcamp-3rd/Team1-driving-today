@@ -6,6 +6,7 @@ import {Button} from '@/components/button'
 import {Divider} from '@/components/divider'
 import {Flex} from '@/components/flex'
 import {Icon} from '@/components/icon'
+import {LazyImage} from '@/components/lazy-image'
 import {Loading} from '@/components/loading'
 import {Rating} from '@/components/rating'
 import {Typography} from '@/components/typography'
@@ -169,7 +170,7 @@ function InstructorReviews({instructorId}: {instructorId: number}) {
   )
 }
 
-const Avartar = styled.img(({width, height}) => ({
+const Avartar = styled(LazyImage)(({width, height}) => ({
   borderRadius: '50%',
   width,
   height,
