@@ -92,7 +92,7 @@ export function ScrollAnimationProvider({
       divToWatch.removeEventListener('wheel', onScroll)
       running = false
     }
-  }, [loop, max])
+  }, [loop, max, start])
 
   return (
     <ScrollAnimationContext.Provider value={callbacksRef}>
@@ -146,7 +146,4 @@ const Container = styled.div(({theme}) => ({
   overflow: 'hidden',
   height: '100vh',
   width: '100vw',
-  '& *': {
-    // transition: 'all 0.1s ease',
-  },
 }))

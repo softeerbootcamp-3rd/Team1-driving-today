@@ -280,7 +280,7 @@ const WheelImg = styled.div(({theme}) => ({
   maskRepeat: 'no-repeat',
   maskSize: 'contain',
   backgroundColor: theme.color.primary,
-  animation: `${fadein} 1s ease`,
+  animation: `${fadein} 0.5s ease`,
 }))
 
 const LogoImg = styled.div(({theme}) => ({
@@ -293,7 +293,7 @@ const LogoImg = styled.div(({theme}) => ({
   maskRepeat: 'no-repeat',
   maskSize: 'contain',
   backgroundColor: theme.color.primary,
-  animation: `${fadein} 1s ease`,
+  animation: `${fadein} 0.5s ease`,
 }))
 
 const fadein = keyframes`
