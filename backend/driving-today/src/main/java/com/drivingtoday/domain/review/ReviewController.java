@@ -1,7 +1,7 @@
 package com.drivingtoday.domain.review;
 
 import com.drivingtoday.domain.review.dto.ReviewRequest;
-import com.drivingtoday.domain.review.dto.ReviewResponse;
+import com.drivingtoday.domain.review.dto.ReviewInfo;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
 import com.drivingtoday.global.dto.SliceResponse;
@@ -22,12 +22,10 @@ public class ReviewController {
 
     @Operation(summary = "[학생] 특정 강사에 대한 리뷰들 조회 API")
     @GetMapping("/reviews")
-    public ResponseEntity<SliceResponse<ReviewResponse>> reviewList(@RequestParam("instructorId") Long instructorId,
-                                                            @RequestParam("pageNumber") Integer pageNumber,
-                                                            @RequestParam("pageSize") Integer pageSize) {
-        SliceResponse<ReviewResponse> reviews = reviewFindService.findReviews(instructorId, pageNumber, pageSize);
-
-
+    public ResponseEntity<SliceResponse<ReviewInfo>> reviewList(@RequestParam("instructorId") Long instructorId,
+                                                                @RequestParam("pageNumber") Integer pageNumber,
+                                                                @RequestParam("pageSize") Integer pageSize) {
+        SliceResponse<ReviewInfo> reviews = reviewFindService.findReviews(instructorId, pageNumber, pageSize);
         return ResponseEntity.ok(reviews);
     }
 
