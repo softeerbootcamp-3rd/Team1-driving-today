@@ -63,12 +63,10 @@ export function SecondStage({offset}: AnimationProps) {
       <MessageContainerLeft ref={secondMsgRef}>
         <Message>10만 연수생들의</Message>
         <Message>생생한 연수 후기</Message>
-        <Image src="/review.png" />
       </MessageContainerLeft>
       <MessageContainerRight ref={thirdMsgRef}>
         <Message>채팅으로 궁금한 건</Message>
         <Message>직접 물어보자!</Message>
-        <Image src="/chat.png" />
       </MessageContainerRight>
     </>
   )
