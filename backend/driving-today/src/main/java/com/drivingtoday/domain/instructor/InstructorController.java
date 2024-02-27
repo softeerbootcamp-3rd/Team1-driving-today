@@ -4,6 +4,7 @@ import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
 import com.drivingtoday.domain.instructor.dto.InstructorDetailResponse;
 import com.drivingtoday.domain.instructor.dto.InstructorInfo;
 import com.drivingtoday.global.auth.config.JwtFilter;
+import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class InstructorController {
     @Operation(summary = "[강사] 로그인한 강사 정보 조회 API")
     @GetMapping("/instructor/my")
     public ResponseEntity<InstructorInfo> myDetail() {
-        InstructorInfo myInfo = instructorFindService.findInstructor(JwtFilter.getAuthentication().getId());
+        InstructorInfo myInfo = instructorFindService.findInstructor(AuthenticationContextHolder.getAuthentication().getId());
         return ResponseEntity.ok(myInfo);
     }
 }

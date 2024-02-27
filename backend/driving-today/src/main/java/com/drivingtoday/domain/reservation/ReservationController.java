@@ -4,6 +4,7 @@ import com.drivingtoday.domain.reservation.dto.ReservationInstructorResponse;
 import com.drivingtoday.domain.reservation.dto.ReservationRequest;
 import com.drivingtoday.domain.reservation.dto.ReservationStudentResponse;
 import com.drivingtoday.global.auth.config.JwtFilter;
+import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class ReservationController {
     @Operation(summary = "[학생] 예약만들기 API")
     @PostMapping("/reservation")
     public ResponseEntity<Void> reservationAdd(@RequestBody ReservationRequest reservationRequest) {
-        Long studentId = JwtFilter.getAuthentication().getId();
+        Long studentId = AuthenticationContextHolder.getAuthentication().getId();
         Long newReservationId = reservationLockFacade.addReservation(reservationRequest, studentId);
         return ResponseEntity.created(URI.create("/reservation/" + newReservationId)).build();
     }
@@ -32,7 +33,7 @@ public class ReservationController {
     @Operation(summary = "[학생] 본인 예약리스트 조회 API")
     @GetMapping("/reservations/student")
     public ResponseEntity<List<ReservationStudentResponse>> reservationList(@RequestParam("status") String status) {
-        Long studentId = JwtFilter.getAuthentication().getId();
+        Long studentId = AuthenticationContextHolder.getAuthentication().getId();
         List<ReservationStudentResponse> allStudentReservation =
                 reservationListService.findAllStudentReservation(studentId, status);
         return ResponseEntity.ok(allStudentReservation);
@@ -44,7 +45,7 @@ public class ReservationController {
     public ResponseEntity<List<ReservationInstructorResponse>> instructorReservationList(@RequestParam("pageNumber") Integer pageNumber,
                                                                                          @RequestParam("pageSize") Integer pageSize,
                                                                                          @RequestParam("status") String status) {
-        Long studentId = JwtFilter.getAuthentication().getId();
+        Long studentId = AuthenticationContextHolder.getAuthentication().getId();
         List<ReservationInstructorResponse> allInstructorReservation =
                 reservationListService.findAllInstructorReservation(studentId, pageNumber, pageSize, status);
         return ResponseEntity.ok(allInstructorReservation);
@@ -54,9 +55,9 @@ public class ReservationController {
     @DeleteMapping("/reservations/{reservation_id}")
     public ResponseEntity<Void> cancelStudentReservation(@PathVariable("reservation_id") Long reservationId, @RequestParam("role") String role) {
         if (role.equals("student")) {
-            reservationDeleteService.cancelStudentReservation(reservationId, JwtFilter.getAuthentication().getId());
+            reservationDeleteService.cancelStudentReservation(reservationId, AuthenticationContextHolder.getAuthentication().getId());
         } else {
-            reservationDeleteService.rejectInstructorReservation(reservationId, JwtFilter.getAuthentication().getId());
+            reservationDeleteService.rejectInstructorReservation(reservationId, AuthenticationContextHolder.getAuthentication().getId());
         }
         return ResponseEntity.ok().build();
     }
