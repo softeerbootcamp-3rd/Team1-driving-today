@@ -11,7 +11,7 @@ import {
 
 import {Loading} from '@/components/loading'
 import {Typography} from '@/components/typography'
-import {useSuspendedApiCall} from '@/hooks/use-api-call'
+import {useFetch} from '@/hooks/use-fetch'
 
 import {TextField} from '.'
 
@@ -96,10 +96,11 @@ interface AcademyListResultProps {
 }
 
 function AcademyListResult({query, onAcademySelect}: AcademyListResultProps) {
-  const {data} = useSuspendedApiCall<AcademyListResponse>(`/academies?name=${query}`)
+  const {data: academies} = useFetch<AcademyListResponse>(`/academies?name=${query}`)
+
   return (
     <>
-      {data?.map((v) => (
+      {academies?.map((v) => (
         <Typography
           key={v.academyId}
           onPointerDown={() => onAcademySelect(v)}
