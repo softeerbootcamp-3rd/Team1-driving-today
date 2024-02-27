@@ -129,13 +129,6 @@ const CarImgContainer = styled.div({
   top: '-20vh',
 })
 
-const Image = styled(LazyImage)({
-  height: '30vh',
-  width: '50vw',
-  objectFit: 'contain',
-  animation: `${wiggle} 3s ease-in-out infinite`,
-})
-
 function RainBackground() {
   return (
     <RainContainer>

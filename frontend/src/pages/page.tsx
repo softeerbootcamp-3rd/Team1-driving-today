@@ -19,6 +19,7 @@ export function LandingPage() {
           backdropFilter: 'blur(8px)',
           border: 'none',
           background: 'rgba(0,0,0,0)',
+          justifyContent: 'flex-end',
         }}
       >
         {sessionProvider.session ? <AuthHeader /> : <UnAuthHeader />}
@@ -34,6 +35,14 @@ function AuthHeader() {
       <Link to="/dashboard">
         <LinkLabel>대시보드</LinkLabel>
       </Link>
+      <LogoutButton
+        onClick={() => {
+          sessionProvider.logout()
+          window.location.reload()
+        }}
+      >
+        로그아웃
+      </LogoutButton>
     </>
   )
 }
@@ -51,9 +60,20 @@ function UnAuthHeader() {
   )
 }
 
-const LinkLabel = styled.p(({theme}) => ({
-  color: theme.color.gray800,
-  opacity: 0.3,
+const LinkLabel = styled.p(() => ({
+  opacity: 0.5,
+  padding: '0 2rem',
+  fontSize: '1.8rem',
+  fontWeight: 600,
+  ':hover': {
+    opacity: 1,
+    textDecoration: 'line',
+  },
+  transition: 'opacity 0.5s ease',
+}))
+
+const LogoutButton = styled.button(() => ({
+  opacity: 0.5,
   padding: '0 2rem',
   fontSize: '1.8rem',
   fontWeight: 600,

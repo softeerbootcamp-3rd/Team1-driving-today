@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react'
 
 import {apiCall} from '@/utils/api'
+import {errorMessage} from '@/utils/constants'
 import {sessionProvider} from '@/utils/session'
 
 export interface ChatRoomEnterResponse {
@@ -53,8 +54,9 @@ export function useChatSocket(id: number): UseChatSocketReturn {
   const socketRef = useRef<WebSocket>()
   const [isReady, setIsReady] = useState(false)
 
-  if (!sessionProvider.session) throw new Error('no seesion')
-  const role = sessionProvider.session.role
+  const session = sessionProvider.session
+  if (!session) throw new Error(errorMessage.SESSION_ERROR)
+  const role = session.role
 
   const handleQuitRoom = useCallback(() => {
     if (!chatRoomInfo) return

@@ -1,4 +1,4 @@
-import {API_BASE_URL} from '@/utils/constants'
+import {API_BASE_URL, errorMessage} from '@/utils/constants'
 
 export type UserRole = 'STUDENT' | 'INSTRUCTOR'
 
@@ -9,7 +9,7 @@ export interface Session {
 }
 
 export interface SessionProvider {
-  session?: Session
+  session: Session | null
   login: (arg: {role: UserRole; email: string; password: string}) => Promise<Session>
   signup: (arg: {
     role: UserRole
@@ -24,7 +24,7 @@ const SESSION_KEY = 'session'
 
 function getSessionFromStorage() {
   const sessionStr = localStorage.getItem(SESSION_KEY)
-  if (!sessionStr) return
+  if (!sessionStr) return null
   return JSON.parse(sessionStr) as Session
 }
 
@@ -51,7 +51,7 @@ export const sessionProvider: SessionProvider = {
     })
 
     if (res.status !== 200) {
-      throw new Error('login failed')
+      throw new Error(errorMessage.LOGIN_FAIL)
     }
 
     const sessionResponse = (await res.json()) as LoginResponse
@@ -63,10 +63,11 @@ export const sessionProvider: SessionProvider = {
     } as Session
 
     saveSessionToStorage(session)
+    this.session = session
 
     return session
   },
-  signup: async ({role, registerRequest, profileImg}) => {
+  async signup({role, registerRequest, profileImg}) {
     const formData = new FormData()
     formData.append(
       'registerRequest',
@@ -82,15 +83,16 @@ export const sessionProvider: SessionProvider = {
     })
 
     if (res.status !== 201) {
-      throw new Error('회원가입에 실패했습니다')
+      throw new Error(errorMessage.SIGNUP_FAIL)
     }
   },
-  logout: () => {
+  logout() {
+    this.session = null
     resetSession()
   },
   getAccessToken() {
     const token = this.session?.accessToken
-    if (!token) throw Error('no session')
+    if (!token) throw new Error(errorMessage.SESSION_ERROR)
     return token
   },
 }

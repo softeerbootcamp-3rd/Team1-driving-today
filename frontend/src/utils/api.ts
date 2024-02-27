@@ -1,15 +1,25 @@
 import {ExtendedPromise} from '@/hooks/use-api-call'
 
-import {API_BASE_URL} from './constants'
+import {API_BASE_URL, errorMessage} from './constants'
 import {sessionProvider} from './session'
 
 export async function apiCall(path: string, init?: RequestInit) {
-  if (!sessionProvider.session) throw new Error('세션이 만료되었습니다')
-  // todo: refresh token on 401
-  return fetch(`${API_BASE_URL}${path}`, {
+  const session = sessionProvider.session
+  if (!session) {
+    throw new Error(errorMessage.SESSION_ERROR)
+  }
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
-    headers: {...init?.headers, Authorization: `Bearer ${sessionProvider.session.accessToken}`},
+    headers: {
+      ...init?.headers,
+      Authorization: `Bearer ${session.accessToken}`,
+    },
   })
+  if (res.status === 400 || res.status === 401) {
+    sessionProvider.logout()
+    throw new Error(String(res.status))
+  }
+  return res
 }
 
 const apiCallCache = new Map<string, {promise: ExtendedPromise<unknown>; gcId?: number}>()
@@ -55,6 +65,7 @@ async function createApiCallPromise(path: string, init?: RequestInit) {
   const res = await apiCall(path, {
     ...init,
   })
+
   if (!res.ok) throw new Error(res.status.toString())
   return await res.json()
 }
