@@ -4,6 +4,7 @@ import type {PropsWithChildren} from 'react'
 import {NavLink, type NavLinkProps} from 'react-router-dom'
 
 import {Button, type ButtonProps} from '../button'
+import {Flex} from '../flex'
 import {Icon, type IconName} from '../icon'
 
 function SidebarRoot({children}: PropsWithChildren) {
@@ -70,7 +71,11 @@ const Label = styled.p<{active: boolean}>(({theme, active}) => ({
 }))
 
 function SidebarFooter({children}: PropsWithChildren) {
-  return <footer>{children}</footer>
+  return (
+    <Flex gap="1rem" flexDirection="column">
+      {children}
+    </Flex>
+  )
 }
 
 type SidebarChatButtonProps = Omit<ButtonProps, 'color' | 'bgColor'>
@@ -87,10 +92,26 @@ const ChatButton = styled(Button)(({theme}) => ({
   border: `1px solid ${theme.color.gray400}`,
 }))
 
+type SidebarLogoutProps = Omit<ButtonProps, 'color' | 'bgColor'>
+function SidebarLogout(props: SidebarLogoutProps) {
+  return (
+    <LogoutButton {...props} bgColor="gray100" color="gray600">
+      로그아웃
+    </LogoutButton>
+  )
+}
+
+const LogoutButton = styled(Button)(({theme}) => ({
+  borderRadius: '1.6rem',
+  padding: '1.2rem',
+  border: `1px solid ${theme.color.gray400}`,
+}))
+
 export const Sidebar = {
   Root: SidebarRoot,
   LinkList: SidebarLinkList,
   Link: SidebarLink,
   Footer: SidebarFooter,
   ChatButton: SidebarChatButton,
+  LogoutButton: SidebarLogout,
 }

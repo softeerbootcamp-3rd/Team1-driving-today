@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import {Link, Navigate, Outlet, useLoaderData, useRouteError} from 'react-router-dom'
+import {Link, Navigate, Outlet, useLoaderData, useNavigate, useRouteError} from 'react-router-dom'
 
 import {Flex} from '@/components/flex'
 import {Sidebar} from '@/components/sidebar'
@@ -7,7 +7,7 @@ import {Typography} from '@/components/typography'
 import {useChatModal} from '@/providers'
 import {isErrorInstance} from '@/utils/is-error-instance'
 
-import {UserRole} from '../utils/session'
+import {sessionProvider, UserRole} from '../utils/session'
 import {ChatModalContainer} from './components'
 
 function LayoutRoot() {
@@ -81,6 +81,8 @@ export const Layout = Object.assign(LayoutRoot, {
 
 function StudentSidebar() {
   const {handleOpen} = useChatModal()
+  const navigate = useNavigate()
+
   return (
     <Sidebar.Root>
       <Sidebar.LinkList>
@@ -89,6 +91,12 @@ function StudentSidebar() {
         <Sidebar.Link icon="makeReservation" to="/reservation" label="연수 예약" />
       </Sidebar.LinkList>
       <Sidebar.Footer>
+        <Sidebar.LogoutButton
+          onClick={() => {
+            sessionProvider.logout()
+            navigate('/', {replace: true})
+          }}
+        />
         <Sidebar.ChatButton onClick={() => handleOpen({content: 'HOME'})} />
       </Sidebar.Footer>
     </Sidebar.Root>
@@ -97,6 +105,8 @@ function StudentSidebar() {
 
 function InstructorSidebar() {
   const {handleOpen} = useChatModal()
+  const navigate = useNavigate()
+
   return (
     <Sidebar.Root>
       <Sidebar.LinkList>
@@ -104,6 +114,12 @@ function InstructorSidebar() {
         <Sidebar.Link icon="history" to="/history" label="지난 연수" />
       </Sidebar.LinkList>
       <Sidebar.Footer>
+        <Sidebar.LogoutButton
+          onClick={() => {
+            sessionProvider.logout()
+            navigate('/', {replace: true})
+          }}
+        />
         <Sidebar.ChatButton onClick={() => handleOpen({content: 'HOME'})} />
       </Sidebar.Footer>
     </Sidebar.Root>
