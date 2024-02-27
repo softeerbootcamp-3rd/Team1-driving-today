@@ -53,8 +53,9 @@ export function useChatSocket(id: number): UseChatSocketReturn {
   const socketRef = useRef<WebSocket>()
   const [isReady, setIsReady] = useState(false)
 
-  if (!sessionProvider.session) throw new Error('no seesion')
-  const role = sessionProvider.session.role
+  const session = sessionProvider.session
+  if (!session) throw new Error('세션 정보가 없습니다.')
+  const role = session.role
 
   const handleQuitRoom = useCallback(() => {
     if (!chatRoomInfo) return

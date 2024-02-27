@@ -9,7 +9,7 @@ export interface Session {
 }
 
 export interface SessionProvider {
-  session?: Session
+  session: Session | null
   login: (arg: {role: UserRole; email: string; password: string}) => Promise<Session>
   signup: (arg: {
     role: UserRole
@@ -24,7 +24,7 @@ const SESSION_KEY = 'session'
 
 function getSessionFromStorage() {
   const sessionStr = localStorage.getItem(SESSION_KEY)
-  if (!sessionStr) return
+  if (!sessionStr) return null
   return JSON.parse(sessionStr) as Session
 }
 
@@ -63,10 +63,11 @@ export const sessionProvider: SessionProvider = {
     } as Session
 
     saveSessionToStorage(session)
+    this.session = session
 
     return session
   },
-  signup: async ({role, registerRequest, profileImg}) => {
+  async signup({role, registerRequest, profileImg}) {
     const formData = new FormData()
     formData.append(
       'registerRequest',
@@ -85,12 +86,13 @@ export const sessionProvider: SessionProvider = {
       throw new Error('회원가입에 실패했습니다')
     }
   },
-  logout: () => {
+  logout() {
+    this.session = null
     resetSession()
   },
   getAccessToken() {
     const token = this.session?.accessToken
-    if (!token) throw Error('no session')
+    if (!token) throw Error('세션정보가 없습니다.')
     return token
   },
 }

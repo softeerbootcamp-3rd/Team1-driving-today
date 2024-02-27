@@ -13,7 +13,7 @@ import {sessionProvider} from '@/utils/session'
 import {timestampToString} from '@/utils/time'
 
 export function ChatHome({onCloseClick}: {onCloseClick: () => void}) {
-  if (!sessionProvider.session) throw new Error('no session')
+  if (!sessionProvider.session) throw new Error('세션 정보가 없습니다.')
   const role = sessionProvider.session.role
   return (
     <Container>

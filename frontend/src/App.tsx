@@ -103,10 +103,11 @@ const router = createBrowserRouter(
 )
 
 async function checkAuthLoader() {
-  if (!sessionProvider.session) {
+  const session = sessionProvider.session
+  if (!session) {
     return redirect('/')
   }
-  return sessionProvider.session.role
+  return session.role
 }
 
 interface RequireRoleProps {
