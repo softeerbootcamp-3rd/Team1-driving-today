@@ -9,6 +9,7 @@ import com.drivingtoday.domain.student.StudentFindService;
 import com.drivingtoday.global.aop.Timer;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
+import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class ChatController {
     @Operation(summary = "강사가 본인한테 온 메시지 톡방들 리스트화")
     @GetMapping("/instructor/rooms")
     public ResponseEntity<List<ChatRoomInfoConcise>> chatListInstructor(){
-        Authentication authentication = JwtFilter.getAuthentication();
+        Authentication authentication = AuthenticationContextHolder.getAuthentication();
         if(authentication.getRole().equals("STUDENT")){
             throw new RuntimeException("잘못된 접근");
         }
@@ -46,7 +47,7 @@ public class ChatController {
     @Operation(summary = "학생이 보낸 메시지 톡방들 리스트화")
     @GetMapping("/student/rooms")
     public ResponseEntity<List<ChatRoomInfoConcise>> chatListStudent(){
-        Authentication authentication = JwtFilter.getAuthentication();
+        Authentication authentication = AuthenticationContextHolder.getAuthentication();
         if(authentication.getRole().equals("INSTRUCTOR")){
             throw new RuntimeException("잘못된 접근");
         }
@@ -64,7 +65,7 @@ public class ChatController {
 
         Long instructorId = requestBody.getInstructorId();
 
-        Authentication authentication = JwtFilter.getAuthentication();
+        Authentication authentication = AuthenticationContextHolder.getAuthentication();
         Instructor instructor = instructorFindService.findById(instructorId);
 
         Student student = studentFindService.findById(authentication.getId());
@@ -92,7 +93,7 @@ public class ChatController {
 
         Long studentId = requestBody.getStudentId();
 
-        Authentication authentication = JwtFilter.getAuthentication();
+        Authentication authentication = AuthenticationContextHolder.getAuthentication();
         Student student = studentFindService.findById(studentId);
         Instructor instructor = instructorFindService.findById(authentication.getId());
 

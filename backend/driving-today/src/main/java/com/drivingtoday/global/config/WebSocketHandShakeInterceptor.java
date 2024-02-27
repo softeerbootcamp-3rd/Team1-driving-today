@@ -3,6 +3,7 @@ package com.drivingtoday.global.config;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
 import com.drivingtoday.global.auth.exception.JwtErrorCode;
+import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
 import com.drivingtoday.global.auth.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class WebSocketHandShakeInterceptor implements HandshakeInterceptor {
             JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
             Authentication auth = makeAuthentication(accessToken);
 
-            Authentication loginedAuthentication = JwtFilter.getAuthentication();
+            Authentication loginedAuthentication = AuthenticationContextHolder.getAuthentication();
 
             if(Objects.equals(auth.getId(), loginedAuthentication.getId())){
                 log.info("logged in ID : " + loginedAuthentication.getId());

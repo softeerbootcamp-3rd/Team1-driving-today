@@ -2,6 +2,7 @@ package com.drivingtoday.global.auth.config;
 
 import com.drivingtoday.global.auth.constants.Authentication;
 import com.drivingtoday.global.auth.exception.JwtErrorCode;
+import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
 import com.drivingtoday.global.auth.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -23,7 +24,7 @@ import java.util.Enumeration;
 @RequiredArgsConstructor
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private static ThreadLocal<Authentication> auth = new ThreadLocal<>();
+    //private static ThreadLocal<Authentication> auth = new ThreadLocal<>();
     private final JwtProvider jwtProvider;
     private final String[] allowUriList
             = new String[]{"*/health", "*/academies**", "*/register", "*/login", "/swagger-ui/*", "**/api-docs**"};
@@ -76,7 +77,7 @@ public class JwtFilter extends OncePerRequestFilter {
             //토큰 검증
             JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
             if (jwtErrorCode == JwtErrorCode.VALID_JWT_TOKEN) {
-                auth.set(makeAuthentication(accessToken));
+                AuthenticationContextHolder.setAuthentication(makeAuthentication(accessToken));
             } else {
                 log.warn("{} : {}", jwtErrorCode.getErrorCode(), jwtErrorCode.getMessage());
                 makeExceptionResponse(jwtErrorCode, response);
@@ -111,7 +112,4 @@ public class JwtFilter extends OncePerRequestFilter {
         response.getOutputStream().write(messageBytes);
     }
 
-    public static Authentication getAuthentication() {
-        return auth.get();
-    }
 }

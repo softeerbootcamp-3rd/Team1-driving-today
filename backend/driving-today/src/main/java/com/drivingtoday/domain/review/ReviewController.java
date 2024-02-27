@@ -4,6 +4,7 @@ import com.drivingtoday.domain.review.dto.ReviewRequest;
 import com.drivingtoday.domain.review.dto.ReviewInfo;
 import com.drivingtoday.global.auth.config.JwtFilter;
 import com.drivingtoday.global.auth.constants.Authentication;
+import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
 import com.drivingtoday.global.dto.SliceResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class ReviewController {
     @Operation(summary = "[학생] 리뷰 등록하기 API")
     @PostMapping("/review")
     public ResponseEntity<Void> reviewAdd(@RequestBody ReviewRequest reviewRequest) {
-        Authentication authentication = JwtFilter.getAuthentication();
+        Authentication authentication = AuthenticationContextHolder.getAuthentication();
         Long newReviewId = reviewAddService.addReview(reviewRequest, authentication.getId());
         return ResponseEntity.created(URI.create("/reviews/" + newReviewId)).build();
     }

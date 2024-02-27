@@ -17,4 +17,11 @@ public class Authentication {
                 .role(role)
                 .build();
     }
+
+    public static Authentication createEmptyAuthentication(){
+        return Authentication.builder()
+                .role("NAN")
+                .id(null)
+                .build();
+    }
 }

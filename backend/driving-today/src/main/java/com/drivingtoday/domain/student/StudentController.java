@@ -2,6 +2,7 @@ package com.drivingtoday.domain.student;
 
 import com.drivingtoday.domain.student.dto.StudentInfo;
 import com.drivingtoday.global.auth.config.JwtFilter;
+import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class StudentController {
     @Operation(summary = "[학생] 로그인한 학생 정보 조회 API")
     @GetMapping("/student/my")
     public ResponseEntity<StudentInfo> myDetail() {
-        StudentInfo myInfo = studentFindService.findStudent(JwtFilter.getAuthentication().getId());
+        StudentInfo myInfo = studentFindService.findStudent(AuthenticationContextHolder.getAuthentication().getId());
         return ResponseEntity.ok(myInfo);
     }
 }
