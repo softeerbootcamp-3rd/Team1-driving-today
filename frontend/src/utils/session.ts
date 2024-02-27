@@ -1,4 +1,4 @@
-import {API_BASE_URL} from '@/utils/constants'
+import {API_BASE_URL, errorMessage} from '@/utils/constants'
 
 export type UserRole = 'STUDENT' | 'INSTRUCTOR'
 
@@ -51,7 +51,7 @@ export const sessionProvider: SessionProvider = {
     })
 
     if (res.status !== 200) {
-      throw new Error('login failed')
+      throw new Error(errorMessage.LOGIN_FAIL)
     }
 
     const sessionResponse = (await res.json()) as LoginResponse
@@ -83,7 +83,7 @@ export const sessionProvider: SessionProvider = {
     })
 
     if (res.status !== 201) {
-      throw new Error('회원가입에 실패했습니다')
+      throw new Error(errorMessage.SIGNUP_FAIL)
     }
   },
   logout() {
@@ -92,7 +92,7 @@ export const sessionProvider: SessionProvider = {
   },
   getAccessToken() {
     const token = this.session?.accessToken
-    if (!token) throw Error('세션정보가 없습니다.')
+    if (!token) throw new Error(errorMessage.SESSION_ERROR)
     return token
   },
 }

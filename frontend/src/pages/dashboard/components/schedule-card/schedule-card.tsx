@@ -130,7 +130,7 @@ export function InstructorScheduleCard() {
       const res = await apiCall(
         `/reservations/instructor?pageNumber=${pageParam}&pageSize=${PAGE_SIZE}&status=scheduled`,
       )
-      if (!res.ok) throw new Error('server error')
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
       return (await res.json()) as StudentReservation[]
     },
     initialPageParam: 1,

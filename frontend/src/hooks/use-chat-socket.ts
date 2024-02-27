@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react'
 
 import {apiCall} from '@/utils/api'
+import {errorMessage} from '@/utils/constants'
 import {sessionProvider} from '@/utils/session'
 
 export interface ChatRoomEnterResponse {
@@ -54,7 +55,7 @@ export function useChatSocket(id: number): UseChatSocketReturn {
   const [isReady, setIsReady] = useState(false)
 
   const session = sessionProvider.session
-  if (!session) throw new Error('세션 정보가 없습니다.')
+  if (!session) throw new Error(errorMessage.SESSION_ERROR)
   const role = session.role
 
   const handleQuitRoom = useCallback(() => {

@@ -121,7 +121,7 @@ function InstructorReviews({instructorId}: {instructorId: number}) {
       const res = await apiCall(
         `/reviews?instructorId=${instructorId}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
       )
-      if (!res.ok) throw new Error('server error')
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
       const reviewResponse = (await res.json()) as ReviewResponse
       return reviewResponse.content
     },

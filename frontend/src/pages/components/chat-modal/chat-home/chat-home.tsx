@@ -9,11 +9,12 @@ import {useSuspendedApiCall} from '@/hooks/use-api-call'
 import {ChatMessageHistory, ChatRoomInfo} from '@/hooks/use-chat-socket'
 import {useChatModal} from '@/providers'
 import {InstructorInfoResponse, StudentInfoResponse} from '@/types/user-info'
+import {errorMessage} from '@/utils/constants'
 import {sessionProvider} from '@/utils/session'
 import {timestampToString} from '@/utils/time'
 
 export function ChatHome({onCloseClick}: {onCloseClick: () => void}) {
-  if (!sessionProvider.session) throw new Error('세션 정보가 없습니다.')
+  if (!sessionProvider.session) throw new Error(errorMessage.SESSION_ERROR)
   const role = sessionProvider.session.role
   return (
     <Container>

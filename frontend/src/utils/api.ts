@@ -1,12 +1,12 @@
 import {ExtendedPromise} from '@/hooks/use-api-call'
 
-import {API_BASE_URL} from './constants'
+import {API_BASE_URL, errorMessage} from './constants'
 import {sessionProvider} from './session'
 
 export async function apiCall(path: string, init?: RequestInit) {
   const session = sessionProvider.session
   if (!session) {
-    throw new Error('세션 정보가 없습니다.')
+    throw new Error(errorMessage.SESSION_ERROR)
   }
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
@@ -65,7 +65,7 @@ async function createApiCallPromise(path: string, init?: RequestInit) {
   const res = await apiCall(path, {
     ...init,
   })
-  // console.log({res})
+
   if (!res.ok) throw new Error(res.status.toString())
   return await res.json()
 }

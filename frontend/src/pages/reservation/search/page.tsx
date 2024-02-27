@@ -44,7 +44,7 @@ export function SearchPage() {
       const res = await apiCall(
         `/instructors?latitude=${searchCoord.latitude}&longitude=${searchCoord.longitude}&trainingTime=${trainingTime}&reservationTime=${reservationTime}&reservationDate=${reservationDate}&pageNumber=${pageParam}&pageSize=${PAGE_SIZE}`,
       )
-      if (!res.ok) throw new Error('server error')
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
       const items = (await res.json()) as InstructorsResponseItem[]
       return items
     },
