@@ -1,7 +1,6 @@
 package com.drivingtoday.domain.instructor;
 
 import com.drivingtoday.domain.instructor.dto.AvailableInstructorInfo;
-import com.drivingtoday.domain.instructor.dto.AvailableInstructorsRequest;
 import jakarta.transaction.Transactional;
 import com.drivingtoday.domain.reservation.Reservation;
 import com.drivingtoday.domain.student.Student;

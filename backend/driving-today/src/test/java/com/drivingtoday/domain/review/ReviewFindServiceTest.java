@@ -1,5 +1,6 @@
 package com.drivingtoday.domain.review;
 
+import com.drivingtoday.domain.review.dto.ReviewInfo;
 import com.drivingtoday.global.dto.SliceResponse;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,7 @@ public class ReviewFindServiceTest {
         Integer pageSize = 10;
 
         //when
-        SliceResponse<Review> reviews = reviewFindService.findReviews(1L, 1, 10);
+        SliceResponse<ReviewInfo> reviews = reviewFindService.findReviews(1L, 1, 10);
 
         //then
         assertThat(reviews.getContent().size()).isEqualTo(10);
@@ -41,7 +42,7 @@ public class ReviewFindServiceTest {
         Integer pageSize = 1;
 
         //when
-        SliceResponse<Review> reviews = reviewFindService.findReviews(1L, 1, 10);
+        SliceResponse<ReviewInfo> reviews = reviewFindService.findReviews(1L, 1, 10);
 
         //then
         assertThat(reviews.getContent()).isEmpty();
@@ -56,34 +57,13 @@ public class ReviewFindServiceTest {
         Integer pageSize = 5;
 
         //when
-        SliceResponse<Review> reviews1 = reviewFindService.findReviews(instructorId, pageNumber1, pageSize);
-        SliceResponse<Review> reviews2 = reviewFindService.findReviews(instructorId, pageNumber2, pageSize);
+        SliceResponse<ReviewInfo> reviews1 = reviewFindService.findReviews(instructorId, pageNumber1, pageSize);
+        SliceResponse<ReviewInfo> reviews2 = reviewFindService.findReviews(instructorId, pageNumber2, pageSize);
 
         //then
         assertThat(reviews1.getContent().size()).isEqualTo(5);
         assertThat(reviews2.getContent().size()).isEqualTo(5);
     }
 
-//    @Test
-//    @DisplayName("저장된 10개의 리뷰를 3개씩 3page + 1개 1page로 나눠지는지 테스트")
-//    public void 페이징_테스트2() {
-//        //given
-//        ReviewFindRequest request1 = new ReviewFindRequest(1L, 1, 3);
-//        ReviewFindRequest request2 = new ReviewFindRequest(1L, 2, 3);
-//        ReviewFindRequest request3 = new ReviewFindRequest(1L, 3, 3);
-//        ReviewFindRequest request4 = new ReviewFindRequest(1L, 4, 3);
-//
-//        //when
-//        List<ReviewInfo> reviews1 = reviewFindService.findReviews(request1);
-//        List<ReviewInfo> reviews2 = reviewFindService.findReviews(request2);
-//        List<ReviewInfo> reviews3 = reviewFindService.findReviews(request3);
-//        List<ReviewInfo> reviews4 = reviewFindService.findReviews(request4);
-//
-//        //then
-//        assertThat(reviews1.size()).isEqualTo(3);
-//        assertThat(reviews2.size()).isEqualTo(3);
-//        assertThat(reviews3.size()).isEqualTo(3);
-//        assertThat(reviews4.size()).isEqualTo(1);
-//    }
 
 }
