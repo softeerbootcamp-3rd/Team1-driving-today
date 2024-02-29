@@ -1,5 +1,14 @@
 # 오늘의 운전 (Driving Today)
 
+## 프로젝트 문서
+
+- [Wiki 페이지](https://github.com/softeerbootcamp-3rd/Team1-driving-today/wiki)
+- [백엔드 API 문서(swagger)](https://api.odriving.site/swagger-ui/index.html)
+
+## 프로젝트 개요
+
+오늘의 운전(Driving Today)은 운전 연수 학원 강사에 대한 정보 불균형을 해소하고자 합니다. 기존에는 운전학원을 등록하기 전 주변인의 후기에 의존하였고, 운전학원마다 상이한 가격과 연수 시간을 비교하기 어려웠습니다. 이를 해소하고자 운전 학원 강사 개개인별 정보와 사용자 리뷰를 통해 운전 학원 강사에 대한 정보를 제공해줍니다.
+
 ## 팀원 소개
 
 |                                                                                       오정진                                                                                       |                                                                                      홍정희                                                                                       |                                                                                      이지수                                                                                       |                                                                                        서지원                                                                                        |                                                                                       김준희                                                                                       |
@@ -8,9 +17,6 @@
 |                                                                                      frontend                                                                                      |                                                                                     frontend                                                                                      |                                                                                      backend                                                                                      |                                                                                       backend                                                                                        |                                                                                      backend                                                                                       |
 |                                                                 <a href='https://github.com/ojj1123'>@ojj1123</a>                                                                  |                                                                  <a href='https://github.com/junhea'>@junhea</a>                                                                  |                                                                  <a href='https://github.com/jsLeen'>@jsLeen</a>                                                                  |                                                                <a href='https://github.com/seojeewon'>@seojeewon</a>                                                                 |                                                                 <a href='https://github.com/zensen6'>@zensen6</a>                                                                  |
 
-## 프로젝트 개요
-
-오늘의 운전(Driving Today)은 운전 연수 학원 강사에 대한 정보 불균형을 해소하고자 합니다. 기존에는 운전학원을 등록하기 전 주변인의 후기에 의존하였고, 운전학원마다 상이한 가격과 연수 시간을 비교하기 어려웠습니다. 이를 해소하고자 운전 학원 강사 개개인별 정보와 사용자 리뷰를 통해 운전 학원 강사에 대한 정보를 제공해줍니다.
 
 ## 핵심 기능
 
@@ -128,7 +134,3 @@ pnpm dev
 ## 인프라 및 아키텍처
 
 ![](./docs/인프라-및-아키텍처.png)
-
-## 프로젝트 문서 모음
-
-[Wiki 페이지](https://github.com/softeerbootcamp-3rd/Team1-driving-today/wiki)에서 프로젝트 문서를 확인할 수 있습니다.
