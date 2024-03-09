@@ -50,7 +50,7 @@ public class JwtProvider {
 
     public Jwt createJwt(Map<String, Object> claims) {
         String accessToken = createAT(claims, getExpireDateAccessToken());
-        String refreshToken = createRT(new HashMap<>(), getExpireDateRefreshToken());
+        String refreshToken = createRT(claims, getExpireDateRefreshToken());
         return Jwt.of(accessToken, refreshToken);
     }
 
@@ -59,6 +59,11 @@ public class JwtProvider {
                 .setSigningKey(key)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getType(String token){
+        Claims claims = getClaims(token);
+        return (String) claims.get("type");
     }
 
     public Date getExpireDateAccessToken() {
