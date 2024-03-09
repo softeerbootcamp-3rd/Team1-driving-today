@@ -3,7 +3,9 @@ package com.drivingtoday.global.auth.config;
 import com.drivingtoday.global.auth.constants.Authentication;
 import com.drivingtoday.global.auth.exception.JwtErrorCode;
 import com.drivingtoday.global.auth.jwt.AuthenticationContextHolder;
+import com.drivingtoday.global.auth.jwt.Jwt;
 import com.drivingtoday.global.auth.jwt.JwtProvider;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,7 +26,7 @@ import java.util.Enumeration;
 @RequiredArgsConstructor
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    //private static ThreadLocal<Authentication> auth = new ThreadLocal<>();
+
     private final JwtProvider jwtProvider;
     private final String[] allowUriList
             = new String[]{"*/health", "*/academies**", "*/register", "*/login", "/swagger-ui/*", "**/api-docs**"};
@@ -61,6 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
 
+            //토큰 검증이 필요하지 않은 api는 필터 진행하지 않음
             if (checkAllowList(request.getRequestURI())) {
                 filterChain.doFilter(request, response);
                 return;
@@ -73,12 +76,23 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
             //토큰 꺼내기
-            String accessToken = jwtProvider.resolveToken(authorization);
+            String token = jwtProvider.resolveToken(authorization);
             //토큰 검증
-            JwtErrorCode jwtErrorCode = jwtProvider.validateToken(accessToken);
+            JwtErrorCode jwtErrorCode = jwtProvider.validateToken(token);
+            //유효한 access token
             if (jwtErrorCode == JwtErrorCode.VALID_JWT_TOKEN) {
-                AuthenticationContextHolder.setAuthentication(makeAuthentication(accessToken));
-            } else {
+                if(jwtProvider.getType(token).equals("AT")){
+                    AuthenticationContextHolder.setAuthentication(makeAuthentication(token));
+                }
+                //유효한 refresh token
+                else{
+                    log.debug("토큰 재발급");
+                    issueNewToken(token, response);
+                    return;
+                }
+
+            }
+            else {
                 log.warn("{} : {}", jwtErrorCode.getErrorCode(), jwtErrorCode.getMessage());
                 makeExceptionResponse(jwtErrorCode, response);
                 return;
@@ -112,4 +126,13 @@ public class JwtFilter extends OncePerRequestFilter {
         response.getOutputStream().write(messageBytes);
     }
 
+    private void issueNewToken(String refreshToken, HttpServletResponse response) throws IOException {
+        Jwt jwt = jwtProvider.createJwt(jwtProvider.getClaims(refreshToken));
+        byte[] tokens = new Gson().toJson(jwt).getBytes(StandardCharsets.UTF_8);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+        response.setContentLength(tokens.length);
+        response.setStatus(200);
+        response.getOutputStream().write(tokens);
+    }
 }

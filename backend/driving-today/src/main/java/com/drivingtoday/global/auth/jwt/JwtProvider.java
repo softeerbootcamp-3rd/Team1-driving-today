@@ -31,7 +31,16 @@ public class JwtProvider {
         this.key = secretKey;
     }
 
-    public String createToken(Map<String, Object> claims, Date expireDate) {
+    public String createAT(Map<String, Object> claims, Date expireDate) {
+        claims.put("type", "AT");
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(expireDate)
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+    public String createRT(Map<String, Object> claims, Date expireDate) {
+        claims.put("type", "RT");
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(expireDate)
@@ -40,8 +49,8 @@ public class JwtProvider {
     }
 
     public Jwt createJwt(Map<String, Object> claims) {
-        String accessToken = createToken(claims, getExpireDateAccessToken());
-        String refreshToken = createToken(new HashMap<>(), getExpireDateRefreshToken());
+        String accessToken = createAT(claims, getExpireDateAccessToken());
+        String refreshToken = createRT(claims, getExpireDateRefreshToken());
         return Jwt.of(accessToken, refreshToken);
     }
 
@@ -50,6 +59,11 @@ public class JwtProvider {
                 .setSigningKey(key)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getType(String token){
+        Claims claims = getClaims(token);
+        return (String) claims.get("type");
     }
 
     public Date getExpireDateAccessToken() {
