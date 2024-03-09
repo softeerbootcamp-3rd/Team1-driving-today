@@ -45,4 +45,17 @@ class JwtProviderTest {
         Assertions.assertThat(jwtProvider.getClaims(refreshToken).get("type")).isEqualTo("RT");
     }
 
+    @Test
+    @DisplayName("토큰 타입 가져오는 메서드 테스트")
+    void 타입가져오기(){
+        //given
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtProvider.CLAIM_USERID, 1L);
+        claims.put(JwtProvider.CLAIM_ROLE, Role.STUDENT);
+        String accessToken = jwtProvider.createAT(claims, jwtProvider.getExpireDateAccessToken());
+        //when
+        String type = jwtProvider.getType(accessToken);
+        //then
+        Assertions.assertThat(type).isEqualTo("AT");
+    }
 }
